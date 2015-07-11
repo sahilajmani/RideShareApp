@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 11, 2015 5:51:20 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.OTP" table="OTP">
+        <id name="id" type="java.lang.String">
+            <column name="ID" />
+            <generator class="guid" />
+        </id>
+        <property name="email" type="java.lang.String">
+            <column name="EMAIL" />
+        </property>
+        <property name="create_time" type="java.sql.Timestamp">
+            <column name="CREATE_TIME" />
+        </property>
+        <property name="passcode" type="java.lang.String">
+            <column name="PASSCODE" />
+        </property>
+    </class>
+</hibernate-mapping>

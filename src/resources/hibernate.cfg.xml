@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+<!-- 	<property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property> -->	
+         <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cwqgghkrvick.us-west-2.rds.amazonaws.com:3306/myridedb</property>
+        <property name="hibernate.connection.username">ridesharing</property>
+        <property name="hibernate.connection.password">ridesharing123</property>
+
+        <!-- JDBC connection pool (use the built-in connection pool) -->
+        <!-- <property name="connection.pool_size">1</property> -->
+
+        <!--
+            SQL dialect
+            There are other mysql dialects avaialable IF you run INTO trouble WITH this one.
+            The FULL list IS:
+                MySQL5Dialect
+                MySQL5InnoDBDialect
+                MySQLDialect
+                MySQLInnoDBDialect
+                MySQLMyISAMDialect
+            See http://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/dialect/package-summary.html
+        -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <!-- <property name="current_session_context_class">thread</property> -->
+
+        <!-- Disable the second-level cache  -->
+        <!-- <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
+
+        <!-- Change these values to true to echo all executed SQL to stdout -->
+        <!-- <property name="show_sql">false</property>
+        <property name="use_sql_comments">false</property>
+
+        Drop and re-create the database schema on startup
+        <property name="hbm2ddl.auto">update</property> -->
+		<!-- <property name="hbm2ddl.auto">create</property> -->
+        <!-- This is the entity class that we'll be testing. -->
+        <mapping resource="resources/User.hbm.xml"/>
+        <mapping resource="resources/Time.hbm.xml"/>
+        <mapping resource="resources/Address.hbm.xml"/>
+        <mapping resource="resources/OTP.hbm.xml"/>
+
+    </session-factory>
+</hibernate-configuration>

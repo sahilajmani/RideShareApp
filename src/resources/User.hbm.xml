@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 11, 2015 2:50:18 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.User" table="USER">
+        <id name="id" type="java.lang.String">
+            <column name="id" />
+            <generator class="guid" />
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="NAME" />
+        </property>
+        <property name="companyName" type="java.lang.String">
+            <column name="COMPANYNAME" />
+        </property>
+        <property name="email" type="java.lang.String">
+            <column name="EMAIL" />
+        </property>
+        <property name="contact" type="java.lang.String">
+            <column name="CONTACT" />
+        </property>
+        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join" cascade="save-update">
+            <column name="STARTTIME_PICKUP" />
+        </many-to-one>
+        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
+            <column name="STARTTIME_DROP" />
+        </many-to-one>
+        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
+            <column name="OFFICETIME_PICKUP" />
+        </many-to-one>
+        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join" cascade="save-update" >
+            <column name="OFFICETIME_DROP" />
+        </many-to-one>
+        <property name="company_joined_month" type="java.lang.String">
+            <column name="COMPANY_JOINED_MONTH" />
+        </property>
+        <property name="company_joined_year" type="java.lang.String">
+            <column name="COMPANY_JOINED_YEAR" />
+        </property>
+        <property name="hasCar" type="boolean">
+            <column name="HASCAR" />
+        </property>
+        <property name="isCurrentPoolActive" type="boolean" access="field">
+            <column name="ISCURRENTPOOLACTIVE" />
+        </property>
+        <property name="isMobileVerified" type="boolean" access="field">
+            <column name="ISMOBILEVERIFIED" />
+        </property>
+        <property name="isEmailVerified" type="boolean" access="field">
+            <column name="ISEMAILVERIFIED" />
+        </property>
+        <property name="isActive" type="boolean" access="field">
+            <column name="ISACTIVE" />
+        </property>
+        <property name="registerDate" type="java.sql.Timestamp">
+            <column name="REGISTERDATE" />
+        </property>
+        <property name="modifyDate" type="java.sql.Timestamp">
+            <column name="MODIFYDATE" />
+        </property>
+        <property name="distance" type="float">
+            <column name="DISTANCE" />
+        </property>
+        <many-to-one name="homeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+            <column name="HOMEADDRESS" />
+        </many-to-one>
+        <many-to-one name="officeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+            <column name="OFFICEADDRESS" />
+        </many-to-one>
+        <property name="duration" type="int">
+            <column name="DURATION" />
+        </property>
+    </class>
+</hibernate-mapping>
