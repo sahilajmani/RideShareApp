@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 11, 2015 2:50:18 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Jul 12, 2015 6:18:26 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.User" table="USER">
         <id name="id" type="java.lang.String">
-            <column name="id" />
-            <generator class="guid" />
+            <column name="ID" />
+            <generator class="assigned" />
         </id>
         <property name="name" type="java.lang.String">
             <column name="NAME" />
@@ -20,16 +20,16 @@
         <property name="contact" type="java.lang.String">
             <column name="CONTACT" />
         </property>
-        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join">
             <column name="STARTTIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join">
             <column name="STARTTIME_DROP" />
         </many-to-one>
-        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join">
             <column name="OFFICETIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join" cascade="save-update" >
+        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join">
             <column name="OFFICETIME_DROP" />
         </many-to-one>
         <property name="company_joined_month" type="java.lang.String">
@@ -62,14 +62,15 @@
         <property name="distance" type="float">
             <column name="DISTANCE" />
         </property>
-        <many-to-one name="homeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="homeAddress" class="pojos.Address" fetch="join">
             <column name="HOMEADDRESS" />
         </many-to-one>
-        <many-to-one name="officeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="officeAddress" class="pojos.Address" fetch="join">
             <column name="OFFICEADDRESS" />
         </many-to-one>
         <property name="duration" type="int">
             <column name="DURATION" />
         </property>
+        <one-to-one name="pool" class="pojos.Pool"></one-to-one>
     </class>
 </hibernate-mapping>

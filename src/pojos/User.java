@@ -25,6 +25,17 @@ private float distance;
 private Address homeAddress;
 private Address officeAddress;
 private int duration;
+private Pool pool;
+public Pool getPool() {
+	return pool;
+}
+
+
+public void setPool(Pool pool) {
+	this.pool = pool;
+}
+
+
 public String getName() {
 	return name;
 }

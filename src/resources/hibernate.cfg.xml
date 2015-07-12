@@ -49,6 +49,8 @@
         <mapping resource="resources/Time.hbm.xml"/>
         <mapping resource="resources/Address.hbm.xml"/>
         <mapping resource="resources/OTP.hbm.xml"/>
+        <mapping resource="resources/Pool.hbm.xml"/>
+        <mapping resource="resources/Car.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>
