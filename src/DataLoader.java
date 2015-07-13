@@ -44,7 +44,7 @@ public class DataLoader {
 //		address.setId(1);
 		user.setHomeAddress(address);
 //		user.setId(1);
-//		session.save(user);
+	session.save(user);
 		System.out.println("user saved successfully ! "+user.getId());
 		tx.commit();
 		session.close();
