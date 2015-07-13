@@ -1,12 +1,15 @@
 package pojos;
 
-import java.sql.Timestamp;
+import java.io.Serializable;
+import java.util.Date;
 
-public class OTP {
+
+@SuppressWarnings("serial")
+public class OTP implements Serializable{
 
 	private String email;
 	private String id;
-	private Timestamp create_time;
+	private Date create_time;
 	private String passcode;
 	public String getEmail() {
 		return email;
@@ -20,10 +23,10 @@ public class OTP {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Timestamp getCreate_time() {
+	public Date getCreate_time() {
 		return create_time;
 	}
-	public void setCreate_time(Timestamp create_time) {
+	public void setCreate_time(Date create_time) {
 		this.create_time = create_time;
 	}
 	public String getPasscode() {

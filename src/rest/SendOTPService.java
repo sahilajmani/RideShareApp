@@ -7,23 +7,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import utility.GlobalConstants;
+import utility.RideSharingUtil;
+import dao.DaoI;
 import email.SendMail;
 
 
 @Path("/otp")
 public class SendOTPService {
+	DaoI dao = RideSharingUtil.getDaoInstance();
 	
 	@POST
 	@Path("sendOTPService")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sendOTPEmail(@FormParam("userEmail") String userEmail){
-		int OTP = generateOTP();
-		String message = "OTP : " + OTP ;
+		int otp = generateOTP();
+		dao.insertOTPEmail(userEmail, otp);
+		String message = "OTP : " + otp ;
 		String subject = "OTP for Ride Easy" ;
 		String[] to = {userEmail};
 		SendMail.sendEmail(GlobalConstants.FROM_EMAIL, GlobalConstants.PASSWORD_EMAIL, subject, message, to);
-		//Store OTP against email in DB logic to be written 		
-		return "mail sent to " + userEmail + " with OTP : " + OTP;
+		return "mail sent to " + userEmail + " with OTP : " + otp;
 	}
 	
 	@POST
