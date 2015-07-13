@@ -51,6 +51,7 @@
         <mapping resource="resources/Pool.hbm.xml"/>
         <mapping resource="resources/Car.hbm.xml"/>
         <mapping resource="resources/Transaction.hbm.xml"/>
+        <mapping resource="resources/UserMapping.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>
