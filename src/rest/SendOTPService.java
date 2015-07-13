@@ -20,12 +20,12 @@ public class SendOTPService {
 	@Path("sendOTPService")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String sendOTPEmail(@FormParam("userEmail") String userEmail){
-		int otp = generateOTP();
-		dao.insertOTPEmail(userEmail, otp);
+		int otp = generateOTP();		
 		String message = "OTP : " + otp ;
 		String subject = "OTP for Ride Easy" ;
 		String[] to = {userEmail};
 		SendMail.sendEmail(GlobalConstants.FROM_EMAIL, GlobalConstants.PASSWORD_EMAIL, subject, message, to);
+		dao.insertOTPEmail(userEmail, otp);
 		return "mail sent to " + userEmail + " with OTP : " + otp;
 	}
 	
