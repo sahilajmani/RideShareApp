@@ -31,7 +31,7 @@ public class DataLoader {
 		user.setEmail("saajmani@cisco.com");
 		Time startTime = new Time();
 //		startTime.setId(1);
-		startTime.setTime("9:30AM");
+		startTime.setTime("9:30AM");	
 		Time endTime = new Time();
 //		startTime.setId(2);
 		startTime.setTime("11:30AM");
