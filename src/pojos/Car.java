@@ -1,6 +1,9 @@
 package pojos;
 
-public class Car {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Car implements Serializable{
 private String id;
 private User owner;
 private String name;

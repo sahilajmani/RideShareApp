@@ -1,10 +1,12 @@
 package pojos;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Pool {
+@SuppressWarnings("serial")
+public class Pool implements Serializable{
 private String id;
 private boolean is_active;
 private User hostUser;

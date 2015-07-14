@@ -1,8 +1,10 @@
 package pojos;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class User {
+@SuppressWarnings("serial")
+public class User implements Serializable{
 private String id;
 private String name;
 private String	companyName;
