@@ -9,25 +9,48 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import dao.DaoI;
 import pojos.User;
+import utility.RideSharingUtil;
 
 
 @Path("/profile")
 public class ProfileService {
-
+	DaoI dao = RideSharingUtil.getDaoInstance();
+	
 	@POST
-	@Path("updateProfile")
+	@Path("insertUserProfile")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String updateUserProfile(@FormParam("userId") int userId, @FormParam("userName") int userName, @FormParam("userEmail") int userEmail){
-		//insert or update using hibernate
-		return "Updated";
+	public String insertUserProfile(@FormParam("name") String name, @FormParam("userEmail") String userEmail){
+		User user = new User();
+		user.setName(name);
+		user.setEmail(userEmail);
+		if(dao.insertUser(user)){
+		return "Insert Successful";
+		}else{
+			return "Insert Failed";			
+		}
+	}
+	
+	@POST
+	@Path("updateUserProfile")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateUserProfile(@FormParam("id") String id, @FormParam("name") String name, @FormParam("userEmail") String userEmail){
+		User user = new User();
+		user.setId(id);
+		user.setName(name);
+		user.setEmail(userEmail);
+		if(dao.updateUser(user)){
+		return "Update Successful";
+		}else{
+			return "Update Failed";
+		}
 	}	
 	@GET
-	@Path("userDetails")
+	@Path("getUserDetails")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User fetchUserDetails(@QueryParam("userId") int userId){
-		User  user = new User();
-		return user;
+	public User fetchUserDetails(@QueryParam("userId") String userId){
+		return dao.getUserDetails(userId);
 	}
 	
 	
