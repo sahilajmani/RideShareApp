@@ -20,16 +20,16 @@
         <property name="contact" type="java.lang.String">
             <column name="CONTACT" />
         </property>
-        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join">
+        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join" cascade="save-update">
             <column name="STARTTIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join">
+        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
             <column name="STARTTIME_DROP" />
         </many-to-one>
-        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join">
+        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
             <column name="OFFICETIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join">
+        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
             <column name="OFFICETIME_DROP" />
         </many-to-one>
         <property name="company_joined_month" type="java.lang.String">
@@ -62,10 +62,10 @@
         <property name="distance" type="float">
             <column name="DISTANCE" />
         </property>
-        <many-to-one name="homeAddress" class="pojos.Address" fetch="join">
+        <many-to-one name="homeAddress" class="pojos.Address" fetch="join" cascade="save-update">
             <column name="HOMEADDRESS" />
         </many-to-one>
-        <many-to-one name="officeAddress" class="pojos.Address" fetch="join">
+        <many-to-one name="officeAddress" class="pojos.Address" fetch="join" cascade="save-update">
             <column name="OFFICEADDRESS" />
         </many-to-one>
         <property name="duration" type="int">

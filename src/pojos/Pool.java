@@ -9,7 +9,7 @@ import java.util.Collection;
 public class Pool implements Serializable{
 private String id;
 private boolean is_active;
-private User hostUser;
+private String hostUserId;
 private Address sourceAddress;
 private Address destinationAddress;
 private Time startTime_pickup;
@@ -42,11 +42,12 @@ public boolean isIs_active() {
 public void setIs_active(boolean is_active) {
 	this.is_active = is_active;
 }
-public User getHostUser() {
-	return hostUser;
+private Collection <String> participantsUserId= new ArrayList();
+public Collection<String> getParticipantsUserId() {
+	return participantsUserId;
 }
-public void setHostUser(User hostUser) {
-	this.hostUser = hostUser;
+public void setParticipantsUserId(Collection<String> participantsUserId) {
+	this.participantsUserId = participantsUserId;
 }
 public Address getSourceAddress() {
 	return sourceAddress;
@@ -125,6 +126,11 @@ public Timestamp getModifyDate() {
 }
 public void setModifyDate(Timestamp modifyDate) {
 	this.modifyDate = modifyDate;
+}public String getHostUserId() {
+		return hostUserId;
+}
+public void setHostUserId(String hostUserId) {
+	this.hostUserId = hostUserId;
 }
 
 

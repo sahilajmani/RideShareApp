@@ -6,7 +6,7 @@
     <class name="pojos.Address" table="ADDRESS">
         <id name="id" type="java.lang.String">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="guid" />
         </id>
         <property name="addressLine1" type="java.lang.String">
             <column name="ADDRESSLINE1" />

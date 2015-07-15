@@ -6,7 +6,7 @@
     <class name="pojos.Car" table="CAR">
         <id name="id" type="java.lang.String">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="guid" />
         </id>
         <many-to-one name="owner" class="pojos.User" fetch="join">
             <column name="OWNER" />
