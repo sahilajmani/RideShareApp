@@ -6,7 +6,7 @@
     <class name="pojos.Pool" table="POOL">
         <id name="id" type="java.lang.String">
             <column name="ID" />
-            <generator class="guid" />
+            <generator class="assigned" />
         </id>
         <property name="is_active" type="boolean">
             <column name="IS_ACTIVE" />
@@ -14,22 +14,22 @@
         <property name="hostUserId" type="java.lang.String">
             <column name="HOSTUSERID" />
         </property>
-        <many-to-one name="sourceAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="sourceAddress" class="pojos.Address" fetch="join">
             <column name="SOURCEADDRESS" />
         </many-to-one>
-        <many-to-one name="destinationAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="destinationAddress" class="pojos.Address" fetch="join">
             <column name="DESTINATIONADDRESS" />
         </many-to-one>
-        <many-to-one name="startTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="startTime_pickup" class="pojos.Time" fetch="join">
             <column name="STARTTIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join">
             <column name="STARTTIME_DROP" />
         </many-to-one>
-        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join">
             <column name="OFFICETIME_PICKUP" />
         </many-to-one>
-        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
+        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join">
             <column name="OFFICETIME_DROP" />
         </many-to-one>
         <property name="comments" type="java.lang.String">
@@ -44,7 +44,7 @@
         <property name="costPerMonth" type="java.lang.Integer">
             <column name="COSTPERMONTH" />
         </property>
-        <many-to-one name="car" class="pojos.Car" fetch="join" cascade="save-update">
+        <many-to-one name="car" class="pojos.Car" fetch="join">
             <column name="CAR" />
         </many-to-one>
         <property name="isAvailable" type="java.lang.Boolean">
