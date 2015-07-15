@@ -1,6 +1,9 @@
 package dao;
 
+import java.util.List;
+
 import pojos.OTP;
+import pojos.Pool;
 import pojos.User;
 
 public interface DaoI{
@@ -11,4 +14,7 @@ public interface DaoI{
 	public boolean insertUser(User user);
 	public boolean updateUser(User user);
 	public User getUserDetails(String userId);
+	public List<Pool> matchedPool(String userId);
+	public List<User> findMatchedUser(String userId);//will find users and their distane and will also persist them
+	
 }

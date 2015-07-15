@@ -14,6 +14,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import pojos.OTP;
+import pojos.Pool;
 import pojos.User;
 import utility.RideSharingUtil;
 
@@ -130,5 +131,23 @@ public class DaoImpl implements DaoI {
 		User userVO = (User) cr.list().get(0);
 		session.close();
 		return userVO;
+	}
+	@Override
+	public List<Pool> matchedPool(String userId)
+	{
+		return null;
+		//List of pools returned for particular user.
+		
+	}
+	
+	@Override
+	public List<User> findMatchedUser(String userId)
+	{
+		//Db call for initial filtering
+		//call to method for javalogic
+		return null;
+		
+		
+		
 	}
 }
