@@ -28,7 +28,7 @@ public class DataLoader {
 		user.setName("Sahil Ajmani");
 		user.setCompanyName("cisco");
 		user.setContact("8861622290");
-		user.setEmail("saajmani@cisco.com");
+		user.setEmail("saajmani123@cisco.com");
 		Time startTime = new Time();
 //		startTime.setId(1);
 		startTime.setTime("9:30AM");	
