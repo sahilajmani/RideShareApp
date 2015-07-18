@@ -24,7 +24,8 @@ public class DistanceBwPlaces {
 					throws MalformedURLException, IOException, ProtocolException {
 				String originParams = sourceLat + "%20" + sourceLon;
 				String destinationParams = destLat + "%20" + destLon;
-		
+if(sourceLat==destLat && sourceLon==destLon)
+return 0.0;
 				 URL url = new URL(
 						"https://maps.googleapis.com/maps/api/distancematrix/json?origins="+ originParams +"&destinations="+destinationParams);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
