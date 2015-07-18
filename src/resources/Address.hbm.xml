@@ -23,10 +23,10 @@
         <property name="pincode" type="java.lang.String">
             <column name="PINCODE" />
         </property>
-        <property name="lattitude" type="float">
+        <property name="lattitude" type="double">
             <column name="LATTITUDE" />
         </property>
-        <property name="longitude" type="float">
+        <property name="longitude" type="double">
             <column name="LONGITUDE" />
         </property>
     </class>

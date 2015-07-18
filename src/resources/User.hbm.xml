@@ -15,7 +15,7 @@
             <column name="COMPANYNAME" />
         </property>
         <property name="email" type="java.lang.String">
-            <column name="EMAIL" />
+            <column name="EMAIL" unique="true" unique-key="true"/>
         </property>
         <property name="contact" type="java.lang.String">
             <column name="CONTACT" />
