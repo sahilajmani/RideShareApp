@@ -57,7 +57,7 @@ public class DataLoaderRishabh {
 		System.out.println(result);
 		sessionFactory.close();*/
 		
-		Session session=sessionFactory.openSession();
+		/*Session session=sessionFactory.openSession();
 		String hql = "from OTP";
 		Query qry = session.createQuery(hql);
 		List<OTP> lst = qry.list();
@@ -66,7 +66,44 @@ public class DataLoaderRishabh {
 			System.out.println("OTP : " + otp.getPasscode());
 			System.out.println("Create Time : " + otp.getCreate_time());		
 		}
-		sessionFactory.close();
+		sessionFactory.close();*/
+	   
+		Address add1=new Address();
+		add1.setId("1");
+		add1.setLattitude(28.7010952);
+		add1.setLongitude(77.1612418);
+		Address add2=new Address();
+		add2.setId("2");
+		add2.setLattitude(28.426852);
+		add2.setLongitude(77.031367);
+		Address add3=new Address();
+		add3.setId("3");
+		add3.setLattitude(28.673751);
+		add3.setLongitude(77.127338);
+		Address add4=new Address();
+		add4.setId("4");
+		add4.setLattitude(28.495781);
+		add4.setLongitude(77.08826);
+		User user1=new User();
+		user1.setId("1001");
+		user1.setHomeAddress(add1);
+		user1.setOfficeAddress(add2);
+		user1.setHasCar(false);
+		user1.setDistance((float) 41.5);
+		User user2=new User();
+		user2.setId("1002");
+		user2.setHasCar(false);
+		user2.setHomeAddress(add3);
+		user2.setOfficeAddress(add2);
+		user2.setDistance((float) 36.9);
+		 Session session = sessionFactory.openSession();
+			Transaction tx = session.beginTransaction();		
+		session.save(user1);
+		tx.commit();	
+		tx = session.beginTransaction();
+		session.save(user2);
+		tx.commit();
+		session.close();
 		
 		
 	}
