@@ -10,8 +10,8 @@ private String addressLine2;
 private String city;
 private String state;
 private String pincode;
-private double lattitude;
-private double longitude;
+private float lattitude;
+private float longitude;
 
 public String getId() {
 	return id;
@@ -49,17 +49,16 @@ public String getPincode() {
 public void setPincode(String pincode) {
 	this.pincode = pincode;
 }
-public double getLattitude() {
+public float getLattitude() {
 	return lattitude;
 }
-public void setLattitude(double lattitude) {
+public void setLattitude(float lattitude) {
 	this.lattitude = lattitude;
 }
-public double getLongitude() {
+public float getLongitude() {
 	return longitude;
 }
-public void setLongitude(double longitude) {
+public void setLongitude(float longitude) {
 	this.longitude = longitude;
 }
-
 }
