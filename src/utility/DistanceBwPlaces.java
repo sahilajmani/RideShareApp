@@ -30,7 +30,7 @@ return 0.0;
 						"https://maps.googleapis.com/maps/api/distancematrix/json?origins="+ originParams +"&destinations="+destinationParams);
 				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 				conn.setRequestMethod("GET");
-				String line=null, outputString = "",status="";
+				String line=null, outputString = "";
 
 			String json=null;
 			try{	BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -58,17 +58,12 @@ return 0.0;
 			e.printStackTrace();
 		}
           JSONObject jb = (JSONObject) obj;
-//System.out.println(jb);
+
           //now read
           JSONArray jsonObject1 = (JSONArray) jb.get("rows");
           JSONObject jb1 = (JSONObject) jsonObject1.get(0);
           JSONArray jsonObject2 = (JSONArray) jb1.get("elements");
           JSONObject jb2 = (JSONObject) jsonObject2.get(0);
-
-          status = (String) jb2.get("status");
-          if(!status.equalsIgnoreCase("ok"))
-        		return 11000;	  
-          
           JSONObject jb3 = (JSONObject) jb2.get("distance");
            outputString = (String) jb3.get("text");
           String[] str;
@@ -95,9 +90,7 @@ return 0.0;
 		}
   //		System.out.println(number.toString());
 
-		if(distance==null)	
-			return 11000;
-		
+			
 			if(isDistanceKm)
 				 return((Double.parseDouble(distance)));
 			else

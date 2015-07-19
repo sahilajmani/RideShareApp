@@ -1,11 +1,7 @@
 package dao;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -20,9 +16,7 @@ import org.hibernate.criterion.Restrictions;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.User;
-import pojos.UserMapping;
 import utility.RideSharingUtil;
-import utility.UserMatching;
 
 public class DaoImpl implements DaoI {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
@@ -91,7 +85,7 @@ public class DaoImpl implements DaoI {
 			return false;
 		} finally {
 			session.close();
-		}
+		}		
 	}
 
 	@Override
@@ -99,7 +93,7 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
-		OTP otpObjectByEmail = (OTP) cr.list().get(0);
+		OTP otpObjectByEmail =(OTP) cr.list().get(0);
 		session.close();
 		return otpObjectByEmail;
 	}
@@ -138,51 +132,22 @@ public class DaoImpl implements DaoI {
 		session.close();
 		return userVO;
 	}
-
 	@Override
-	public List<Pool> matchedPool(String userId) {
+	public List<Pool> matchedPool(String userId)
+	{
 		return null;
-		// List of pools returned for particular user.
-
-	}
-
-	@Override
-	public List<UserMapping> findMatchedUser(String userId) {
-		Session session = sessionFactory.openSession();
-		User currentUser = this.getUserDetails(userId);
-	String hql = "from User user where user.id<>'"+userId+"' and (user.homeAddress.lattitude between "
-				+ (currentUser.getHomeAddress().getLattitude() - 1)
-				+ " and "
-				+ (currentUser.getHomeAddress().getLattitude() + 1) +") and (user.homeAddress.longitude between "
-						+ (currentUser.getHomeAddress().getLongitude() - 1)
-						+ " and "
-						+ (currentUser.getHomeAddress().getLongitude() + 1)+") and (user.officeAddress.longitude between "
-								+ (currentUser.getOfficeAddress().getLongitude() - 1)
-								+ " and "
-								+ (currentUser.getOfficeAddress().getLongitude() + 1)+") and (user.officeAddress.lattitude between "
-				+ (currentUser.getOfficeAddress().getLattitude() - 1)
-				+ " and "
-				+ (currentUser.getOfficeAddress().getLattitude() + 1)+")" ;
-	
-		Query qry = session.createQuery(hql);
+		//List of pools returned for particular user.
 		
-		List<User> userList = qry.list();
-		System.out.println(userList.size());
-		UserMatching userMatch = new UserMatching();
-		try {
-			return userMatch.getMatchedUsers(userList, currentUser);// will come from
-																// DB
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//
+	}
+	
+	@Override
+	public List<User> findMatchedUser(String userId)
+	{
+		//Db call for initial filtering
+		//call to method for javalogic
 		return null;
-
+		
+		
+		
 	}
 }

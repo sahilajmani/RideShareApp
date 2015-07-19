@@ -5,7 +5,6 @@ import java.util.List;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.User;
-import pojos.UserMapping;
 
 public interface DaoI{
 	public boolean insertOTPEmail(String userEmail, int otp);
@@ -16,6 +15,6 @@ public interface DaoI{
 	public boolean updateUser(User user);
 	public User getUserDetails(String userId);
 	public List<Pool> matchedPool(String userId);
-	public List<UserMapping> findMatchedUser(String userId);//will find users and their distane and will also persist them
+	public List<User> findMatchedUser(String userId);//will find users and their distane and will also persist them
 	
 }
