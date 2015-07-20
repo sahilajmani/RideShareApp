@@ -77,7 +77,7 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
-		OTP otpObjectByEmail =(OTP) cr.list().get(0);
+		OTP otpObjectByEmail = (OTP) cr.list().get(0);
 		otpObjectByEmail.setPasscode(otp + "");
 		logger.info("OTP : " + otp);
 		try {
@@ -110,8 +110,14 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		session.save(user);
 		tx.commit();
+
+		List<UserMapping> userMatch = findMatchedUser(user.getId());
+		for (UserMapping userMapping : userMatch) {
+			session.save(userMapping);
+			tx.commit();
+		}
 		session.close();
-		return false;
+		return true;
 	}
 
 	@Override
@@ -125,6 +131,11 @@ public class DaoImpl implements DaoI {
 		updateUserVO.setEmail(user.getEmail());
 		session.update(updateUserVO);
 		tx.commit();
+		List<UserMapping> userMatch = findMatchedUser(user.getId());
+		for (UserMapping userMapping : userMatch) {
+			session.save(userMapping);
+			tx.commit();
+		}
 		session.close();
 		return true;
 	}
@@ -150,28 +161,29 @@ public class DaoImpl implements DaoI {
 	public List<UserMapping> findMatchedUser(String userId) {
 		Session session = sessionFactory.openSession();
 		User currentUser = this.getUserDetails(userId);
-	String hql = "from User user where user.id<>'"+userId+"' and (user.homeAddress.lattitude between "
-				+ (currentUser.getHomeAddress().getLattitude() - 1)
-				+ " and "
-				+ (currentUser.getHomeAddress().getLattitude() + 1) +") and (user.homeAddress.longitude between "
-						+ (currentUser.getHomeAddress().getLongitude() - 1)
-						+ " and "
-						+ (currentUser.getHomeAddress().getLongitude() + 1)+") and (user.officeAddress.longitude between "
-								+ (currentUser.getOfficeAddress().getLongitude() - 1)
-								+ " and "
-								+ (currentUser.getOfficeAddress().getLongitude() + 1)+") and (user.officeAddress.lattitude between "
-				+ (currentUser.getOfficeAddress().getLattitude() - 1)
-				+ " and "
-				+ (currentUser.getOfficeAddress().getLattitude() + 1)+")" ;
-	
+		String hql = "from User user where user.id<>'" + userId
+				+ "' and (user.homeAddress.lattitude between "
+				+ (currentUser.getHomeAddress().getLattitude() - 1) + " and "
+				+ (currentUser.getHomeAddress().getLattitude() + 1)
+				+ ") and (user.homeAddress.longitude between "
+				+ (currentUser.getHomeAddress().getLongitude() - 1) + " and "
+				+ (currentUser.getHomeAddress().getLongitude() + 1)
+				+ ") and (user.officeAddress.longitude between "
+				+ (currentUser.getOfficeAddress().getLongitude() - 1) + " and "
+				+ (currentUser.getOfficeAddress().getLongitude() + 1)
+				+ ") and (user.officeAddress.lattitude between "
+				+ (currentUser.getOfficeAddress().getLattitude() - 1) + " and "
+				+ (currentUser.getOfficeAddress().getLattitude() + 1) + ")";
+
 		Query qry = session.createQuery(hql);
-		
+
 		List<User> userList = qry.list();
 		System.out.println(userList.size());
 		UserMatching userMatch = new UserMatching();
 		try {
-			return userMatch.getMatchedUsers(userList, currentUser);// will come from
-																// DB
+			return userMatch.getMatchedUsers(userList, currentUser);// will come
+																	// from
+			// DB
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
