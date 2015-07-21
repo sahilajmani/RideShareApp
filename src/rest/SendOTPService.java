@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import pojos.OTP;
 import pojos.RestServiceResponse;
+import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import dao.DaoI;
@@ -24,8 +25,10 @@ public class SendOTPService {
 	@Path("sendOTPService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse sendOTPEmail(String userEmail) {
+	public RestServiceResponse sendOTPEmail(User user) {
+		String userEmail = user.getEmail();
 		RestServiceResponse serviceResponse = new RestServiceResponse();
+		serviceResponse.setResponse(false);
 		if (!userEmail.isEmpty()) {
 			int otp = generateOTP();
 			String message = "OTP : " + otp;
@@ -37,6 +40,8 @@ public class SendOTPService {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					serviceResponse.setResponse(true);
+				}else{
+					serviceResponse.setResponse(false);
 				}
 			} else {
 				if (dao.insertOTPEmail(userEmail, otp)) {
@@ -44,11 +49,12 @@ public class SendOTPService {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					serviceResponse.setResponse(true);
+				}else{
+					serviceResponse.setResponse(false);
 				}
 			}
-			serviceResponse.setResponse(true);
 		} else {
-			serviceResponse.setResponse(true);
+			serviceResponse.setResponse(false);
 		}
 		return serviceResponse;
 	}
