@@ -2,6 +2,7 @@ package rest;
 
 import java.util.Date;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -9,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pojos.OTP;
+import pojos.RestServiceResponse;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import dao.DaoI;
@@ -20,8 +22,10 @@ public class SendOTPService {
 
 	@POST
 	@Path("sendOTPService")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String sendOTPEmail(@FormParam("userEmail") String userEmail) {
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RestServiceResponse sendOTPEmail(String userEmail) {
+		RestServiceResponse serviceResponse = new RestServiceResponse();
 		if (!userEmail.isEmpty()) {
 			int otp = generateOTP();
 			String message = "OTP : " + otp;
@@ -32,22 +36,21 @@ public class SendOTPService {
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
-					return "mail sent to " + userEmail + " with OTP : " + otp
-							+ " and OTP updated in the DB";
+					serviceResponse.setResponse(true);
 				}
 			} else {
 				if (dao.insertOTPEmail(userEmail, otp)) {
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
-					return "mail sent to " + userEmail + " with OTP : " + otp
-							+ " and OTP inserted in the DB";
+					serviceResponse.setResponse(true);
 				}
 			}
-			return "Some issue while inserting/updating in DB";
+			serviceResponse.setResponse(true);
 		} else {
-			return "User Email Empty";
+			serviceResponse.setResponse(true);
 		}
+		return serviceResponse;
 	}
 
 	@POST
@@ -60,13 +63,14 @@ public class SendOTPService {
 	}
 
 	private String getOTPAuthentication(String userOTP, OTP otpObjectByEmail) {
-		if(userOTP.equalsIgnoreCase(otpObjectByEmail.getPasscode())){
+		if (userOTP.equalsIgnoreCase(otpObjectByEmail.getPasscode())) {
 			Date currentTime = new Date();
 			Date otpCreationTime = otpObjectByEmail.getCreate_time();
-			long diffInMinutes = (currentTime.getTime() - otpCreationTime.getTime() )/60000;
-			if(diffInMinutes<=GlobalConstants.OTPPermissibleTimeInMinutes){
+			long diffInMinutes = (currentTime.getTime() - otpCreationTime
+					.getTime()) / 60000;
+			if (diffInMinutes <= GlobalConstants.OTPPermissibleTimeInMinutes) {
 				return "true and difference is : " + diffInMinutes;
-			}			
+			}
 		}
 		return "false";
 	}
