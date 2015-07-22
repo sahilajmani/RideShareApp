@@ -40,7 +40,7 @@ public class SendOTPService {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					serviceResponse.setResponse(true);
-				}else{
+				} else {
 					serviceResponse.setResponse(false);
 				}
 			} else {
@@ -49,7 +49,7 @@ public class SendOTPService {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					serviceResponse.setResponse(true);
-				}else{
+				} else {
 					serviceResponse.setResponse(false);
 				}
 			}
@@ -61,24 +61,32 @@ public class SendOTPService {
 
 	@POST
 	@Path("OTPAuthenticationService")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String OTPAuthentication(@FormParam("userEmail") String userEmail,
-			@FormParam("OTP") String userOTP) {
-		OTP otpObjectByEmail = dao.getOPTbyEmail(userEmail);
-		return getOTPAuthentication(userOTP, otpObjectByEmail);
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RestServiceResponse OTPAuthentication(OTP otpObj) {
+		RestServiceResponse restServiceResponse = new RestServiceResponse();
+		restServiceResponse.setResponse(false);
+		OTP otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
+		if (null !=otpObjectByEmail && otpObjectByEmail.getPasscode() != null
+				&& !otpObjectByEmail.getPasscode().isEmpty()) {
+			if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
+				restServiceResponse.setResponse(true);
+			}
+		}
+		return restServiceResponse;
 	}
 
-	private String getOTPAuthentication(String userOTP, OTP otpObjectByEmail) {
+	private boolean getOTPAuthentication(String userOTP, OTP otpObjectByEmail) {
 		if (userOTP.equalsIgnoreCase(otpObjectByEmail.getPasscode())) {
 			Date currentTime = new Date();
 			Date otpCreationTime = otpObjectByEmail.getCreate_time();
 			long diffInMinutes = (currentTime.getTime() - otpCreationTime
 					.getTime()) / 60000;
 			if (diffInMinutes <= GlobalConstants.OTPPermissibleTimeInMinutes) {
-				return "true and difference is : " + diffInMinutes;
+				return true;
 			}
 		}
-		return "false";
+		return false;
 	}
 
 	private int generateOTP() {
