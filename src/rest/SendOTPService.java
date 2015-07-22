@@ -66,11 +66,16 @@ public class SendOTPService {
 	public RestServiceResponse OTPAuthentication(OTP otpObj) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		restServiceResponse.setResponse(false);
-		OTP otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
-		if (null !=otpObjectByEmail && otpObjectByEmail.getPasscode() != null
-				&& !otpObjectByEmail.getPasscode().isEmpty()) {
-			if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
-				restServiceResponse.setResponse(true);
+		if (null != otpObj && null != otpObj.getEmail()
+				&& null != otpObj.getPasscode() && !otpObj.getEmail().isEmpty()
+				&& !otpObj.getPasscode().isEmpty()) {
+			OTP otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
+			if (null != otpObjectByEmail
+					&& otpObjectByEmail.getPasscode() != null
+					&& !otpObjectByEmail.getPasscode().isEmpty()) {
+				if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
+					restServiceResponse.setResponse(true);
+				}
 			}
 		}
 		return restServiceResponse;
