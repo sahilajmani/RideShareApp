@@ -3,8 +3,6 @@ package pojos;
 import java.io.Serializable;
 import java.util.Date;
 
-
-@SuppressWarnings("serial")
 public class OTP implements Serializable{
 
 	private String email;

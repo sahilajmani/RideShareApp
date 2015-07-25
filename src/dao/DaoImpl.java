@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -99,7 +98,10 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
-		OTP otpObjectByEmail = (OTP) cr.list().get(0);
+		OTP otpObjectByEmail = null;
+		if(cr.list().size()==1){
+		otpObjectByEmail = (OTP) cr.list().get(0);
+		}
 		session.close();
 		return otpObjectByEmail;
 	}
