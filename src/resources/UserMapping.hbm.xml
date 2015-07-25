@@ -6,7 +6,7 @@
     <class name="pojos.UserMapping" table="USERMAPPING">
         <id name="id" type="java.lang.String">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="guid" />
         </id>
         <many-to-one name="userA" class="pojos.User" fetch="join">
             <column name="USERA" />
