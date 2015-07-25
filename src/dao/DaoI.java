@@ -17,5 +17,7 @@ public interface DaoI{
 	public User getUserDetails(String userId);
 	public List<Pool> matchedPool(String userId);
 	public List<UserMapping> findMatchedUser(String userId);//will find users and their distane and will also persist them
+	void persistUserMatch(List<UserMapping> userMapping);
+	
 	
 }

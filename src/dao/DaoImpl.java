@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -98,10 +99,7 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
-		OTP otpObjectByEmail = null;
-		if(cr.list().size()==1){
-		otpObjectByEmail = (OTP) cr.list().get(0);
-		}
+		OTP otpObjectByEmail = (OTP) cr.list().get(0);
 		session.close();
 		return otpObjectByEmail;
 	}
@@ -133,11 +131,13 @@ public class DaoImpl implements DaoI {
 		updateUserVO.setEmail(user.getEmail());
 		session.update(updateUserVO);
 		tx.commit();
-		List<UserMapping> userMatch = findMatchedUser(user.getId());
-		for (UserMapping userMapping : userMatch) {
-			session.save(userMapping);
-			tx.commit();
-		}
+		List<UserMapping> userMapping = findMatchedUser(user.getId());
+//		for (UserMapping userMatch : userMapping) {
+//			session.save(userMatch);
+//			tx.commit();
+//		}
+
+		persistUserMatch(userMapping);
 		session.close();
 		return true;
 	}
@@ -154,8 +154,29 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public List<Pool> matchedPool(String userId) {
-		return null;
+		
 		// List of pools returned for particular user.
+		Session session = sessionFactory.openSession();
+		//User currentUser = this.getUserDetails(userId);
+		String hql = "select t.pool,min(um.distance) from Transaction t,UserMapping um where um.userA.id='"+ userId 
+				+"' and t.is_valid="+true+" and t.pool.isAvailable="+true+" and um.userB.id=t.user.id  group by  t.pool "
+						+ "order by min(um.distance)"
+						; 
+		Query qry = session.createQuery(hql);
+		//@SuppressWarnings("unchecked")
+		//List<Pool> userPools = qry.list();
+		List<Object[]> result= (List<Object[]>)qry.list();
+		
+		for (Object[] results :result) {
+		    Pool pool = (Pool) results[0];
+		    Float distance = (Float) results[1];
+		    System.out.println(pool.getId() +"  "+ distance);//able to get pool and distance.put it in java element
+		}
+
+	//	for(Pool pool:userPools)
+	//	System.out.println(pool.getId());
+		session.close();
+return null;				
 
 	}
 
@@ -180,6 +201,7 @@ public class DaoImpl implements DaoI {
 		Query qry = session.createQuery(hql);
 
 		List<User> userList = qry.list();
+		//session.close();
 		System.out.println(userList.size());
 		UserMatching userMatch = new UserMatching();
 		try {
@@ -199,4 +221,18 @@ public class DaoImpl implements DaoI {
 		return null;
 
 	}
+
+	@Override
+	public void persistUserMatch(List<UserMapping> userMapping) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		for (UserMapping userMatch :userMapping ) {
+			session.save(userMatch);
+
+		}
+		tx.commit();
+		session.close();
+	
+	}
+
 }
