@@ -104,17 +104,17 @@ public class TestUserMatching {
 //	User user7 = new User(1007, "userName", false, 43,  28.7069921,77.1805385, 28.426852, 77.031367);//azadpur--ggn
 //	User user8 = new User(1008, "userName", false, 41.4, 28.6960432,77.1526005, 28.426852, 77.081367);//nsp-shushant lok
 	List<User> userList=new ArrayList<User>();
-	userList.add(user2);
-	userList.add(user3);
+//	userList.add(user2);
+//	userList.add(user3);
 	userList.add(user4);
 	userList.add(user5);
-	userList.add(user6);
-	//userList.add(user1);
-	userList.add(user7);
+//	userList.add(user6);
+//	userList.add(user1);
+//	userList.add(user7);
 	UserMatching userMatch=new UserMatching();
 try {
 	//System.out.println(
-			for(UserMapping userMap:userMatch.getMatchedUsers(userList,user1)){
+			for(UserMapping userMap:userMatch.getMatchedUsers(userList,user5)){
 				System.out.println(userMap.getUserB().getId() +"  "+ userMap.getDistance());
 			}
 } catch (MalformedURLException e) {
