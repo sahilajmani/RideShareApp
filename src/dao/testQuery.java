@@ -11,8 +11,9 @@ public class testQuery {
 		DaoImpl db=new DaoImpl();
 	//	List<UserMapping> userMapping=db.findMatchedUser("user7");
 	//   db.persistUserMatch(userMapping);
-		db.matchedPool("user1");
-	//System.out.println("DONE2");
+		//db.matchedPool("user1");
+	//	db.matchedPool("user1");
+	System.out.println(db.getUserPoolRecord("user1").size());
 	}
 
 }
