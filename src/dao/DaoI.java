@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import pojos.OTP;
@@ -18,10 +19,8 @@ public interface DaoI{
 	public boolean updateUser(User user);
 	public User getUserDetails(String userId);
 	public List<Pool> matchedPool(String userId);
-	public List<UserMapping> findMatchedUser(String userId);//will find users and their distane and will also persist them
-	void persistUserMatch(List<UserMapping> userMapping);
 	public List<pojos.Transaction> getUserPoolRecord(String userId);
 	Pool getPoolDetails(String poolId);
-	
+	boolean insertUpdateUser(User user);	
 	
 }
