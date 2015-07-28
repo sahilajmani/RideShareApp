@@ -1,8 +1,5 @@
 package pojos;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Id;
 
 public class UserMapping {
 	private String id;

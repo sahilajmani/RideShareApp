@@ -3,8 +3,6 @@ package pojos;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 public class User implements Serializable{
 private String id;
 private String name;

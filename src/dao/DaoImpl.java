@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import pojos.Address;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.Transactions;
@@ -110,25 +112,28 @@ public class DaoImpl implements DaoI {
 	@Override
 	public boolean insertUpdateUser(User user) {
 		Session session = sessionFactory.openSession();
-
-		String hql = "select id from User";
+		String hql = "select user.id from User user";
 		Query qry = session.createQuery(hql);
 		List<String> lst = qry.list();
-
 		Transaction tx = session.beginTransaction();
-
 		// Existing User
 		if (lst != null && lst.size() > 0 && lst.contains(user.getId())) {
 			int flag = 0;
 			// if change in address
 			if (doFindMatchedUser(user)) {
 				List<UserMapping> userMatch = findMatchedUser(user.getId());
-				List<UserMapping> userMatchFromDB = getMatchedUserFromDB(user
+				List<String> listUsersMatchId = new ArrayList<String>();
+				for (UserMapping uMap : userMatch) {
+					listUsersMatchId.add(uMap.getUserB().getId());
+				}
+				List<String> listUsersMatchIdFromDB = getMatchedUserFromDB(user
 						.getId());
-				if (userMatch != null && userMatchFromDB != null
-						&& userMatch.size() == userMatchFromDB.size()) {
-					for (UserMapping userMap : userMatch) {
-						if (userMatchFromDB.contains(userMap)) {
+				if (listUsersMatchId != null
+						&& listUsersMatchIdFromDB != null
+						&& listUsersMatchId.size() == listUsersMatchIdFromDB
+								.size()) {
+					for (String userId : listUsersMatchId) {
+						if (listUsersMatchIdFromDB.contains(userId)) {
 							continue;
 						} else {
 							flag = 1;
@@ -140,10 +145,12 @@ public class DaoImpl implements DaoI {
 				}
 
 				if (flag == 1) {
-					if (deleteMatchedUsers(user)) {
+					if (deleteMatchedUsers(user.getId())) {
 						if (null != userMatch && userMatch.size() > 0) {
 							persistUserMatch(userMatch, session);
 						}
+						// remove from existing pool and make default pool
+						// active
 					} else {
 						return false;
 					}
@@ -155,8 +162,7 @@ public class DaoImpl implements DaoI {
 
 		} else { // New User
 			// insert user
-			session.save(user);
-			tx.commit();
+			session.save(user);			
 			// create pool
 			createPool(user, session);
 			// persist matched users
@@ -164,46 +170,84 @@ public class DaoImpl implements DaoI {
 			if (null != userMatch && userMatch.size() > 0) {
 				persistUserMatch(userMatch, session);
 			}
-
+			tx.commit();
 		}
 		session.close();
 		return true;
 	}
 
-	/*
-	 * @Override public boolean insertUser(User user) { Session session =
-	 * sessionFactory.openSession(); Transaction tx =
-	 * session.beginTransaction(); session.save(user); tx.commit();
-	 * 
-	 * List<UserMapping> userMatch = findMatchedUser(user.getId()); // for
-	 * (UserMapping userMapping : userMatch) { // session.save(userMapping); //
-	 * tx.commit(); // } persistUserMatch(userMatch); session.close(); return
-	 * true; }
-	 * 
-	 * @Override public boolean updateUser(User user) { // NEEDS DISCUSSION
-	 * Session session = sessionFactory.openSession(); Transaction tx =
-	 * session.beginTransaction(); Criteria cr =
-	 * session.createCriteria(User.class); cr.add(Restrictions.eq("id",
-	 * user.getId())); User updateUserVO = (User) cr.list().get(0);
-	 * updateUserVO.setName(user.getName());
-	 * updateUserVO.setEmail(user.getEmail()); session.update(updateUserVO);
-	 * tx.commit(); List<UserMapping> userMapping =
-	 * findMatchedUser(user.getId()); // for (UserMapping userMatch :
-	 * userMapping) { // session.save(userMatch); // tx.commit(); // }
-	 * 
-	 * persistUserMatch(userMapping); session.close(); return true; }
-	 */
-
-	private List<UserMapping> getMatchedUserFromDB(String id) {
-		return null;
+	private List<String> getMatchedUserFromDB(String id) {
+		Session session = sessionFactory.openSession();
+		String hql = "select userB.id from UserMapping where userA.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, id);
+		List<String> lst = qry.list();
+		session.close();
+		return lst;
 	}
 
-	private boolean deleteMatchedUsers(User user) {
-		return false;
+	public boolean deleteMatchedUsers(String userId) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		String hql = "delete from UserMapping where userA.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, userId);
+		qry.executeUpdate();
+		tx.commit();
+		session.close();
+		return true;
 	}
+/*
+	public static void main(String[] args) {
+		DaoImpl dao = new DaoImpl();
+		for (String str : dao.getMatchedUserFromDB("user1")) {
+			System.out.println(str);
+		}
+		System.out.println(dao.deleteMatchedUsers("user1"));
+		for (String str : dao.getMatchedUserFromDB("user1")) {
+			System.out.println(str);
+		}
+
+	}*/
 
 	private boolean doFindMatchedUser(User user) {
-		return false;
+		Address homeAddressFromDB = getHomeAddressFromDB(user.getId());
+		Address officeAddressFromDB = getOfficeAddressFromDB(user.getId());
+		Address homeAddress = user.getHomeAddress();
+		Address officeAddress = user.getOfficeAddress();
+		if (homeAddressFromDB != null && officeAddressFromDB != null
+				&& homeAddress != null && officeAddress != null) {
+			if (homeAddressFromDB.getLattitude() == homeAddress.getLattitude()
+					&& homeAddressFromDB.getLongitude() == homeAddress
+							.getLongitude()
+					&& officeAddressFromDB.getLattitude() == officeAddress
+							.getLattitude()
+					&& officeAddressFromDB.getLongitude() == officeAddress
+							.getLongitude()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private Address getOfficeAddressFromDB(String id) {
+		Session session = sessionFactory.openSession();
+		String hql = "select user.officeAddress from User user where user.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, id);
+		Address officeAddress = (Address) qry.uniqueResult();
+		session.close();
+		return officeAddress;
+	}
+
+	private Address getHomeAddressFromDB(String id) {
+		Session session = sessionFactory.openSession();
+		String hql = "select user.homeAddress from User user where user.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, id);
+		Address officeAddress = (Address) qry.uniqueResult();
+		session.close();
+		return officeAddress;
 	}
 
 	private void createPool(User user, Session session) {
@@ -328,11 +372,9 @@ public class DaoImpl implements DaoI {
 	}
 
 	private void persistUserMatch(List<UserMapping> userMapping, Session session) {
-		Transaction tx = session.beginTransaction();
 		for (UserMapping userMatch : userMapping) {
 			session.save(userMatch);
 		}
-		tx.commit();
 	}
 
 	public List<Transactions> getUserPoolRecord(String userId) {
