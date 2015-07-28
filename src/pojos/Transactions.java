@@ -2,7 +2,7 @@ package pojos;
 
 import java.util.Date;
 
-public class Transaction {
+public class Transactions {
 	User user;
 	String id;
 	public User getUser() {
