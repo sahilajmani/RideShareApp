@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 
 import pojos.OTP;
 import pojos.Pool;
+import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
 import utility.RideSharingUtil;
@@ -194,17 +195,14 @@ public class DaoImpl implements DaoI {
 	 */
 
 	private List<UserMapping> getMatchedUserFromDB(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private boolean deleteMatchedUsers(User user) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	private boolean doFindMatchedUser(User user) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -337,19 +335,8 @@ public class DaoImpl implements DaoI {
 		tx.commit();
 	}
 
-	@Override
-	public List<pojos.Transaction> getUserPoolRecord(String userId) {
+	public List<Transactions> getUserPoolRecord(String userId) {
 		return null;
-	}
-
-	@Override
-	public boolean insertUser(User user) {
-		return false;
-	}
-
-	@Override
-	public boolean updateUser(User user) {
-		return false;
 	}
 
 }
