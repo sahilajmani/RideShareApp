@@ -162,7 +162,7 @@ public class DaoImpl implements DaoI {
 
 		} else { // New User
 			// insert user
-			session.save(user);			
+			session.save(user);
 			// create pool
 			createPool(user, session);
 			// persist matched users
@@ -197,19 +197,6 @@ public class DaoImpl implements DaoI {
 		session.close();
 		return true;
 	}
-/*
-	public static void main(String[] args) {
-		DaoImpl dao = new DaoImpl();
-		for (String str : dao.getMatchedUserFromDB("user1")) {
-			System.out.println(str);
-		}
-		System.out.println(dao.deleteMatchedUsers("user1"));
-		for (String str : dao.getMatchedUserFromDB("user1")) {
-			System.out.println(str);
-		}
-
-	}*/
-
 	private boolean doFindMatchedUser(User user) {
 		Address homeAddressFromDB = getHomeAddressFromDB(user.getId());
 		Address officeAddressFromDB = getOfficeAddressFromDB(user.getId());
@@ -251,7 +238,6 @@ public class DaoImpl implements DaoI {
 	}
 
 	private void createPool(User user, Session session) {
-		Transaction tx = session.beginTransaction();
 		Pool pool = new Pool();
 		pool.setId(user.getId());
 		pool.setHostUserId(user.getId());
@@ -260,7 +246,6 @@ public class DaoImpl implements DaoI {
 		pool.setSourceAddress(user.getHomeAddress());
 		pool.setDestinationAddress(user.getOfficeAddress());
 		session.save(pool);
-		tx.commit();
 	}
 
 	@Override
@@ -325,7 +310,7 @@ public class DaoImpl implements DaoI {
 	private List<UserMapping> findMatchedUser(String userId) {
 		Session session = sessionFactory.openSession();
 		User currentUser = this.getUserDetails(userId);
-		if (null != currentUser.getHomeAddress()
+		if (null != currentUser && null != currentUser.getHomeAddress()
 				&& null != currentUser.getOfficeAddress()
 				&& currentUser.getHomeAddress().getLattitude() != 0.0
 				&& currentUser.getHomeAddress().getLongitude() != 0.0
