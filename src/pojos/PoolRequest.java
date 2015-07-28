@@ -4,39 +4,21 @@ import java.sql.Timestamp;
 
 public class PoolRequest {
 
-	private String id;
 	private String poolId;
 	private String userId;
-	private int status;
+	private boolean status;
 	private Timestamp created;
 	private String description;
 	
-	
-
-	public PoolRequest(String id, String poolId, String userId, int status,
+	public PoolRequest(String poolId, String userId, boolean status,
 			Timestamp created, String description) {
 		super();
-		this.id = id;
 		this.poolId = poolId;
 		this.userId = userId;
 		this.status = status;
 		this.created = created;
 		this.description = description;
 	}
-
-	
-	
-	public String getId() {
-		return id;
-	}
-
-
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-
 
 	public String getPoolId() {
 		return poolId;
@@ -54,11 +36,11 @@ public class PoolRequest {
 		this.userId = userId;
 	}
 
-	public int getStatus() {
+	public boolean isStatus() {
 		return status;
 	}
 
-	public void setStatus(int status) {
+	public void setStatus(boolean status) {
 		this.status = status;
 	}
 
