@@ -112,16 +112,17 @@ public class DaoImpl implements DaoI {
 		tx.commit();
 
 		List<UserMapping> userMatch = findMatchedUser(user.getId());
-		for (UserMapping userMapping : userMatch) {
-			session.save(userMapping);
-			tx.commit();
-		}
+//		for (UserMapping userMapping : userMatch) {
+//			session.save(userMapping);
+//			tx.commit();
+//		}
+		persistUserMatch(userMatch);
 		session.close();
 		return true;
 	}
 
 	@Override
-	public boolean updateUser(User user) {
+	public boolean updateUser(User user) {       //NEEDS DISCUSSION
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		Criteria cr = session.createCriteria(User.class);
@@ -152,6 +153,19 @@ public class DaoImpl implements DaoI {
 		return userVO;
 	}
 
+	@Override
+	public Pool getPoolDetails(String poolId) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(Pool.class);
+		cr.add(Restrictions.eq("id", poolId));
+		Pool pool = (Pool) cr.list().get(0);
+		session.close();
+		return pool;
+	}
+
+	
+	
+	
 	@Override
 	public List<Pool> matchedPool(String userId) {
 		
@@ -234,5 +248,12 @@ return null;
 		session.close();
 	
 	}
+
+	@Override
+	public List<pojos.Transaction> getUserPoolRecord(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
