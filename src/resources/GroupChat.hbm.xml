@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 22, 2015 9:40:10 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.GroupChat" table="GROUPCHAT">
+        <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <many-to-one name="pool_id" class="pojos.Pool" fetch="join">
+            <column name="POOL_ID" />
+        </many-to-one>
+        <many-to-one name="sender" class="pojos.User" fetch="join">
+            <column name="SENDER" />
+        </many-to-one>
+        <property name="message" type="java.lang.String">
+            <column name="MESSAGE" />
+        </property>
+        <property name="fetchCount" type="java.lang.Integer">
+            <column name="FETCHCOUNT" />
+        </property>
+        <many-to-one name="timeStamp" class="pojos.Time" fetch="join">
+            <column name="TIMESTAMP" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>
