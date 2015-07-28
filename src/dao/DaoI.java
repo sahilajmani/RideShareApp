@@ -20,7 +20,7 @@ public interface DaoI{
 	public List<Pool> matchedPool(String userId);
 	public List<UserMapping> findMatchedUser(String userId);//will find users and their distane and will also persist them
 	void persistUserMatch(List<UserMapping> userMapping);
-	public List<pojos.Transaction> getUserPoolRecord(String userId);
+	public List<pojos.Transactions> getUserPoolRecord(String userId);
 	Pool getPoolDetails(String poolId);
 	
 	

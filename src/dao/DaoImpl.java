@@ -250,7 +250,7 @@ return null;
 	}
 
 	@Override
-	public List<pojos.Transaction> getUserPoolRecord(String userId) {
+	public List<pojos.Transactions> getUserPoolRecord(String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
