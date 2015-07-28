@@ -4,21 +4,39 @@ import java.sql.Timestamp;
 
 public class PoolRequest {
 
+	private String id;
 	private String poolId;
 	private String userId;
-	private boolean status;
+	private int status;
 	private Timestamp created;
 	private String description;
 	
-	public PoolRequest(String poolId, String userId, boolean status,
+	
+
+	public PoolRequest(String id, String poolId, String userId, int status,
 			Timestamp created, String description) {
 		super();
+		this.id = id;
 		this.poolId = poolId;
 		this.userId = userId;
 		this.status = status;
 		this.created = created;
 		this.description = description;
 	}
+
+	
+	
+	public String getId() {
+		return id;
+	}
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
 
 	public String getPoolId() {
 		return poolId;
@@ -36,11 +54,11 @@ public class PoolRequest {
 		this.userId = userId;
 	}
 
-	public boolean isStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
@@ -60,12 +78,15 @@ public class PoolRequest {
 		this.description = description;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "PoolRequest [poolId=" + poolId + ", userId=" + userId
-				+ ", status=" + status + ", created=" + created
+		return "PoolRequest [id=" + id + ", poolId=" + poolId + ", userId="
+				+ userId + ", status=" + status + ", created=" + created
 				+ ", description=" + description + "]";
 	}
+
 	
 	
 	
