@@ -277,7 +277,7 @@ public class DaoImpl implements DaoI {
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);
-		String hql = "select t.pool,min(um.distance) from Transaction t,UserMapping um where um.userA.id='"
+		String hql = "select t.pool,min(um.distance) from Transactions t,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and t.is_valid="
 				+ true
@@ -362,8 +362,14 @@ public class DaoImpl implements DaoI {
 		}
 	}
 
-	public List<Transactions> getUserPoolRecord(String userId) {
-		return null;
+public List<Transactions> getUserPoolRecord(String userId) { //pool transaction history of user
+		
+		Session session = sessionFactory.openSession();
+		String hql = "from Transactions where user.id=?";
+		Query qry = session.createQuery(hql);
+		List<Transactions> transactionRecord = qry.list();	
+		session.close();
+		return transactionRecord;	
 	}
 
 }
