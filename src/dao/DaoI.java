@@ -4,6 +4,7 @@ import java.util.List;
 
 import pojos.OTP;
 import pojos.Pool;
+import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
 
@@ -15,7 +16,8 @@ public interface DaoI{
 	public User getUserDetails(String userId);
 	public List<Pool> matchedPool(String userId);
 	public List<Transactions> getUserPoolRecord(String userId);
-	Pool getPoolDetails(String poolId);
-	boolean insertUpdateUser(User user);	
+	public Pool getPoolDetails(String poolId);
+	public boolean insertUpdateUser(User user);
+	public List<PoolRequest> getPoolRequests(String userId);
 	
 }
