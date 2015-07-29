@@ -16,6 +16,7 @@ public interface DaoI{
 	public List<Pool> matchedPool(String userId);
 	public List<Transactions> getUserPoolRecord(String userId);
 	Pool getPoolDetails(String poolId);
-	boolean insertUpdateUser(User user);	
+	boolean insertUpdateUser(User user);
+	public User getUserDetailsByEmail(String email);	
 	
 }
