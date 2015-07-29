@@ -134,7 +134,7 @@
 								</component>
 							</components>
 							<componentProperties>
-								<configurationfile>src/main/hbm2ddl/hibernate.cfg.xml</configurationfile>
+								<configurationfile>src/resources/hibernate.cfg.xml</configurationfile>
 								<propertyfile>src/main/hbm2ddl/hibernate-mysql.properties</propertyfile>
 								<outputfilename>hbm2ddl.sql</outputfilename>
 								<drop>false</drop>
