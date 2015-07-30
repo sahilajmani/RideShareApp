@@ -111,83 +111,6 @@ public class DaoImpl implements DaoI {
 		return otpObjectByEmail;
 	}
 
-	@Override
-	public boolean insertUpdateUser(User user) {
-		Session session = sessionFactory.openSession();
-		String hql = "select user.id from User user"; //wrong query,no where clause. this will bring all the users.
-		Query qry = session.createQuery(hql);
-		List<String> lst = qry.list();
-		Transaction tx = session.beginTransaction();
-		// Existing User
-		if (lst != null && lst.size() > 0 && lst.contains(user.getId())) {
-			int flag = 0;
-			// if change in address
-			if (doFindMatchedUser(user)) {
-				List<UserMapping> userMatch = findMatchedUser(user.getId());
-				List<String> listUsersMatchId = new ArrayList<String>();
-				for (UserMapping uMap : userMatch) {
-					listUsersMatchId.add(uMap.getUserB().getId());
-				}
-				List<String> listUsersMatchIdFromDB = getMatchedUserFromDB(user
-						.getId());
-				if (listUsersMatchId != null
-						&& listUsersMatchIdFromDB != null
-						&& listUsersMatchId.size() == listUsersMatchIdFromDB
-								.size()) {
-					for (String userId : listUsersMatchId) {
-						if (listUsersMatchIdFromDB.contains(userId)) {
-							continue;
-						} else {
-							flag = 1;
-							break;
-						}
-					}
-				} else {
-					flag = 1;
-				}
-
-				if (flag == 1) {
-					if (deleteMatchedUsers(user.getId())) {
-						if (null != userMatch && userMatch.size() > 0) {
-							persistUserMatch(userMatch, session);
-						}
-						// remove from existing pool and make default pool
-						// active
-					} else {
-						return false;
-					}
-				}
-			}
-			// update user
-			session.saveOrUpdate(user.getId(), user);
-			tx.commit();
-
-		} else { // New User
-			// insert user
-			session.save(user);
-			// create pool
-			createPool(user, session);
-			// persist matched users
-			List<UserMapping> userMatch = findMatchedUser(user.getId());
-			if (null != userMatch && userMatch.size() > 0) {
-				persistUserMatch(userMatch, session);
-			}
-			tx.commit();
-		}
-		session.close();
-		return true;
-	}
-
-	private List<String> getMatchedUserFromDB(String id) {
-		Session session = sessionFactory.openSession();
-		String hql = "select userB.id from UserMapping where userA.id=?";
-		Query qry = session.createQuery(hql);
-		qry.setString(0, id);
-		List<String> lst = qry.list();
-		session.close();
-		return lst;
-	}
-
 	public boolean deleteMatchedUsers(String userId) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
@@ -199,47 +122,8 @@ public class DaoImpl implements DaoI {
 		session.close();
 		return true;
 	}
-	private boolean doFindMatchedUser(User user) {
-		Address homeAddressFromDB = getHomeAddressFromDB(user.getId());
-		Address officeAddressFromDB = getOfficeAddressFromDB(user.getId());
-		Address homeAddress = user.getHomeAddress();
-		Address officeAddress = user.getOfficeAddress();
-		if (homeAddressFromDB != null && officeAddressFromDB != null
-				&& homeAddress != null && officeAddress != null) {
-			if (homeAddressFromDB.getLattitude() == homeAddress.getLattitude()
-					&& homeAddressFromDB.getLongitude() == homeAddress
-							.getLongitude()
-					&& officeAddressFromDB.getLattitude() == officeAddress
-							.getLattitude()
-					&& officeAddressFromDB.getLongitude() == officeAddress
-							.getLongitude()) {
-				return false;
-			}
-		}
-		return true;
-	}
 
-	private Address getOfficeAddressFromDB(String id) {
-		Session session = sessionFactory.openSession();
-		String hql = "select user.officeAddress from User user where user.id=?";
-		Query qry = session.createQuery(hql);
-		qry.setString(0, id);
-		Address officeAddress = (Address) qry.uniqueResult();
-		session.close();
-		return officeAddress;
-	}
-
-	private Address getHomeAddressFromDB(String id) {
-		Session session = sessionFactory.openSession();
-		String hql = "select user.homeAddress from User user where user.id=?";
-		Query qry = session.createQuery(hql);
-		qry.setString(0, id);
-		Address officeAddress = (Address) qry.uniqueResult();
-		session.close();
-		return officeAddress;
-	}
-
-	private void createPool(User user, Session session) {
+	private Pool createPool(User user) {
 		Pool pool = new Pool();
 		pool.setId(user.getId());
 		pool.setHostUserId(user.getId());
@@ -247,7 +131,7 @@ public class DaoImpl implements DaoI {
 		pool.setIsAvailable(true);
 		pool.setSourceAddress(user.getHomeAddress());
 		pool.setDestinationAddress(user.getOfficeAddress());
-		session.save(pool);
+		return pool;
 	}
 
 	@Override
@@ -359,45 +243,49 @@ public class DaoImpl implements DaoI {
 	}
 
 	private void persistUserMatch(List<UserMapping> userMapping, Session session) {
-		for (UserMapping userMatch : userMapping) {
-			session.save(userMatch);
+		if (userMapping != null && userMapping.size() > 0) {
+			for (UserMapping userMatch : userMapping) {
+				session.save(userMatch);
+			}
 		}
 	}
 
-public List<Transactions> getUserPoolRecord(String userId) { //pool transaction history of user
-		
+	public List<Transactions> getUserPoolRecord(String userId) { // pool
+																	// transaction
+																	// history
+																	// of user
+
 		Session session = sessionFactory.openSession();
-		String hql = "from Transactions where user.id='"+userId+"'";
+		String hql = "from Transactions where user.id='" + userId + "'";
 		Query qry = session.createQuery(hql);
-		List<Transactions> transactionRecord = qry.list();	
+		List<Transactions> transactionRecord = qry.list();
 		session.close();
-		return transactionRecord;	
+		return transactionRecord;
 	}
 
-@Override
-public User getUserDetailsByEmail(String email) {
-	Session session = sessionFactory.openSession();
-	Criteria cr = session.createCriteria(User.class);
-	cr.add(Restrictions.eq("email", email));
-	User userVO = null;
-	if (cr.list() != null && cr.list().size() > 0) {
-		userVO = (User) cr.list().get(0);
+	@Override
+	public User getUserDetailsByEmail(String email) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(User.class);
+		cr.add(Restrictions.eq("email", email));
+		User userVO = null;
+		if (cr.list() != null && cr.list().size() > 0) {
+			userVO = (User) cr.list().get(0);
+		}
+		session.close();
+		return userVO;
 	}
-	session.close();
-	return userVO;
-}
 
-@Override
-public List<PoolRequest> getPoolRequests(String userId)
-{
-	Session session = sessionFactory.openSession();
-	String hql = "from PoolRequest where user.id=?";
-	Query qry = session.createQuery(hql);
-	qry.setString(0, userId);
-	List<PoolRequest> userPoolRequest = qry.list();	
-	session.close();
-	return userPoolRequest;	
-}
+	@Override
+	public List<PoolRequest> getPoolRequests(String userId) {
+		Session session = sessionFactory.openSession();
+		String hql = "from PoolRequest where user.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, userId);
+		List<PoolRequest> userPoolRequest = qry.list();
+		session.close();
+		return userPoolRequest;
+	}
 
 	@Override
 	public boolean updatePoolRequest(PoolRequest request, int response) {
@@ -421,7 +309,6 @@ public List<PoolRequest> getPoolRequests(String userId)
 		return result;
 	}
 
-	
 	private boolean addToPool(User user, Pool pool) {
 		if (!pool.getIsAvailable())
 			return false;
@@ -434,25 +321,25 @@ public List<PoolRequest> getPoolRequests(String userId)
 			pool.setIsAvailable(false);
 
 		session.saveOrUpdate(pool);
-		
-		String hql = "from Transactions where id='"+user.getId()+"' and is_valid=true";
+
+		String hql = "from Transactions where id='" + user.getId()
+				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
-		Transactions oldTransaction= (Transactions)qry.uniqueResult();
+		Transactions oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
-		Date currentDateTime= new Date();
+		Date currentDateTime = new Date();
 		oldTransaction.setValid_to(currentDateTime);
 		session.saveOrUpdate(oldTransaction);
-		
-		Transactions newTransaction=new Transactions();
+
+		Transactions newTransaction = new Transactions();
 		newTransaction.setIs_valid(true);
 		newTransaction.setPool(pool);
 		newTransaction.setUser(user);
 		newTransaction.setValid_from(currentDateTime);
-		newTransaction.setValid_to(new Date(9999,12,31,00,00,00));
+		newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
 		session.save(newTransaction);
 		return true;
 	}
-
 
 	@Override
 	public boolean leavePool(User user, Pool pool) {
@@ -483,17 +370,92 @@ public List<PoolRequest> getPoolRequests(String userId)
 			newTransaction.setValid_from(currentDateTime);
 			newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
 			session.save(newTransaction);
-			
+
 			return true;
 
-		}
-		else//if hostuser is leaving the pool
+		} else// if hostuser is leaving the pool
 		{
-			
-			//write tomorrow
-			
-			
+
+			// write tomorrow
+
 		}
+		return false;
 
 	}
+
+	@Override
+	public boolean insertUser(User user) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Pool pool = createPool(user);
+		session.save(pool);
+		user.setPool(pool);
+		// insert user
+		session.save(user);
+		// insert transaction
+		insertTransaction(user, session);
+		// persist matched users
+		List<UserMapping> userMatch = findMatchedUser(user.getId());
+		if (null != userMatch && userMatch.size() > 0) {
+			persistUserMatch(userMatch, session);
+		}
+		tx.commit();
+		session.close();
+		return true;
+	}
+
+	private void insertTransaction(User user, Session session) {
+		Transactions transaction = new Transactions();
+		transaction.setIs_valid(true);
+		transaction.setPool(user.getPool());
+		transaction.setUser(user);
+		Date date = new Date();
+		transaction.setValid_from(date);
+		session.save(transaction);
+	}
+
+	@Override
+	public boolean updateUser(User user, boolean changeAddress) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		int flag = 0;
+		// if change in address
+		if (changeAddress) {
+			deleteMatchedUsers(user.getId());
+			List<UserMapping> userMatch = findMatchedUser(user.getId());
+			persistUserMatch(userMatch, session);
+			if (!user.getPool().getId().equalsIgnoreCase(user.getId())) {
+				List<Pool> recommendedPools = recommendedPools(user.getId());
+				for (Pool pool : recommendedPools) {
+					if (user.getPool().getId().equalsIgnoreCase(pool.getId())) {
+						flag = 1;
+						break;
+					}
+				}
+				if (flag != 1) {
+					return false;
+				}
+			}
+		}
+		// update user
+		session.update(user.getId(), user);
+		tx.commit();
+		session.close();
+		return true;
+	}
+	private List<Pool> recommendedPools(String userId) {
+		Session session = sessionFactory.openSession();
+		// User currentUser = this.getUserDetails(userId);
+		String hql = "select t.pool from Transactions t,UserMapping um where um.userA.id='"
+				+ userId
+				+ "' and t.is_valid="
+				+ true
+				+ " and t.pool.isAvailable="
+				+ true
+				+ " and um.userB.id=t.user.id";
+		Query qry = session.createQuery(hql);
+		List<Pool> lstPool = qry.list();
+		return lstPool;
+	}
+
 }
