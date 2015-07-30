@@ -20,6 +20,7 @@ import org.hibernate.criterion.Restrictions;
 import pojos.Address;
 import pojos.OTP;
 import pojos.Pool;
+import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
@@ -383,6 +384,17 @@ public User getUserDetailsByEmail(String email) {
 	}
 	session.close();
 	return userVO;
+}
+
+@Override
+public List<PoolRequest> getPoolRequests(String userId)
+{
+	Session session = sessionFactory.openSession();
+	String hql = "from PoolRequest where user.id=?";
+	Query qry = session.createQuery(hql);
+	List<PoolRequest> userPoolRequest = qry.list();	
+	session.close();
+	return userPoolRequest;	
 }
 
 }
