@@ -71,6 +71,8 @@
         <property name="duration" type="int">
             <column name="DURATION" />
         </property>
-        <one-to-one name="pool" class="pojos.Pool"></one-to-one>
+         <many-to-one name="pool" class="pojos.Pool" fetch="join">
+            <column name="POOL" />
+        </many-to-one>
     </class>
 </hibernate-mapping>
