@@ -113,7 +113,7 @@ public class DaoImpl implements DaoI {
 	@Override
 	public boolean insertUpdateUser(User user) {
 		Session session = sessionFactory.openSession();
-		String hql = "select user.id from User user";
+		String hql = "select user.id from User user"; //wrong query,no where clause. this will bring all the users.
 		Query qry = session.createQuery(hql);
 		List<String> lst = qry.list();
 		Transaction tx = session.beginTransaction();
@@ -397,5 +397,25 @@ public List<PoolRequest> getPoolRequests(String userId)
 	session.close();
 	return userPoolRequest;	
 }
+
+@Override
+public boolean updatePoolRequest(PoolRequest request,int response) 
+{
+ boolean result=false;
+	Session session = sessionFactory.openSession();
+	String hql = "from PoolRequest where id=?"; 
+	Query qry = session.createQuery(hql);
+	qry.setString(0, request.getId());
+	PoolRequest poolRequest= (PoolRequest)qry.list().get(0);
+	poolRequest.setStatus(response);
+	try
+	{session.saveOrUpdate(poolRequest);
+	result=true;
+	}catch(Exception e)
+	{}finally
+	{session.close();
+	}
+	return result;
+	}
 
 }
