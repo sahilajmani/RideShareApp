@@ -372,4 +372,17 @@ public List<Transactions> getUserPoolRecord(String userId) { //pool transaction 
 		return transactionRecord;	
 	}
 
+@Override
+public User getUserDetailsByEmail(String email) {
+	Session session = sessionFactory.openSession();
+	Criteria cr = session.createCriteria(User.class);
+	cr.add(Restrictions.eq("email", email));
+	User userVO = null;
+	if (cr.list() != null && cr.list().size() > 0) {
+		userVO = (User) cr.list().get(0);
+	}
+	session.close();
+	return userVO;
+}
+
 }
