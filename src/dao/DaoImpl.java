@@ -388,7 +388,6 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		Pool pool = createPool(user);
-		session.save(pool);
 		user.setPool(pool);
 		// insert user
 		session.save(user);
