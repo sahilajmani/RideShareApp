@@ -366,7 +366,7 @@ public class DaoImpl implements DaoI {
 public List<Transactions> getUserPoolRecord(String userId) { //pool transaction history of user
 		
 		Session session = sessionFactory.openSession();
-		String hql = "from Transactions where user.id=?";
+		String hql = "from Transactions where user.id='"+userId+"'";
 		Query qry = session.createQuery(hql);
 		List<Transactions> transactionRecord = qry.list();	
 		session.close();
@@ -392,6 +392,7 @@ public List<PoolRequest> getPoolRequests(String userId)
 	Session session = sessionFactory.openSession();
 	String hql = "from PoolRequest where user.id=?";
 	Query qry = session.createQuery(hql);
+	qry.setString(0, userId);
 	List<PoolRequest> userPoolRequest = qry.list();	
 	session.close();
 	return userPoolRequest;	
