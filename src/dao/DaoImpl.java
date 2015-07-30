@@ -20,7 +20,6 @@ import org.hibernate.criterion.Restrictions;
 import pojos.Address;
 import pojos.OTP;
 import pojos.Pool;
-import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
@@ -363,8 +362,6 @@ public class DaoImpl implements DaoI {
 		}
 	}
 
-	
-@Override	
 public List<Transactions> getUserPoolRecord(String userId) { //pool transaction history of user
 		
 		Session session = sessionFactory.openSession();
@@ -374,17 +371,5 @@ public List<Transactions> getUserPoolRecord(String userId) { //pool transaction 
 		session.close();
 		return transactionRecord;	
 	}
-
-
-@Override
-public List<PoolRequest> getPoolRequests(String userId)
-{
-	Session session = sessionFactory.openSession();
-	String hql = "from PoolRequest where user.id=?";
-	Query qry = session.createQuery(hql);
-	List<PoolRequest> userPoolRequest = qry.list();	
-	session.close();
-	return userPoolRequest;	
-}
 
 }
