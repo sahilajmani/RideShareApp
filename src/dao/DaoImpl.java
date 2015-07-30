@@ -20,11 +20,13 @@ import org.hibernate.criterion.Restrictions;
 import pojos.Address;
 import pojos.OTP;
 import pojos.Pool;
+import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
 import utility.RideSharingUtil;
 import utility.UserMatching;
+import utility.GlobalConstants;
 
 public class DaoImpl implements DaoI {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
@@ -112,7 +114,7 @@ public class DaoImpl implements DaoI {
 	@Override
 	public boolean insertUpdateUser(User user) {
 		Session session = sessionFactory.openSession();
-		String hql = "select user.id from User user";
+		String hql = "select user.id from User user"; //wrong query,no where clause. this will bring all the users.
 		Query qry = session.createQuery(hql);
 		List<String> lst = qry.list();
 		Transaction tx = session.beginTransaction();
@@ -365,24 +367,133 @@ public class DaoImpl implements DaoI {
 public List<Transactions> getUserPoolRecord(String userId) { //pool transaction history of user
 		
 		Session session = sessionFactory.openSession();
-		String hql = "from Transactions where user.id=?";
+		String hql = "from Transactions where user.id='"+userId+"'";
 		Query qry = session.createQuery(hql);
 		List<Transactions> transactionRecord = qry.list();	
 		session.close();
 		return transactionRecord;	
 	}
 
+@Override
+public User getUserDetailsByEmail(String email) {
+	Session session = sessionFactory.openSession();
+	Criteria cr = session.createCriteria(User.class);
+	cr.add(Restrictions.eq("email", email));
+	User userVO = null;
+	if (cr.list() != null && cr.list().size() > 0) {
+		userVO = (User) cr.list().get(0);
+	}
+	session.close();
+	return userVO;
+}
+
+@Override
+public List<PoolRequest> getPoolRequests(String userId)
+{
+	Session session = sessionFactory.openSession();
+	String hql = "from PoolRequest where user.id=?";
+	Query qry = session.createQuery(hql);
+	qry.setString(0, userId);
+	List<PoolRequest> userPoolRequest = qry.list();	
+	session.close();
+	return userPoolRequest;	
+}
+
 	@Override
-	public User getUserDetailsByEmail(String email) {
+	public boolean updatePoolRequest(PoolRequest request, int response) {
+		boolean result = false;
 		Session session = sessionFactory.openSession();
-		Criteria cr = session.createCriteria(User.class);
-		cr.add(Restrictions.eq("email", email));
-		User userVO = null;
-		if (cr.list() != null && cr.list().size() > 0) {
-			userVO = (User) cr.list().get(0);
+		String hql = "from PoolRequest where id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, request.getId());
+		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
+		if (response == GlobalConstants.REQUEST_ACCEPTED)
+			addToPool(request.getUser(), request.getPool());
+		poolRequest.setStatus(response);
+
+		try {
+			session.saveOrUpdate(poolRequest);
+			result = true;
+		} catch (Exception e) {
+		} finally {
+			session.close();
 		}
-		session.close();
-		return userVO;
+		return result;
 	}
 
+	
+	private boolean addToPool(User user, Pool pool) {
+		if (!pool.getIsAvailable())
+			return false;
+
+		Session session = sessionFactory.openSession();
+		pool.getParticipants().add(user);
+		int noOfMembers = pool.getNumberOfMembers();
+		pool.setNumberOfMembers(noOfMembers + 1);
+		if (pool.getMax_members() == noOfMembers + 1)
+			pool.setIsAvailable(false);
+
+		session.saveOrUpdate(pool);
+		
+		String hql = "from Transactions where id='"+user.getId()+"' and is_valid=true";
+		Query qry = session.createQuery(hql);
+		Transactions oldTransaction= (Transactions)qry.uniqueResult();
+		oldTransaction.setIs_valid(false);
+		Date currentDateTime= new Date();
+		oldTransaction.setValid_to(currentDateTime);
+		session.saveOrUpdate(oldTransaction);
+		
+		Transactions newTransaction=new Transactions();
+		newTransaction.setIs_valid(true);
+		newTransaction.setPool(pool);
+		newTransaction.setUser(user);
+		newTransaction.setValid_from(currentDateTime);
+		newTransaction.setValid_to(new Date(9999,12,31,00,00,00));
+		session.save(newTransaction);
+		return true;
+	}
+
+
+	@Override
+	public boolean leavePool(User user, Pool pool) {
+
+		if (!pool.getHostUserId().equals(user.getId())) {
+			Session session = sessionFactory.openSession();
+			pool.getParticipants().remove(user);
+			int noOfMembers = pool.getNumberOfMembers();
+			pool.setNumberOfMembers(noOfMembers - 1);
+			pool.setIsAvailable(false);
+			session.saveOrUpdate(pool);
+
+			String hql = "from Transactions where id='" + user.getId()
+					+ "' and (is_valid=true or pool.id='" + user.getId()
+					+ "') order by valid_from desc";
+			Query qry = session.createQuery(hql);
+			Transactions oldTransaction = (Transactions) qry.list().get(0);
+			oldTransaction.setIs_valid(false);
+			Date currentDateTime = new Date();
+			oldTransaction.setValid_to(currentDateTime);
+			session.saveOrUpdate(oldTransaction);
+
+			Transactions homeTransaction = (Transactions) qry.list().get(1);
+			Transactions newTransaction = new Transactions();// primary key??
+			newTransaction.setIs_valid(true);
+			newTransaction.setPool(homeTransaction.getPool());
+			newTransaction.setUser(homeTransaction.getUser());
+			newTransaction.setValid_from(currentDateTime);
+			newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
+			session.save(newTransaction);
+			
+			return true;
+
+		}
+		else//if hostuser is leaving the pool
+		{
+			
+			//write tomorrow
+			
+			
+		}
+
+	}
 }

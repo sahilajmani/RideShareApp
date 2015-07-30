@@ -1,24 +1,27 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 28, 2015 8:33:51 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Jul 30, 2015 9:56:30 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.PoolRequest" table="POOLREQUEST">
         <id name="id" type="java.lang.String">
             <column name="ID" />
-            <generator class="assigned" />
+            <generator class="guid" />
         </id>
-        <property name="poolId" type="java.lang.String">
-            <column name="POOLID" />
-        </property>
-        <property name="userId" type="java.lang.String">
-            <column name="USERID" />
-        </property>
+        <many-to-one name="pool" class="pojos.Pool" fetch="join">
+            <column name="POOL" />
+        </many-to-one>
+        <many-to-one name="user" class="pojos.User" fetch="join">
+            <column name="USER" />
+        </many-to-one>
         <property name="status" type="int">
             <column name="STATUS" />
         </property>
         <property name="created" type="java.sql.Timestamp">
             <column name="CREATED" />
+        </property>
+        <property name="updated" type="java.sql.Timestamp" access="field">
+            <column name="UPDATED" />
         </property>
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION" />

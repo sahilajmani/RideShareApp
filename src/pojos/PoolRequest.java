@@ -5,27 +5,59 @@ import java.sql.Timestamp;
 public class PoolRequest {
 
 	private String id;
-	private String poolId;
-	private String userId;
+	private Pool pool;
+	private User user;
 	private int status;
-	private Timestamp created;
-	private String description;
-	
-	
-
-	public PoolRequest(String id, String poolId, String userId, int status,
-			Timestamp created, String description) {
+	public PoolRequest( Pool pool, User user, int status, Timestamp created, String description) {
 		super();
-		this.id = id;
-		this.poolId = poolId;
-		this.userId = userId;
+		this.pool = pool;
+		this.user = user;
 		this.status = status;
 		this.created = created;
 		this.description = description;
 	}
 
+	private Timestamp created;
+	private Timestamp updated;
+	private String description;
 	
 	
+
+
+	
+	
+	@Override
+	public String toString() {
+		return "PoolRequest [id=" + id + ", pool=" + pool + ", user=" + user + ", status=" + status + ", created="
+				+ created + ", description=" + description + "]";
+	}
+
+
+
+	public Pool getPool() {
+		return pool;
+	}
+
+
+
+	public void setPool(Pool pool) {
+		this.pool = pool;
+	}
+
+
+
+	public User getUser() {
+		return user;
+	}
+
+
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+
 	public String getId() {
 		return id;
 	}
@@ -38,21 +70,6 @@ public class PoolRequest {
 
 
 
-	public String getPoolId() {
-		return poolId;
-	}
-
-	public void setPoolId(String poolId) {
-		this.poolId = poolId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	public int getStatus() {
 		return status;
@@ -78,14 +95,6 @@ public class PoolRequest {
 		this.description = description;
 	}
 
-
-
-	@Override
-	public String toString() {
-		return "PoolRequest [id=" + id + ", poolId=" + poolId + ", userId="
-				+ userId + ", status=" + status + ", created=" + created
-				+ ", description=" + description + "]";
-	}
 
 	
 	
