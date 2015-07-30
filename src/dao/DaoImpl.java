@@ -387,6 +387,7 @@ public class DaoImpl implements DaoI {
 	public boolean insertUser(User user) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
+		session.save(user);
 		Pool pool = createPool(user);
 		user.setPool(pool);
 		// insert user
@@ -423,7 +424,8 @@ public class DaoImpl implements DaoI {
 			deleteMatchedUsers(user.getId());
 			List<UserMapping> userMatch = findMatchedUser(user.getId());
 			persistUserMatch(userMatch, session);
-			if (!user.getPool().getId().equalsIgnoreCase(user.getId())) {
+			String poolId = getPoolForUser(user.getId(),session);
+			if (poolId!=null && !poolId.equalsIgnoreCase(user.getId())) {
 				List<Pool> recommendedPools = recommendedPools(user.getId());
 				for (Pool pool : recommendedPools) {
 					if (user.getPool().getId().equalsIgnoreCase(pool.getId())) {
@@ -442,6 +444,13 @@ public class DaoImpl implements DaoI {
 		session.close();
 		return true;
 	}
+	private String getPoolForUser(String userId,Session session) {
+		String hql = "select user.pool.id from User user where user.id='"+userId+"'";		
+		Query qry = session.createQuery(hql);
+		String poolId = (String)qry.uniqueResult();
+		return poolId;
+	}
+
 	private List<Pool> recommendedPools(String userId) {
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);

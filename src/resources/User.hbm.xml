@@ -71,7 +71,7 @@
         <property name="duration" type="int">
             <column name="DURATION" />
         </property>
-         <many-to-one name="pool" class="pojos.Pool" fetch="join">
+         <many-to-one name="pool" class="pojos.Pool" fetch="join" cascade="save-update">
             <column name="POOL" />
         </many-to-one>
     </class>
