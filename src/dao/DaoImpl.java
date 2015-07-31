@@ -6,6 +6,7 @@ import java.net.ProtocolException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -253,7 +254,7 @@ public class DaoImpl implements DaoI {
 	public List<Transactions> getUserPoolRecord(String userId) { // pool
 																	// transaction
 																	// history
-																	// of user
+																	// of user - checked
 
 		Session session = sessionFactory.openSession();
 		String hql = "from Transactions where user.id='" + userId + "'";
@@ -296,7 +297,9 @@ public class DaoImpl implements DaoI {
 		qry.setString(0, request.getId());
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
 		if (response == GlobalConstants.REQUEST_ACCEPTED)
-			addToPool(request.getUser(), request.getPool());
+			result=addToPool(request.getUser(), request.getPool());
+		if(!result)
+			return result;
 		poolRequest.setStatus(response);
 
 		try {
@@ -318,7 +321,7 @@ public class DaoImpl implements DaoI {
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
 		if (pool.getMax_members() == noOfMembers + 1)
-			pool.setIsAvailable(false);
+			pool.setIsAvailable(true);
 
 		session.saveOrUpdate(pool);
 
@@ -349,7 +352,7 @@ public class DaoImpl implements DaoI {
 			pool.getParticipants().remove(user);
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
-			pool.setIsAvailable(false);
+			pool.setIsAvailable(true);
 			session.saveOrUpdate(pool);
 
 			String hql = "from Transactions where id='" + user.getId()
@@ -375,13 +378,72 @@ public class DaoImpl implements DaoI {
 
 		} else// if hostuser is leaving the pool
 		{
+			if(pool.getId().equals(user.getId())) 
+			{
 
-			// write tomorrow
+				Session session = sessionFactory.openSession();
+			//	pool.getParticipants().removeAll(c);
+			//	int noOfMembers = pool.getNumberOfMembers();
+				pool.setNumberOfMembers(1);
+				String hostUserId="";
+				Collection<User> participants=pool.getParticipants();
+				participants.remove(user);
+				pool.getParticipants().removeAll(participants);
+				for(User participant:participants)
+				{
+					float dis=0;
+					if(participant.getDistance()>dis)
+					{	
+						dis=participant.getDistance(); 			//new host user
+						hostUserId=participant.getId();
+					}
+				}
+				pool.setIsAvailable(true);
+				session.saveOrUpdate(pool);
 
+			
+	
+				String hql = "from Transactions where user.id<>'" + user.getId()
+						+ "' and is_valid=true and pool.id='" + user.getId()
+						+ "'";
+				Query qry = session.createQuery(hql);
+				List<Transactions> oldTransactions = (List<Transactions>) qry.list();
+				Date currentDateTime = new Date();
+				for(Transactions oldTransaction:oldTransactions)
+				{oldTransaction.setIs_valid(false);
+				oldTransaction.setValid_to(currentDateTime);
+				}
+				session.saveOrUpdate(oldTransactions);
+				
+				String hql1 = "from Pool where id='" + hostUserId+ "'";
+				Query qry1 = session.createQuery(hql1);
+				Pool hostUserPool = (Pool) qry.uniqueResult();
+				hostUserPool.setParticipants(participants);
+				session.saveOrUpdate(hostUserPool);
+				
+				List<Transactions> newTransactions = new ArrayList<Transactions>();
+				{
+					for(User participant:participants)
+					{
+						Transactions newTransaction = new Transactions();
+						newTransaction.setIs_valid(true);
+						newTransaction.setUser(participant);
+						newTransaction.setValid_from(currentDateTime);
+						newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
+						newTransaction.setPool(hostUserPool);
+						newTransactions.add(newTransaction);
+					}
+					
+				}
+
+				session.save(newTransactions);
+							
+			}
 		}
 		return false;
 
 	}
+
 
 	@Override
 	public boolean insertUser(User user) {
