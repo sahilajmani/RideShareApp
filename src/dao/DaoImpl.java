@@ -278,32 +278,43 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getPoolRequests(String userId) {
+	public List<PoolRequest> getPoolRequests(String userId) { //CHECKED
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
 		List<PoolRequest> userPoolRequest = qry.list();
+//		for(PoolRequest individual : userPoolRequest)
+//		{
+//			System.out.println(individual.getId());
+//			System.out.println(individual.getStatus());
+//			System.out.println(individual.getPool().getId());
+//			System.out.println(individual.getUser().getId());
+//			System.out.println(individual.getDescription());
+//			
+//		}
+		
 		session.close();
 		return userPoolRequest;
 	}
 
 	@Override
-	public boolean updatePoolRequest(PoolRequest request, int response) {
+	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where id=?";
 		Query qry = session.createQuery(hql);
-		qry.setString(0, request.getId());
+		qry.setString(0, requestId);
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
 		if (response == GlobalConstants.REQUEST_ACCEPTED)
-			result=addToPool(request.getUser(), request.getPool());
+		{	result=addToPool(poolRequest.getUser(), poolRequest.getPool());
 		if(!result)
 			return result;
+		}
 		poolRequest.setStatus(response);
 
 		try {
-			session.saveOrUpdate(poolRequest);
+			session.update(poolRequest);
 			result = true;
 		} catch (Exception e) {
 		} finally {
