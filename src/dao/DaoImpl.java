@@ -302,16 +302,17 @@ public class DaoImpl implements DaoI {
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
 		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		
 		String hql = "from PoolRequest where id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, requestId);
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
 		if (response == GlobalConstants.REQUEST_ACCEPTED)
-		{	result=addToPool(poolRequest.getUser(), poolRequest.getPool());
+		{	result=addToPool(poolRequest.getUser(), poolRequest.getPool(),session);
 		if(!result)
 			return result;
 		}
+		Transaction tx = session.beginTransaction();
 		poolRequest.setStatus(response);
 
 		try {
@@ -326,76 +327,87 @@ public class DaoImpl implements DaoI {
 		return result;
 	}
 
-	private boolean addToPool(User user, Pool pool) {
+	private boolean addToPool(User user, Pool pool,Session session) {  //add user to pool
 		if (!pool.getIsAvailable())
 			return false;
 
-		Session session = sessionFactory.openSession();
+	//	Session session = sessionFactory.openSession();
+	    Transaction tx = session.beginTransaction();
 		pool.getParticipants().add(user);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
 		if (pool.getMax_members() == noOfMembers + 1)
-			pool.setIsAvailable(true);
+			pool.setIsAvailable(false);
 
-		session.saveOrUpdate(pool);
-
-		String hql = "from Transactions where id='" + user.getId()
+		session.update(pool);
+		
+//System.out.println("pool saved oyeah");
+		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
 		Transactions oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
 		Date currentDateTime = new Date();
 		oldTransaction.setValid_to(currentDateTime);
-		session.saveOrUpdate(oldTransaction);
-
-		Transactions newTransaction = new Transactions();
+		session.update(oldTransaction);
+//System.out.println("old");
+	
+Transactions newTransaction = new Transactions();
 		newTransaction.setIs_valid(true);
 		newTransaction.setPool(pool);
 		newTransaction.setUser(user);
 		newTransaction.setValid_from(currentDateTime);
-		newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
+		newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 		session.save(newTransaction);
+		tx.commit();
 		return true;
 	}
 
 	@Override
-	public boolean leavePool(User user, Pool pool) {
-
+	public boolean leavePool(String userId, String poolId) {
+		Session session = sessionFactory.openSession();
+		boolean result=false;
+		User user=this.getUserDetails(userId);
+		Pool pool=this.getPoolDetails(poolId);
+		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
-			Session session = sessionFactory.openSession();
+			
 			pool.getParticipants().remove(user);
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
 			pool.setIsAvailable(true);
 			session.saveOrUpdate(pool);
 
-			String hql = "from Transactions where id='" + user.getId()
-					+ "' and (is_valid=true or pool.id='" + user.getId()
+			String hql = "from Transactions where (user.id='" + user.getId()
+					+ "' and is_valid=true) or (pool.id='" + user.getId()
 					+ "') order by valid_from desc";
+			
 			Query qry = session.createQuery(hql);
-			Transactions oldTransaction = (Transactions) qry.list().get(0);
+			System.out.println(qry.list().size());
+			List<Transactions> allTransactions=(List<Transactions>) qry.list();
+			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
 			Date currentDateTime = new Date();
 			oldTransaction.setValid_to(currentDateTime);
-			session.saveOrUpdate(oldTransaction);
+			session.update(oldTransaction);
 
-			Transactions homeTransaction = (Transactions) qry.list().get(1);
+			Transactions homeTransaction = allTransactions.get(1);
 			Transactions newTransaction = new Transactions();// primary key??
 			newTransaction.setIs_valid(true);
 			newTransaction.setPool(homeTransaction.getPool());
 			newTransaction.setUser(homeTransaction.getUser());
 			newTransaction.setValid_from(currentDateTime);
-			newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
+			newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 			session.save(newTransaction);
 
-			return true;
+			result= true;
 
 		} else// if hostuser is leaving the pool
 		{
 			if(pool.getId().equals(user.getId())) 
 			{
 
-				Session session = sessionFactory.openSession();
+			//	Session session = sessionFactory.openSession();
 			//	pool.getParticipants().removeAll(c);
 			//	int noOfMembers = pool.getNumberOfMembers();
 				pool.setNumberOfMembers(1);
@@ -424,7 +436,8 @@ public class DaoImpl implements DaoI {
 				List<Transactions> oldTransactions = (List<Transactions>) qry.list();
 				Date currentDateTime = new Date();
 				for(Transactions oldTransaction:oldTransactions)
-				{oldTransaction.setIs_valid(false);
+				{
+				oldTransaction.setIs_valid(false);
 				oldTransaction.setValid_to(currentDateTime);
 				}
 				session.saveOrUpdate(oldTransactions);
@@ -443,7 +456,7 @@ public class DaoImpl implements DaoI {
 						newTransaction.setIs_valid(true);
 						newTransaction.setUser(participant);
 						newTransaction.setValid_from(currentDateTime);
-						newTransaction.setValid_to(new Date(9999, 12, 31, 00, 00, 00));
+						newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 						newTransaction.setPool(hostUserPool);
 						newTransactions.add(newTransaction);
 					}
@@ -454,7 +467,10 @@ public class DaoImpl implements DaoI {
 							
 			}
 		}
-		return false;
+		tx.commit();
+		session.close();
+		
+		return result;
 
 	}
 

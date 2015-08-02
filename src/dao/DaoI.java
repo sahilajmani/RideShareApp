@@ -22,5 +22,5 @@ public interface DaoI{
 	public User getUserDetailsByEmail(String email);
 	List<PoolRequest> getPoolRequests(String userId);
 	boolean updatePoolRequest(String requestId, int response);
-	boolean leavePool(User user, Pool pool);			
+	boolean leavePool(String userId, String poolId);			
 }

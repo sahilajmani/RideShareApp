@@ -30,8 +30,10 @@ public class testQuery {
 //		
 //	}
 	
-		System.out.println(db.updatePoolRequest("1",2));
-	
+	//	System.out.println(db.updatePoolRequest("3",1));
+		//System.out.println(db.leavePool("user6","user2"));
+		System.out.println(db.leavePool("user2","user2"));
+		
 	}
 
 }
