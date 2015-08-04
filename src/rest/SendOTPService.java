@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import pojos.OTP;
+import pojos.OTPAuthenticationResponse;
 import pojos.RestServiceResponse;
 import pojos.User;
 import utility.GlobalConstants;
@@ -62,9 +63,9 @@ public class SendOTPService {
 	@Path("OTPAuthenticationService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse OTPAuthentication(OTP otpObj) {
-		RestServiceResponse restServiceResponse = new RestServiceResponse();
-		restServiceResponse.setResponse(false);
+	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {
+		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
+		boolean response = false;
 		if (null != otpObj && null != otpObj.getEmail()
 				&& null != otpObj.getPasscode() && !otpObj.getEmail().isEmpty()
 				&& !otpObj.getPasscode().isEmpty()) {
@@ -73,11 +74,17 @@ public class SendOTPService {
 					&& otpObjectByEmail.getPasscode() != null
 					&& !otpObjectByEmail.getPasscode().isEmpty()) {
 				if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
-					restServiceResponse.setResponse(true);
+					response = true;
 				}
 			}
 		}
-		return restServiceResponse;
+		User user = null;
+		if (response) {
+			user = dao.getUserDetailsByEmail(otpObj.getEmail());
+			otpAuthenticationResponse.setUser(user);
+		}
+		otpAuthenticationResponse.setResponse(response);
+		return otpAuthenticationResponse;
 	}
 
 	private boolean getOTPAuthentication(String userOTP, OTP otpObjectByEmail) {
