@@ -42,13 +42,14 @@ public boolean isIs_active() {
 public void setIs_active(boolean is_active) {
 	this.is_active = is_active;
 }
-private Collection <String> participantsUserId= new ArrayList();
+/*private Collection <String> participantsUserId= new ArrayList();
 public Collection<String> getParticipantsUserId() {
 	return participantsUserId;
 }
 public void setParticipantsUserId(Collection<String> participantsUserId) {
 	this.participantsUserId = participantsUserId;
 }
+*/
 public Address getSourceAddress() {
 	return sourceAddress;
 }

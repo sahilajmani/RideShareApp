@@ -36,7 +36,7 @@ public class AsscociationTest {
 	newPool.setHostUserId(hostUser.getId());
 	users.remove(hostUser);
 	newPool.setParticipants(users);
-	newPool.setId("DefaultPoolId14423234");
+	newPool.setId("DefaultPoolId1442553234");
 	session.save(newPool);
 	tx.commit();
 	System.out.println("NewPool saved ! pool id - "+newPool.getId());

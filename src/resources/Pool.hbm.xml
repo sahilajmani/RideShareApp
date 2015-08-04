@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 15, 2015 8:30:35 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 4, 2015 11:35:33 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.Pool" table="POOL">
         <id name="id" type="java.lang.String">
@@ -53,13 +53,11 @@
         <property name="modifyDate" type="java.sql.Timestamp">
             <column name="MODIFYDATE" />
         </property>
-        <bag name="participantsUserId" table="POOL" inverse="false" lazy="true">
+        <bag name="participants" table="pool_participants" inverse="false" lazy="true">
             <key>
-                <column name="ID" />
+                <column name="POOL" />
             </key>
-            <element type="java.lang.String">
-                <column name="PARTICIPANTSUSERID" />
-            </element>
+            <many-to-many class="pojos.User" column="Users" />
         </bag>
     </class>
 </hibernate-mapping>
