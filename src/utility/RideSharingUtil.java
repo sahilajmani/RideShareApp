@@ -7,11 +7,14 @@ import org.hibernate.service.ServiceRegistry;
 
 import dao.DaoI;
 import dao.DaoImpl;
+import dao.IChat;
+import dao.IChatImpl;
 
 
 public class RideSharingUtil {
 	private static DaoI dao = null;
 	private static SessionFactory sessionFactory = null;
+	public static IChat chatDAO = null;
 
 	public static DaoI getDaoInstance() {
 		if (dao == null) {
@@ -19,9 +22,16 @@ public class RideSharingUtil {
 		}
 		return dao;
 	}
+	public static IChat getChatInstance(){
+		if (chatDAO == null) {
+			chatDAO = new IChatImpl();
+		}
+		return chatDAO;
+	}
+	
 
 	public static SessionFactory getSessionFactoryInstance() {
-
+			
 		if (sessionFactory == null) {
 			Configuration configuration = new Configuration().configure(GlobalConstants.HIBERNATE_CONFIG_XML);
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(

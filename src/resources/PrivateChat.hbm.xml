@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Jul 22, 2015 9:40:10 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 6, 2015 1:13:59 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.PrivateChat" table="PRIVATECHAT">
         <id name="id" type="java.lang.Integer">
             <column name="ID" />
-            <generator class="increment" />
+            <generator class="guid" />
         </id>
         <many-to-one name="sender" class="pojos.User" fetch="join">
             <column name="SENDER" />
@@ -17,9 +17,9 @@
         <property name="msg" type="java.lang.String">
             <column name="MSG" />
         </property>
-        <many-to-one name="timestamp" class="pojos.Time" fetch="join">
+        <property name="timestamp" type="java.sql.Timestamp">
             <column name="TIMESTAMP" />
-        </many-to-one>
+        </property>
         <property name="isDelivered" type="java.lang.Boolean">
             <column name="ISDELIVERED" />
         </property>
