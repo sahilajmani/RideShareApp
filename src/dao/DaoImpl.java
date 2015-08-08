@@ -154,9 +154,12 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(Pool.class);
 		cr.add(Restrictions.eq("id", poolId));
-		Pool pool = (Pool) cr.list().get(0);
+		Pool poolVO = null;
+		if (cr.list() != null && cr.list().size() > 0) {
+			poolVO = (Pool) cr.list().get(0);
+		}
 		session.close();
-		return pool;
+		return poolVO;
 	}
 
 	@Override
@@ -300,7 +303,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getOutcomingPoolRequests(String userId)
+	public List<PoolRequest> getOutGoingPoolRequests(String userId)
 	{
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where pool.hostUserId=? and status ="+GlobalConstants.REQUEST_PENDING;

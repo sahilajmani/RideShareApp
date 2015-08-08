@@ -24,7 +24,7 @@ private Integer costPerMonth;
 private Car car;
 private Boolean isAvailable;
 private Timestamp modifyDate;
-private List<User> participants = new ArrayList();
+private List<User> participants;
 public List<User> getParticipants() {
 	return participants;
 }
