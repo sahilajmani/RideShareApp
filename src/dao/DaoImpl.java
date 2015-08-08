@@ -278,7 +278,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getPoolRequests(String userId) { //CHECKED
+	public List<PoolRequest> getIncomingPoolRequests(String userId) { //CHECKED
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
@@ -298,6 +298,18 @@ public class DaoImpl implements DaoI {
 		return userPoolRequest;
 	}
 
+	@Override
+	public List<PoolRequest> getOutcomingPoolRequests(String userId)
+	{
+		Session session = sessionFactory.openSession();
+		String hql = "from PoolRequest where pool.hostUserId=? and status ="+GlobalConstants.REQUEST_PENDING;
+		Query qry = session.createQuery(hql);
+		qry.setString(0, userId);
+		List<PoolRequest> userPoolRequest = qry.list();
+		session.close();
+		return userPoolRequest;	
+	}
+	
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;

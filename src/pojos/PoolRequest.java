@@ -1,8 +1,9 @@
 package pojos;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class PoolRequest {
+public class PoolRequest implements Serializable {
 
 	private String id;
 	private Pool pool;
