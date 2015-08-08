@@ -384,10 +384,16 @@ Transactions newTransaction = new Transactions();
 		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
 			
-			pool.getParticipants().remove(user);
+		Collection<User> participants=pool.getParticipants();
+	for(User participant:participants)
+	{
+		if(participant.getId().equals(user.getId()))
+		participants.remove(participant);
+	}	
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
 			pool.setIsAvailable(true);
+			pool.setParticipants(participants);
 			session.saveOrUpdate(pool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
