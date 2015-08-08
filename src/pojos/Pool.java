@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Pool implements Serializable{
@@ -23,11 +24,11 @@ private Integer costPerMonth;
 private Car car;
 private Boolean isAvailable;
 private Timestamp modifyDate;
-private Collection <User> participants = new ArrayList();
-public Collection<User> getParticipants() {
+private List<User> participants = new ArrayList();
+public List<User> getParticipants() {
 	return participants;
 }
-public void setParticipants(Collection<User> participants) {
+public void setParticipants(List<User> participants) {
 	this.participants = participants;
 }
 public String getId() {

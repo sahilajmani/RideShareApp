@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -375,6 +376,7 @@ Transactions newTransaction = new Transactions();
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean leavePool(String userId, String poolId) {
 		Session session = sessionFactory.openSession();
@@ -384,16 +386,19 @@ Transactions newTransaction = new Transactions();
 		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
 			
-		Collection<User> participants=pool.getParticipants();
-	for(User participant:participants)
-	{
-		if(participant.getId().equals(user.getId()))
-		participants.remove(participant);
+			Iterator<User> participants=pool.getParticipants().iterator();
+		//participants.remove(user);
+			while (participants.hasNext()) {
+				User participant=participants.next();
+			  if(participant.getId().equals(user.getId()))
+		{
+		  participants.remove();
 	}	
+			}	
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
 			pool.setIsAvailable(true);
-			pool.setParticipants(participants);
+		//	pool.setParticipants( (List<User>) participants);
 			session.saveOrUpdate(pool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
@@ -463,7 +468,7 @@ Transactions newTransaction = new Transactions();
 				String hql1 = "from Pool where id='" + hostUserId+ "'";
 				Query qry1 = session.createQuery(hql1);
 				Pool hostUserPool = (Pool) qry.uniqueResult();
-				hostUserPool.setParticipants(participants);
+				hostUserPool.setParticipants((List<User>) participants);
 				session.saveOrUpdate(hostUserPool);
 				
 				List<Transactions> newTransactions = new ArrayList<Transactions>();
