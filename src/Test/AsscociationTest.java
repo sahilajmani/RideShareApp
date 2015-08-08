@@ -1,5 +1,6 @@
 package Test;
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -25,7 +26,7 @@ public class AsscociationTest {
 	Session session=sessionFactory.openSession();
 	Transaction tx = session.beginTransaction();
 	
-	Collection<User> users;
+	List<User> users;
 	Criteria cr = session.createCriteria(User.class);
 	users = cr.list();
 	System.out.println("no of users returned - "+users.size());

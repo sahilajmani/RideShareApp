@@ -35,7 +35,7 @@ public class RequestService {
 		
 		ListPoolRequests listPoolRequests = new ListPoolRequests();
 
-		List<PoolRequest> poolRequests = dao.getOutGoingPoolRequests(user.getId());
+		List<PoolRequest> poolRequests = dao.getOutgoingPoolRequests(user.getId());
 		List<PoolRequest> responsePoolRequests = new ArrayList<PoolRequest>();
 		for(PoolRequest poolRequest : poolRequests){
 			PoolRequest pReq = new PoolRequest();

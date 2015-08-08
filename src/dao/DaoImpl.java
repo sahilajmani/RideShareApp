@@ -282,7 +282,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getIncomingPoolRequests(String userId) { //CHECKED
+	public List<PoolRequest> getOutgoingPoolRequests(String userId) { //CHECKED
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
@@ -303,7 +303,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getOutGoingPoolRequests(String userId)
+	public List<PoolRequest> getIncomingPoolRequests(String userId)
 	{
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where pool.hostUserId=? and status ="+GlobalConstants.REQUEST_PENDING;
