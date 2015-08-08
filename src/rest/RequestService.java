@@ -44,26 +44,8 @@ public class RequestService {
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
 			pReq.setUpdated(poolRequest.getUpdated());
-			Pool pool = new Pool();
 			Pool poolDetails = dao.getPoolDetails(poolRequest.getPool().getId());
-			 pool.setId(poolDetails.getId());
-			 pool.setCar(poolDetails.getCar());
-			 pool.setComments(poolDetails.getComments());
-			 pool.setCostPerMonth(poolDetails.getCostPerMonth());
-			 pool.setDestinationAddress(poolDetails.getDestinationAddress());
-			 pool.setHostUserId(poolDetails.getHostUserId());
-			 pool.setIs_active(poolDetails.isIs_active());
-			 pool.setIsAvailable(poolDetails.getIsAvailable());
-			 pool.setMax_members(poolDetails.getMax_members());
-			 pool.setModifyDate(poolDetails.getModifyDate());
-			 pool.setNumberOfMembers(poolDetails.getNumberOfMembers());
-			 pool.setOfficeTime_drop(poolDetails.getOfficeTime_drop());
-			 pool.setOfficeTime_pickup(poolDetails.getOfficeTime_pickup());
-			 pool.setParticipants(poolDetails.getParticipants());
-			 pool.setSourceAddress(poolDetails.getSourceAddress());
-			 pool.setStartTime_drop(poolDetails.getStartTime_drop());
-			 pool.setStartTime_pickup(poolDetails.getStartTime_pickup());
-			pReq.setPool(pool);
+			pReq.setPool(poolDetails);
 			responsePoolRequests.add(pReq);
 		}
 		listPoolRequests.setPoolRequests(responsePoolRequests);
