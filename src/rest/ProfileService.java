@@ -42,13 +42,13 @@ public class ProfileService {
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-			throw new SystemException();
+			serviceResponse.setResponse(false);
 		} catch (ProtocolException e) {
 			e.printStackTrace();
-			throw new SystemException();
+			serviceResponse.setResponse(false);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new SystemException();
+			serviceResponse.setResponse(false);
 		}
 		return serviceResponse;
 	}
@@ -72,31 +72,16 @@ public class ProfileService {
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-			throw new SystemException();
+			serviceResponse.setResponse(false);
 		} catch (ProtocolException e) {
 			e.printStackTrace();
-			throw new SystemException();
+			serviceResponse.setResponse(false);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new SystemException();
-		}
-		return serviceResponse;
-	}
-
-/*	@POST
-	@Path("updateUserPoolProfile")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse updateUserPoolProfile(User user)
-			throws SystemException {
-		RestServiceResponse serviceResponse = new RestServiceResponse();
-		if (dao.updateUser(user)) {
-			serviceResponse.setResponse(true);
-		} else {
 			serviceResponse.setResponse(false);
 		}
 		return serviceResponse;
-	}*/
+	}
 
 	@POST
 	@Path("getUserDetails")
