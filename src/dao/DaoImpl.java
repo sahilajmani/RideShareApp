@@ -555,8 +555,12 @@ Transactions newTransaction = new Transactions();
 					return false;
 				}
 			}
+		}else{
+			User tempUser = this.getUserDetails(user.getId());
+			user.setHomeAddress(tempUser.getHomeAddress());
+			user.setOfficeAddress(tempUser.getOfficeAddress());
 		}
-		// update user
+		// update user		
 		session.update(user.getId(), user);
 		tx.commit();
 		session.close();

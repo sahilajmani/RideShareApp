@@ -57,15 +57,21 @@ public class ProfileService {
 	@Path("updateUserProfile")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse updateUserProfile(UpdateUserVO updateUserVO) throws SystemException {
+	public RestServiceResponse updateUserProfile(UpdateUserVO updateUserVO)
+			throws SystemException {
 		RestServiceResponse serviceResponse = new RestServiceResponse();
 		try {
-			double distance = DistanceBwPlaces.getDistanceandDuration(updateUserVO.getUser()
-					.getHomeAddress().getLattitude(), updateUserVO.getUser().getHomeAddress()
-					.getLongitude(), updateUserVO.getUser().getOfficeAddress().getLattitude(),
-					updateUserVO.getUser().getOfficeAddress().getLongitude());
-			updateUserVO.getUser().setDistance((float) distance);
-			if (dao.updateUser(updateUserVO.getUser(),updateUserVO.isChangeAddress())) {
+			if (updateUserVO.isChangeAddress()) {
+				double distance = DistanceBwPlaces.getDistanceandDuration(
+						updateUserVO.getUser().getHomeAddress().getLattitude(),
+						updateUserVO.getUser().getHomeAddress().getLongitude(),
+						updateUserVO.getUser().getOfficeAddress()
+								.getLattitude(), updateUserVO.getUser()
+								.getOfficeAddress().getLongitude());
+				updateUserVO.getUser().setDistance((float) distance);
+			}
+			if (dao.updateUser(updateUserVO.getUser(),
+					updateUserVO.isChangeAddress())) {
 				serviceResponse.setResponse(true);
 			} else {
 				serviceResponse.setResponse(false);
