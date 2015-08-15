@@ -20,6 +20,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import pojos.Address;
+import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.PoolRequest;
@@ -163,7 +164,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<Pool> matchedPool(String userId) {
+	public List<MatchedPoolsVO> matchedPool(String userId) {
 
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
@@ -180,21 +181,25 @@ public class DaoImpl implements DaoI {
 		// @SuppressWarnings("unchecked")
 		// List<Pool> userPools = qry.list();
 		List<Object[]> result = (List<Object[]>) qry.list();
-
+		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>();
 		for (Object[] results : result) {
 			Pool pool = (Pool) results[0];
 			Float distance = (Float) results[1];
-			System.out.println(pool.getId() + "  " + distance);// able to get
+			//System.out.println(pool.getId() + "  " + distance);// able to get
 																// pool and
 																// distance.put
 																// it in java
 																// element
+			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
+			matchedPool.setPool(pool);
+			matchedPool.setDistance(distance);
+		matchedPools.add(matchedPool);
 		}
 
 		// for(Pool pool:userPools)
 		// System.out.println(pool.getId());
 		session.close();
-		return null;
+		return 	matchedPools;
 
 	}
 

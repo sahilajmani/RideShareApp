@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.PoolRequest;
@@ -14,7 +15,7 @@ public interface DaoI{
 	public boolean updateOTPEmail(String userEmail, int otp);
 	public OTP getOPTbyEmail(String userEmail);
 	public User getUserDetails(String userId);
-	public List<Pool> matchedPool(String userId);
+	public List<MatchedPoolsVO> matchedPool(String userId);
 	public List<Transactions> getUserPoolRecord(String userId);
 	public Pool getPoolDetails(String poolId);
 	boolean insertUser(User user);
