@@ -15,6 +15,7 @@ public class RideSharingUtil {
 	private static DaoI dao = null;
 	private static SessionFactory sessionFactory = null;
 	public static IChat chatDAO = null;
+	public static Object mutex = new Object();
 
 	public static DaoI getDaoInstance() {
 		if (dao == null) {
@@ -23,9 +24,12 @@ public class RideSharingUtil {
 		return dao;
 	}
 	public static IChat getChatInstance(){
-		if (chatDAO == null) {
-			chatDAO = new IChatImpl();
-		}
+		
+			synchronized (mutex) {
+				if (chatDAO == null) {	
+				chatDAO = new IChatImpl();
+				}
+			}
 		return chatDAO;
 	}
 	
