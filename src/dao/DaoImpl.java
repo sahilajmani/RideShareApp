@@ -185,7 +185,7 @@ public class DaoImpl implements DaoI {
 		for (Object[] results : result) {
 			Pool pool = (Pool) results[0];
 			Float distance = (Float) results[1];
-			//System.out.println(pool.getId() + "  " + distance);// able to get
+			System.out.println(pool.getId() + "  " + distance);// able to get
 																// pool and
 																// distance.put
 																// it in java
@@ -319,6 +319,32 @@ public class DaoImpl implements DaoI {
 		return userPoolRequest;	
 	}
 	
+	
+	@Override
+	public boolean joinPoolRequest(String userId,String poolId)
+	{
+		User user = this.getUserDetails(userId);
+		Pool pool=this.getPoolDetails(poolId);
+		PoolRequest poolRequest=new PoolRequest();
+		poolRequest.setStatus(GlobalConstants.REQUEST_PENDING);
+		poolRequest.setUpdated(null);
+		poolRequest.setCreated(null);
+		poolRequest.setPool(pool);
+		poolRequest.setUser(user);
+		
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		session.save(poolRequest);
+		tx.commit();
+		session.close();
+		return true ;	
+	}
+	
+	
+	
+	
+	
+	
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
@@ -329,7 +355,8 @@ public class DaoImpl implements DaoI {
 		qry.setString(0, requestId);
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
 		if (response == GlobalConstants.REQUEST_ACCEPTED)
-		{	result=addToPool(poolRequest.getUser(), poolRequest.getPool(),session);
+		{	
+			result=addToPool(poolRequest.getUser(), poolRequest.getPool(),session);
 		if(!result)
 			return result;
 		}

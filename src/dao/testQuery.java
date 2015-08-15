@@ -29,11 +29,12 @@ public class testQuery {
 //		System.out.println(individual.getDescription());
 //		
 //	}
-	db.leavePool("user6", "user2");
+//	db.leavePool("user6", "user2");
 	//	System.out.println(db.updatePoolRequest("3",1));
 		//System.out.println(db.leavePool("user6","user2"));
 	//	System.out.println(db.leavePool("user2","user2"));
-		
+	//	System.out.println(db.getmatchedPool("user6").get(0).getDistance());
+		System.out.println(db.joinPoolRequest("user6","user3"));
 	}
 
 }
