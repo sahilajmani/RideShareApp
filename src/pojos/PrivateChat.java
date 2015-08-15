@@ -4,16 +4,16 @@ import java.sql.Timestamp;
 
 public class PrivateChat {
 
-	Integer id;
-	User sender;
-	User receiver;
-	String msg;
-	Timestamp timestamp;
-	Boolean isDelivered;
-	public Integer getId() {
+	private String id;
+	private User sender;
+	private User receiver;
+	private String msg;
+	private Timestamp timestamp;
+	private Boolean isDelivered;
+	public String getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

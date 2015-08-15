@@ -4,7 +4,7 @@
 <!-- Generated Aug 6, 2015 1:13:59 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.PrivateChat" table="PRIVATECHAT">
-        <id name="id" type="java.lang.Integer">
+        <id name="id" type="java.lang.String">
             <column name="ID" />
             <generator class="guid" />
         </id>
