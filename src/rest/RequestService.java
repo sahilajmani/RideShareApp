@@ -4,23 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import dao.DaoI;
 import pojos.ListPoolRequests;
 import pojos.Pool;
 import pojos.PoolRequest;
+import pojos.RequestResponseVO;
+import pojos.RestServiceResponse;
 import pojos.User;
 import utility.RideSharingUtil;
+import dao.DaoI;
 
 @Path("/requests")
 public class RequestService {
@@ -78,5 +74,13 @@ public class RequestService {
 		return listPoolRequests;
 	}
 
-
+	@POST
+	@Path("requestresponseservice")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RestServiceResponse sendRequestResponse(RequestResponseVO requestResponseVO) {
+		RestServiceResponse restServiceResponse = new RestServiceResponse();
+		restServiceResponse.setResponse(dao.updatePoolRequest(requestResponseVO.getRequestId(), requestResponseVO.getResponse()));
+		return restServiceResponse;
+	}
 }
