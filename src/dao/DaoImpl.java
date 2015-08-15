@@ -164,7 +164,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<MatchedPoolsVO> matchedPool(String userId) {
+	public List<MatchedPoolsVO> getmatchedPool(String userId) {
 
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();

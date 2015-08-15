@@ -15,7 +15,7 @@ public interface DaoI{
 	public boolean updateOTPEmail(String userEmail, int otp);
 	public OTP getOPTbyEmail(String userEmail);
 	public User getUserDetails(String userId);
-	public List<MatchedPoolsVO> matchedPool(String userId);
+	public List<MatchedPoolsVO> getmatchedPool(String userId);
 	public List<Transactions> getUserPoolRecord(String userId);
 	public Pool getPoolDetails(String poolId);
 	boolean insertUser(User user);
