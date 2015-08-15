@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import dao.DaoI;
-import pojos.ListMatchPool;
 import pojos.ListMatchPools;
 import pojos.MatchedPoolsVO;
 import pojos.Pool;
