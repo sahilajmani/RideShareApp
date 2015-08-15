@@ -1,5 +1,6 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -12,6 +13,7 @@ import dao.DaoI;
 import pojos.ListMatchPools;
 import pojos.MatchedPoolsVO;
 import pojos.Pool;
+import pojos.User;
 import utility.RideSharingUtil;
 
 @Path("/poolservice")
@@ -22,23 +24,20 @@ public class PoolService {
 	@Path("getpoolservice")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Pool getPoolService(String poolId){
-	Pool pool = new Pool();
-	pool=dao.getPoolDetails(poolId);	
-	return pool;
-	}
-
-	
+	public Pool getPoolService(Pool pool){
+	Pool responsePool = new Pool();
+	responsePool=dao.getPoolDetails(pool.getId());	
+	return responsePool;
+	}	
 	
 	@POST
 	@Path("getmatchedpools")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListMatchPools getMatchedPoolsService(String userId){
-	
-		 List<MatchedPoolsVO> matchPoolsList=dao.getmatchedPool(userId);
-		 ListMatchPools matchpool =new ListMatchPools();
-		 matchpool.setPoolRequests(matchPoolsList);
-		 return  matchpool;
+	public List<MatchedPoolsVO> getMatchedPoolsService(User user){	
+		 List<MatchedPoolsVO> matchPoolsList= new ArrayList<MatchedPoolsVO>();
+		 matchPoolsList = dao.getmatchedPool(user.getId());
+		 System.out.println(matchPoolsList.get(0).getDistance());
+		 return  matchPoolsList;
 	}
 }

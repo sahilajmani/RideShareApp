@@ -192,7 +192,7 @@ public class DaoImpl implements DaoI {
 																// element
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(pool);
-			matchedPool.setDistance(distance);
+			matchedPool.setDistance(distance.toString());
 		matchedPools.add(matchedPool);
 		}
 
