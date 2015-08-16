@@ -16,6 +16,7 @@ import pojos.RequestResponseVO;
 import pojos.RestServiceResponse;
 import pojos.User;
 import utility.RideSharingUtil;
+import vo.UserIdPoolIdVO;
 import dao.DaoI;
 
 @Path("/requests")
@@ -81,6 +82,16 @@ public class RequestService {
 	public RestServiceResponse sendRequestResponse(RequestResponseVO requestResponseVO) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		restServiceResponse.setResponse(dao.updatePoolRequest(requestResponseVO.getRequestId(), requestResponseVO.getResponse()));
+		return restServiceResponse;
+	}
+	
+	@POST
+	@Path("joinpoolrequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO) {
+		RestServiceResponse restServiceResponse = new RestServiceResponse();
+		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId()));
 		return restServiceResponse;
 	}
 }
