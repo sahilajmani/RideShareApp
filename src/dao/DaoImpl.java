@@ -72,7 +72,7 @@ public class DaoImpl implements DaoI {
 		qry.setString(0, userEmail);
 		List<OTP> lst = qry.list();
 		session.close();
-		if (lst.size() > 0) {
+		if (lst!=null && lst.size() > 0) {
 			return true;
 		}
 		return false;
@@ -90,8 +90,8 @@ public class DaoImpl implements DaoI {
 		try {
 			otpObjectByEmail.setCreate_time(this.getCurrentTime());
 			session.update(otpObjectByEmail);
-			logger.info("Update Successful");
 			tx.commit();
+			logger.info("Update Successful");
 			return true;
 		} catch (ParseException e) {
 			logger.info("Parse Exception Occured " + e.getStackTrace());
@@ -107,7 +107,7 @@ public class DaoImpl implements DaoI {
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
 		OTP otpObjectByEmail = null;
-		if (cr.list().size() == 1) {
+		if (cr.list()!= null && cr.list().size() > 0) {
 			otpObjectByEmail = (OTP) cr.list().get(0);
 		}
 		session.close();
