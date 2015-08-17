@@ -7,11 +7,19 @@ public class Address implements Serializable{
 private String id;
 private String addressLine1;
 private String addressLine2;
+private String fullAddress;
 private String city;
 private String state;
 private String pincode;
 private double lattitude;
 private double longitude;
+
+public String getFullAddress() {
+	return fullAddress;
+}
+public void setFullAddress(String fullAddress) {
+	this.fullAddress = fullAddress;
+}
 
 public String getId() {
 	return id;

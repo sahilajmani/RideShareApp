@@ -3,31 +3,35 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated Jul 12, 2015 6:18:26 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="pojos.Address" table="ADDRESS">
-        <id name="id" type="java.lang.String">
-            <column name="ID" />
-            <generator class="guid" />
-        </id>
-        <property name="addressLine1" type="java.lang.String">
-            <column name="ADDRESSLINE1" />
-        </property>
-        <property name="addressLine2" type="java.lang.String">
-            <column name="ADDRESSLINE2" />
-        </property>
-        <property name="city" type="java.lang.String">
-            <column name="CITY" />
-        </property>
-        <property name="state" type="java.lang.String">
-            <column name="STATE" />
-        </property>
-        <property name="pincode" type="java.lang.String">
-            <column name="PINCODE" />
-        </property>
-        <property name="lattitude" type="double">
-            <column name="LATTITUDE" />
-        </property>
-        <property name="longitude" type="double">
-            <column name="LONGITUDE" />
-        </property>
-    </class>
+	<class name="pojos.Address" table="ADDRESS">
+		<id name="id" type="java.lang.String">
+			<column name="ID" />
+			<generator class="guid" />
+		</id>
+		<property name="fullAddress" type="java.lang.String">
+			<column name="FULLADDRESS" />
+		</property>
+
+		<property name="addressLine1" type="java.lang.String">
+			<column name="ADDRESSLINE1" />
+		</property>
+		<property name="addressLine2" type="java.lang.String">
+			<column name="ADDRESSLINE2" />
+		</property>
+		<property name="city" type="java.lang.String">
+			<column name="CITY" />
+		</property>
+		<property name="state" type="java.lang.String">
+			<column name="STATE" />
+		</property>
+		<property name="pincode" type="java.lang.String">
+			<column name="PINCODE" />
+		</property>
+		<property name="lattitude" type="double">
+			<column name="LATTITUDE" />
+		</property>
+		<property name="longitude" type="double">
+			<column name="LONGITUDE" />
+		</property>
+	</class>
 </hibernate-mapping>
