@@ -3,6 +3,7 @@ package rest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -29,7 +30,7 @@ public class ChatService {
 		if(result!=null && result.size() > 0)
 		for(PrivateChat chat : result){
 			msgs.add(chat.getMsg());
-		}
+		} 
 		chatResult.setResult(msgs);
 		}catch(Exception e){
 			chatResult.setSuccess(false);
@@ -41,9 +42,10 @@ public class ChatService {
 	}
 	@POST
 	@Path("sendChat")
-	@Consumes(MediaType.APPLICATION_JSON)
+//	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetChatResult sendChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id,@FormParam("message") String message){
+		System.out.println(sender_Id+"\t"+receiver_id);
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
 		// validate senderId and receiverId
@@ -58,9 +60,11 @@ public class ChatService {
 		chat.setSender(sender);
 		chat.setMsg(message);
 		chat.setIsDelivered(false);
-		chat.setTimestamp(new Timestamp(System.currentTimeMillis()));
+		chat.setCreateTime(new Timestamp(System.currentTimeMillis()));
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
+		System.out.println("chat id -"+chat.getId());
+		System.out.println("chat timestampt --- "+chat.getCreateTime());
 		}catch(Exception e){
 			chatResult.setErrorMsg(e.getMessage());
 			chatResult.setSuccess(false);

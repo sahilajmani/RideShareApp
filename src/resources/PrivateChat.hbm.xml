@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated Aug 6, 2015 1:13:59 AM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated Aug 17, 2015 3:03:26 AM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="pojos.PrivateChat" table="PRIVATECHAT">
         <id name="id" type="java.lang.String">
@@ -17,10 +17,12 @@
         <property name="msg" type="java.lang.String">
             <column name="MSG" />
         </property>
-        <property name="timestamp" type="java.sql.Timestamp">
-            <column name="TIMESTAMP" />
+        <!-- <property name="createTime" type="java.sql.Timestamp">
+            <column name="CREATETIME" />
         </property>
-        <property name="isDelivered" type="java.lang.Boolean">
+         -->
+         <property name="createTime" column="CREATETIME" type="timestamp"/>
+         <property name="isDelivered" type="java.lang.Boolean">
             <column name="ISDELIVERED" />
         </property>
     </class>
