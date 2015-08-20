@@ -2,7 +2,7 @@ package pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-
+@SuppressWarnings("serial")
 public class PoolRequest implements Serializable {
 
 	private String id;
@@ -12,9 +12,19 @@ public class PoolRequest implements Serializable {
 	private Timestamp created;
 	private Timestamp updated;
 	private String description;
-	
+	private float distance;
 
 	
+
+	public float getDistance() {
+		return distance;
+	}
+
+
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
+
 
 	public String getId() {
 		return id;
@@ -85,15 +95,4 @@ public class PoolRequest implements Serializable {
 		this.description = description;
 	}
 
-
-	@Override
-	public String toString() {
-		return "PoolRequest [id=" + id + ", pool=" + pool + ", user=" + user
-				+ ", status=" + status + ", created=" + created + ", updated="
-				+ updated + ", description=" + description + "]";
-	}
-
-
-
-		
 }

@@ -25,6 +25,9 @@
         </property>
         <property name="description" type="java.lang.String">
             <column name="DESCRIPTION" />
+         </property>
+        <property name="distance" type="float">
+            <column name="DISTANCE" />
         </property>
     </class>
 </hibernate-mapping>
