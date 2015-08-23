@@ -17,11 +17,14 @@
         <property name="msg" type="java.lang.String">
             <column name="MSG" />
         </property>
-        <!-- <property name="createTime" type="java.sql.Timestamp">
+        <!-- <property name="createTime" type="java.sql.Date">
             <column name="CREATETIME" />
         </property>
          -->
-         <property name="createTime" column="CREATETIME" type="timestamp"/>
+              <property name="createTime" type="java.sql.Date">
+            <column name="createTime" />
+        </property>
+         <!-- <property name="createTime" column="CREATETIME" type="java.util.Date"/> -->
          <property name="isDelivered" type="java.lang.Boolean">
             <column name="ISDELIVERED" />
         </property>

@@ -1,7 +1,7 @@
 package pojos;
 
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class PrivateChat {
 
@@ -9,11 +9,23 @@ public class PrivateChat {
 	private User sender;
 	private User receiver;
 	private String msg;
-	private Timestamp createTime;
+	private Date  createTime;
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 	private Boolean isDelivered;
 	public String getId() {
 		return id;
 	}
+/*	public Timestamp getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}*/
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -38,12 +50,13 @@ public class PrivateChat {
 	}
 
 	
-	public Timestamp getCreateTime() {
+
+	/*	public Timestamp getCreateTime() {
 		return createTime;
 	}
 	public void setCreateTime(Timestamp createTime) {
 		this.createTime = createTime;
-	}
+	}*/
 	public Boolean getIsDelivered() {
 		return isDelivered;
 	}

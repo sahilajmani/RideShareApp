@@ -1,11 +1,9 @@
 package rest;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -60,11 +58,12 @@ public class ChatService {
 		chat.setSender(sender);
 		chat.setMsg(message);
 		chat.setIsDelivered(false);
-		chat.setCreateTime(new Timestamp(System.currentTimeMillis()));
+//		chat.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		chat.setCreateTime(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
 		System.out.println("chat id -"+chat.getId());
-		System.out.println("chat timestampt --- "+chat.getCreateTime());
+		System.out.println("chat timestamp --- "+chat.getCreateTime());
 		}catch(Exception e){
 			chatResult.setErrorMsg(e.getMessage());
 			chatResult.setSuccess(false);
