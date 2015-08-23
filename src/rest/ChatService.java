@@ -1,5 +1,4 @@
 package rest;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,12 +11,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import dao.DaoI;
+import dao.IChat;
 import RestResponse.GetChatResult;
 import pojos.PrivateChat;
 import pojos.User;
 import utility.RideSharingUtil;
 @Path("/chat")
 public class ChatService {
+	DaoI dao = RideSharingUtil.getDaoInstance();
+	IChat chatDao = RideSharingUtil.getChatInstance();
 	@POST
 	@Path("getChat")
 //	@Consumes(MediaType.APPLICATION_JSON)
@@ -26,7 +29,7 @@ public class ChatService {
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats(sender_Id, receiver_id, true);
+		Collection <PrivateChat> result = chatDao.getPrivateChats(sender_Id, receiver_id, true);
 		if(result!=null && result.size() > 0)
 		for(PrivateChat chat : result){
 			msgs.add(chat.getMsg());
@@ -40,6 +43,7 @@ public class ChatService {
 		chatResult.setSuccess(true);
 		return chatResult;
 	}
+	
 	@POST
 	@Path("sendChat")
 //	@Consumes(MediaType.APPLICATION_JSON)
@@ -49,8 +53,8 @@ public class ChatService {
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
 		// validate senderId and receiverId
-		User sender = RideSharingUtil.getDaoInstance().getUserDetails(sender_Id);
-		User receiver = RideSharingUtil.getDaoInstance().getUserDetails(receiver_id);
+		User sender = dao.getUserDetails(sender_Id);
+		User receiver = dao.getUserDetails(receiver_id);
 		if(sender == null || receiver == null){
 			chatResult.setErrorMsg("Invalid user/reciver ID");
 			chatResult.setSuccess(false);
@@ -60,9 +64,11 @@ public class ChatService {
 		chat.setSender(sender);
 		chat.setMsg(message);
 		chat.setIsDelivered(false);
-		chat.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		Date currentTime = new Date();
+		Timestamp currentTimestamp = new Timestamp(currentTime.getTime());
+		chat.setCreateTime(currentTimestamp);
 		try{
-		RideSharingUtil.getChatInstance().saveChat(chat);
+		chatDao.saveChat(chat);
 		System.out.println("chat id -"+chat.getId());
 		System.out.println("chat timestampt --- "+chat.getCreateTime());
 		}catch(Exception e){
