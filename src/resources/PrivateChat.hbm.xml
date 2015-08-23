@@ -21,7 +21,7 @@
             <column name="CREATETIME" />
         </property>
          -->
-              <property name="createTime" type="java.sql.Date">
+              <property name="createTime" type="java.util.Date">
             <column name="createTime" />
         </property>
          <!-- <property name="createTime" column="CREATETIME" type="java.util.Date"/> -->
