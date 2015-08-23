@@ -37,6 +37,7 @@ public class RequestService {
 		for(PoolRequest poolRequest : poolRequests){
 			PoolRequest pReq = new PoolRequest();
 			pReq.setCreated(poolRequest.getCreated());
+			pReq.setDistance(poolRequest.getDistance());
 			pReq.setDescription(poolRequest.getDescription());
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
@@ -68,6 +69,7 @@ public class RequestService {
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
 			pReq.setUpdated(poolRequest.getUpdated());
+			pReq.setDistance(poolRequest.getDistance());
 			pReq.setUser(dao.getUserDetails(poolRequest.getUser().getId()));
 			responsePoolRequests.add(pReq);
 		}
