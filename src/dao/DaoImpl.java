@@ -378,14 +378,15 @@ public class DaoImpl implements DaoI {
 
 		// Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		pool.getParticipants().add(user);
+	//	pool.getParticipants().add(user);
+		user.setPool(pool);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
 		if (pool.getMax_members() == noOfMembers + 1)
 			pool.setIsAvailable(false);
 
 		session.update(pool);
-
+		session.saveOrUpdate(user);
 		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
@@ -418,19 +419,25 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
 
-			Iterator<User> participants = pool.getParticipants().iterator();
-			// participants.remove(user);
-			while (participants.hasNext()) {
-				User participant = participants.next();
-				if (participant.getId().equals(user.getId())) {
-					participants.remove();
-				}
-			}
+//			Iterator<User> participants = pool.getParticipants().iterator();
+//			// participants.remove(user);
+//			while (participants.hasNext()) {
+//				User participant = participants.next();
+//				if (participant.getId().equals(user.getId())) {
+//					participants.remove();
+//				}
+			
+	//		}
+			Pool userOriginalPool=this.getPoolDetails(userId);
+			user.setPool(userOriginalPool);
+			userOriginalPool.setIsAvailable(true);
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
 			pool.setIsAvailable(true);
 			// pool.setParticipants( (List<User>) participants);
 			session.saveOrUpdate(pool);
+			session.saveOrUpdate(user);
+			session.saveOrUpdate(userOriginalPool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true) or (pool.id='" + user.getId()
@@ -466,12 +473,21 @@ public class DaoImpl implements DaoI {
 				// int noOfMembers = pool.getNumberOfMembers();
 				pool.setNumberOfMembers(1);
 				String hostUserId = "";
-				Collection<User> participants = pool.getParticipants();
-				participants.remove(user);
-				pool.getParticipants().removeAll(participants);
+			//	Collection<User> participants = pool.getParticipants();
+				//participants.remove(user);
+			//	pool.getParticipants().removeAll(participants);
+				List<User> participants=new ArrayList<User>();
+				participants=this.getParticipants(poolId,session);
+				
 				for (User participant : participants) {
 					float dis = 0;
-					if (participant.getDistance() > dis) {
+					if(participant.getId().equalsIgnoreCase(userId))
+					{
+						User host=participant;
+						participants.remove(host);
+					}
+					
+					else if (participant.getDistance() > dis) {
 						dis = participant.getDistance(); // new host user
 						hostUserId = participant.getId();
 					}
@@ -495,9 +511,16 @@ public class DaoImpl implements DaoI {
 				String hql1 = "from Pool where id='" + hostUserId + "'";
 				Query qry1 = session.createQuery(hql1);
 				Pool hostUserPool = (Pool) qry.uniqueResult();
-				hostUserPool.setParticipants((List<User>) participants);
+				//hostUserPool.setParticipants((List<User>) participants);
+				pool.setNumberOfMembers(participants.size());
 				session.saveOrUpdate(hostUserPool);
 
+			for(User participant: participants)
+			{
+				participant.setPool(hostUserPool);
+				
+			}
+			session.save(participants);
 				List<Transactions> newTransactions = new ArrayList<Transactions>();
 				{
 					for (User participant : participants) {
@@ -522,6 +545,15 @@ public class DaoImpl implements DaoI {
 
 		return result;
 
+	}
+
+	private List<User> getParticipants(String poolId,Session session) {
+		String hql = "from User where pool.id<>'"
+				+ poolId + "'";
+		Query qry = session.createQuery(hql);
+		List participants=qry.list();
+		// TODO Auto-generated method stub
+		return participants;
 	}
 
 	@Override

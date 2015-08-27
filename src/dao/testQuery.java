@@ -18,7 +18,7 @@ public class testQuery {
 	//	User user1=new User();
 		//user1.setId(id);
 //	System.out.println(db.getUserPoolRecord("user3").size());
-//	List<PoolRequest> userPoolRequest =	db.getIncomingPoolRequests("user1");
+	List<PoolRequest> userPoolRequest =	db.getIncomingPoolRequests("user2");
 //	System.out.println(userPoolRequest.size());
 //	for(PoolRequest individual : userPoolRequest)
 //	{
@@ -36,8 +36,8 @@ public class testQuery {
 	//	System.out.println(db.getmatchedPool("user6").get(0).getDistance());
 	//	System.out.println(db.joinPoolRequest("user6","user3"));
 	//	User user=db.getUserDetails("testrohan");
-	//	System.out.println(user.getName());
-		System.out.println(db.getmatchedPool("user2").size());
+	System.out.println(db.getIncomingPoolRequests("user2").size());
+	//	System.out.println(db.getmatchedPool("user2").size());
 	}
 
 }
