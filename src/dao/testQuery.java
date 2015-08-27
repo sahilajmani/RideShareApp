@@ -34,7 +34,10 @@ public class testQuery {
 		//System.out.println(db.leavePool("user6","user2"));
 	//	System.out.println(db.leavePool("user2","user2"));
 	//	System.out.println(db.getmatchedPool("user6").get(0).getDistance());
-		System.out.println(db.joinPoolRequest("user6","user3"));
+	//	System.out.println(db.joinPoolRequest("user6","user3"));
+	//	User user=db.getUserDetails("testrohan");
+	//	System.out.println(user.getName());
+		System.out.println(db.getmatchedPool("user2").size());
 	}
 
 }
