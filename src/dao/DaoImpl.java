@@ -72,7 +72,7 @@ public class DaoImpl implements DaoI {
 		qry.setString(0, userEmail);
 		List<OTP> lst = qry.list();
 		session.close();
-		if (lst!=null && lst.size() > 0) {
+		if (lst != null && lst.size() > 0) {
 			return true;
 		}
 		return false;
@@ -107,7 +107,7 @@ public class DaoImpl implements DaoI {
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
 		OTP otpObjectByEmail = null;
-		if (cr.list()!= null && cr.list().size() > 0) {
+		if (cr.list() != null && cr.list().size() > 0) {
 			otpObjectByEmail = (OTP) cr.list().get(0);
 		}
 		session.close();
@@ -193,13 +193,13 @@ public class DaoImpl implements DaoI {
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(pool);
 			matchedPool.setDistance(distance.toString());
-		matchedPools.add(matchedPool);
+			matchedPools.add(matchedPool);
 		}
 
 		// for(Pool pool:userPools)
 		// System.out.println(pool.getId());
 		session.close();
-		return 	matchedPools;
+		return matchedPools;
 
 	}
 
@@ -263,7 +263,8 @@ public class DaoImpl implements DaoI {
 	public List<Transactions> getUserPoolRecord(String userId) { // pool
 																	// transaction
 																	// history
-																	// of user - checked
+																	// of user -
+																	// checked
 
 		Session session = sessionFactory.openSession();
 		String hql = "from Transactions where user.id='" + userId + "'";
@@ -287,84 +288,77 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getOutgoingPoolRequests(String userId) { //CHECKED
+	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
 		List<PoolRequest> userPoolRequest = qry.list();
-//		for(PoolRequest individual : userPoolRequest)
-//		{
-//			System.out.println(individual.getId());
-//			System.out.println(individual.getStatus());
-//			System.out.println(individual.getPool().getId());
-//			System.out.println(individual.getUser().getId());
-//			System.out.println(individual.getDescription());
-//			
-//		}
-		
+		// for(PoolRequest individual : userPoolRequest)
+		// {
+		// System.out.println(individual.getId());
+		// System.out.println(individual.getStatus());
+		// System.out.println(individual.getPool().getId());
+		// System.out.println(individual.getUser().getId());
+		// System.out.println(individual.getDescription());
+		//
+		// }
+
 		session.close();
 		return userPoolRequest;
 	}
 
 	@Override
-	public List<PoolRequest> getIncomingPoolRequests(String userId)
-	{
+	public List<PoolRequest> getIncomingPoolRequests(String userId) {
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where pool.hostUserId=? and status ="+GlobalConstants.REQUEST_PENDING;
+		String hql = "from PoolRequest where pool.hostUserId=? and status ="
+				+ GlobalConstants.REQUEST_PENDING;
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
 		List<PoolRequest> userPoolRequest = qry.list();
 		session.close();
-		return userPoolRequest;	
+		return userPoolRequest;
 	}
-	
-	
+
 	@Override
-	public boolean joinPoolRequest(String userId,String poolId)
-	{
+	public boolean joinPoolRequest(String userId, String poolId) {
 		User user = this.getUserDetails(userId);
-		Pool pool=this.getPoolDetails(poolId);
-		PoolRequest poolRequest=new PoolRequest();
+		Pool pool = this.getPoolDetails(poolId);
+		PoolRequest poolRequest = new PoolRequest();
 		poolRequest.setStatus(GlobalConstants.REQUEST_PENDING);
 		poolRequest.setUpdated(null);
 		poolRequest.setCreated(null);
 		poolRequest.setPool(pool);
 		poolRequest.setUser(user);
-		
+
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		session.save(poolRequest);
 		tx.commit();
 		session.close();
-		return true ;	
+		return true;
 	}
-	
-	
-	
-	
-	
-	
+
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
 		Session session = sessionFactory.openSession();
-		
+
 		String hql = "from PoolRequest where id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, requestId);
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
-		if (response == GlobalConstants.REQUEST_ACCEPTED)
-		{	
-			result=addToPool(poolRequest.getUser(), poolRequest.getPool(),session);
-		if(!result)
-			return result;
+		if (response == GlobalConstants.REQUEST_ACCEPTED) {
+			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
+					session);
+			if (!result)
+				return result;
 		}
 		Transaction tx = session.beginTransaction();
 		poolRequest.setStatus(response);
 
 		try {
-			
+
 			session.update(poolRequest);
 			result = true;
 			tx.commit();
@@ -375,12 +369,15 @@ public class DaoImpl implements DaoI {
 		return result;
 	}
 
-	private boolean addToPool(User user, Pool pool,Session session) {  //add user to pool
+	
+	private boolean addToPool(User user, Pool pool, Session session) { // add
+																		// user to
+																		// pool
 		if (!pool.getIsAvailable())
 			return false;
 
-	//	Session session = sessionFactory.openSession();
-	    Transaction tx = session.beginTransaction();
+		// Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		pool.getParticipants().add(user);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
@@ -388,8 +385,8 @@ public class DaoImpl implements DaoI {
 			pool.setIsAvailable(false);
 
 		session.update(pool);
-		
-//System.out.println("pool saved oyeah");
+
+		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
@@ -398,9 +395,9 @@ public class DaoImpl implements DaoI {
 		Date currentDateTime = new Date();
 		oldTransaction.setValid_to(currentDateTime);
 		session.update(oldTransaction);
-//System.out.println("old");
-	
-Transactions newTransaction = new Transactions();
+		// System.out.println("old");
+
+		Transactions newTransaction = new Transactions();
 		newTransaction.setIs_valid(true);
 		newTransaction.setPool(pool);
 		newTransaction.setUser(user);
@@ -415,34 +412,34 @@ Transactions newTransaction = new Transactions();
 	@Override
 	public boolean leavePool(String userId, String poolId) {
 		Session session = sessionFactory.openSession();
-		boolean result=false;
-		User user=this.getUserDetails(userId);
-		Pool pool=this.getPoolDetails(poolId);
+		boolean result = false;
+		User user = this.getUserDetails(userId);
+		Pool pool = this.getPoolDetails(poolId);
 		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
-			
-			Iterator<User> participants=pool.getParticipants().iterator();
-		//participants.remove(user);
+
+			Iterator<User> participants = pool.getParticipants().iterator();
+			// participants.remove(user);
 			while (participants.hasNext()) {
-				User participant=participants.next();
-			  if(participant.getId().equals(user.getId()))
-		{
-		  participants.remove();
-	}	
-			}	
+				User participant = participants.next();
+				if (participant.getId().equals(user.getId())) {
+					participants.remove();
+				}
+			}
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers(noOfMembers - 1);
 			pool.setIsAvailable(true);
-		//	pool.setParticipants( (List<User>) participants);
+			// pool.setParticipants( (List<User>) participants);
 			session.saveOrUpdate(pool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true) or (pool.id='" + user.getId()
 					+ "') order by valid_from desc";
-			
+
 			Query qry = session.createQuery(hql);
 			System.out.println(qry.list().size());
-			List<Transactions> allTransactions=(List<Transactions>) qry.list();
+			List<Transactions> allTransactions = (List<Transactions>) qry
+					.list();
 			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
 			Date currentDateTime = new Date();
@@ -458,86 +455,80 @@ Transactions newTransaction = new Transactions();
 			newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 			session.save(newTransaction);
 
-			result= true;
+			result = true;
 
 		} else// if hostuser is leaving the pool
 		{
-			if(pool.getId().equals(user.getId())) 
-			{
+			if (pool.getId().equals(user.getId())) {
 
-			//	Session session = sessionFactory.openSession();
-			//	pool.getParticipants().removeAll(c);
-			//	int noOfMembers = pool.getNumberOfMembers();
+				// Session session = sessionFactory.openSession();
+				// pool.getParticipants().removeAll(c);
+				// int noOfMembers = pool.getNumberOfMembers();
 				pool.setNumberOfMembers(1);
-				String hostUserId="";
-				Collection<User> participants=pool.getParticipants();
+				String hostUserId = "";
+				Collection<User> participants = pool.getParticipants();
 				participants.remove(user);
 				pool.getParticipants().removeAll(participants);
-				for(User participant:participants)
-				{
-					float dis=0;
-					if(participant.getDistance()>dis)
-					{	
-						dis=participant.getDistance(); 			//new host user
-						hostUserId=participant.getId();
+				for (User participant : participants) {
+					float dis = 0;
+					if (participant.getDistance() > dis) {
+						dis = participant.getDistance(); // new host user
+						hostUserId = participant.getId();
 					}
 				}
 				pool.setIsAvailable(true);
 				session.saveOrUpdate(pool);
 
-			
-	
-				String hql = "from Transactions where user.id<>'" + user.getId()
-						+ "' and is_valid=true and pool.id='" + user.getId()
-						+ "'";
+				String hql = "from Transactions where user.id<>'"
+						+ user.getId() + "' and is_valid=true and pool.id='"
+						+ user.getId() + "'";
 				Query qry = session.createQuery(hql);
-				List<Transactions> oldTransactions = (List<Transactions>) qry.list();
+				List<Transactions> oldTransactions = (List<Transactions>) qry
+						.list();
 				Date currentDateTime = new Date();
-				for(Transactions oldTransaction:oldTransactions)
-				{
-				oldTransaction.setIs_valid(false);
-				oldTransaction.setValid_to(currentDateTime);
+				for (Transactions oldTransaction : oldTransactions) {
+					oldTransaction.setIs_valid(false);
+					oldTransaction.setValid_to(currentDateTime);
 				}
 				session.saveOrUpdate(oldTransactions);
-				
-				String hql1 = "from Pool where id='" + hostUserId+ "'";
+
+				String hql1 = "from Pool where id='" + hostUserId + "'";
 				Query qry1 = session.createQuery(hql1);
 				Pool hostUserPool = (Pool) qry.uniqueResult();
 				hostUserPool.setParticipants((List<User>) participants);
 				session.saveOrUpdate(hostUserPool);
-				
+
 				List<Transactions> newTransactions = new ArrayList<Transactions>();
 				{
-					for(User participant:participants)
-					{
+					for (User participant : participants) {
 						Transactions newTransaction = new Transactions();
 						newTransaction.setIs_valid(true);
 						newTransaction.setUser(participant);
 						newTransaction.setValid_from(currentDateTime);
-						newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
+						newTransaction.setValid_to(new Date(8000, 12, 31, 00,
+								00, 00));
 						newTransaction.setPool(hostUserPool);
 						newTransactions.add(newTransaction);
 					}
-					
+
 				}
 
 				session.save(newTransactions);
-							
+
 			}
 		}
 		tx.commit();
 		session.close();
-		
+
 		return result;
 
 	}
-
 
 	@Override
 	public boolean insertUser(User user) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		session.save(user);
+		session.save(user);  //why here save?? doubt??
 		Pool pool = createPool(user);
 		user.setPool(pool);
 		// insert user
@@ -574,8 +565,8 @@ Transactions newTransaction = new Transactions();
 			deleteMatchedUsers(user.getId());
 			List<UserMapping> userMatch = findMatchedUser(user.getId());
 			persistUserMatch(userMatch, session);
-			String poolId = getPoolForUser(user.getId(),session);
-			if (poolId!=null && !poolId.equalsIgnoreCase(user.getId())) {
+			String poolId = getPoolForUser(user.getId(), session);
+			if (poolId != null && !poolId.equalsIgnoreCase(user.getId())) {
 				List<Pool> recommendedPools = recommendedPools(user.getId());
 				for (Pool pool : recommendedPools) {
 					if (user.getPool().getId().equalsIgnoreCase(pool.getId())) {
@@ -587,21 +578,23 @@ Transactions newTransaction = new Transactions();
 					return false;
 				}
 			}
-		}else{
+		} else {
 			User tempUser = this.getUserDetails(user.getId());
 			user.setHomeAddress(tempUser.getHomeAddress());
 			user.setOfficeAddress(tempUser.getOfficeAddress());
 		}
-		// update user		
+		// update user
 		session.update(user.getId(), user);
 		tx.commit();
 		session.close();
 		return true;
 	}
-	private String getPoolForUser(String userId,Session session) {
-		String hql = "select user.pool.id from User user where user.id='"+userId+"'";		
+
+	private String getPoolForUser(String userId, Session session) {
+		String hql = "select user.pool.id from User user where user.id='"
+				+ userId + "'";
 		Query qry = session.createQuery(hql);
-		String poolId = (String)qry.uniqueResult();
+		String poolId = (String) qry.uniqueResult();
 		return poolId;
 	}
 
@@ -615,9 +608,80 @@ Transactions newTransaction = new Transactions();
 				+ " and t.pool.isAvailable="
 				+ true
 				+ " and um.userB.id=t.user.id";
+		
+//	String hql ="select u.pool from User u,UserMapping um where um.userA.id='"
+//			+ userId
+//			+ " and u.pool.isAvailable="
+//			+ true
+//			+ " and um.userB.id=u.id";
+//		
 		Query qry = session.createQuery(hql);
 		List<Pool> lstPool = qry.list();
 		return lstPool;
 	}
 
+	@Override//dont use
+	public void deleteUser(String userId) {//not tested
+		Session session = sessionFactory.openSession();
+		// Transaction tx = session.beginTransaction();
+
+//		Query q = session.createQuery("delete from User where id = uid");
+//		q.setParameter("uid", userId);
+//		User user = (User) q.list().get(0);
+//		session.delete(user);
+		Transaction tx = session.beginTransaction();
+		String hql = "delete from User where user.id=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, userId);
+		qry.executeUpdate();
+		tx.commit();
+		
+		session.close();
+
+	}
+	
+	public void  deleteAddress()//not tested
+	{
+		Session session = sessionFactory.openSession();
+		// Transaction tx = session.beginTransaction();
+
+//		Query q = session.createQuery("delete from User where id = uid");
+//		q.setParameter("uid", userId);
+//		User user = (User) q.list().get(0);
+//		session.delete(user);
+		Transaction tx = session.beginTransaction();
+		String hql = "from Address address";
+		Query qry = session.createQuery(hql);
+	//	qry.setString(0, "office_add");
+	//	List<Address> lstPool = qry.list();
+
+	//	System.out.println(lstPool.size());
+		tx.commit();
+		
+		session.close();
+		
+		System.out.println("end");
+	}
+	
+	//made by vidur- helped to put data
+	public boolean matchTest(String userId) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+	//	session.save(user);
+		//Pool pool = createPool(user);
+	//	user.setPool(pool);
+		// insert user
+	//	session.save(user);
+		// insert transaction
+	//	insertTransaction(user, session);
+		// persist matched users
+		List<UserMapping> userMatch = findMatchedUser(userId);
+		System.out.println(userMatch.size());
+		if (null != userMatch && userMatch.size() > 0) {
+			persistUserMatch(userMatch, session);
+		}
+		tx.commit();
+		session.close();
+		return true;
+	}
 }
