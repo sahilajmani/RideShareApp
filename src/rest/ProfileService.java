@@ -94,10 +94,7 @@ public class ProfileService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User fetchUserDetails(User user) {
-		if (null != dao.getUserDetails(user.getId())) {
 			return dao.getUserDetails(user.getId());
-		}
-		return null;
 	}
 
 }

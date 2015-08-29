@@ -5,7 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Car implements Serializable{
 private String id;
-private User owner;
+//private User owner;
 private String name;
 private Integer seater;
 public String getId() {
@@ -14,12 +14,12 @@ public String getId() {
 public void setId(String id) {
 	this.id = id;
 }
-public User getOwner() {
+/*public User getOwner() {
 	return owner;
 }
 public void setOwner(User owner) {
 	this.owner = owner;
-}
+}*/
 public String getName() {
 	return name;
 }

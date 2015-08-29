@@ -8,9 +8,9 @@
             <column name="ID" />
             <generator class="guid" />
         </id>
-        <many-to-one name="owner" class="pojos.User" fetch="join">
+<!--         <many-to-one name="owner" class="pojos.User" fetch="join">
             <column name="OWNER" />
-        </many-to-one>
+        </many-to-one> -->
         <property name="name" type="java.lang.String">
             <column name="NAME" />
         </property>
