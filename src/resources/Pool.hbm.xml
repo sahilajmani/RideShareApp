@@ -53,11 +53,5 @@
         <property name="modifyDate" type="java.sql.Timestamp">
             <column name="MODIFYDATE" />
         </property>
-        <bag name="participants" table="pool_participants" inverse="false" lazy="false">
-            <key>
-                <column name="POOL" />
-            </key>
-            <many-to-many class="pojos.User" column="Users" />
-        </bag>
     </class>
 </hibernate-mapping>
