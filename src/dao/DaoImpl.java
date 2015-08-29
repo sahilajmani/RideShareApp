@@ -287,13 +287,12 @@ Pool newPool = this.getPoolDetails(pool.getId());
 	}
 
 	@Override
-	public List<String> getOutgoingPoolRequests(String userId) { // CHECKED
+	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
 		Session session = sessionFactory.openSession();
-		String hql = "select distance from PoolRequest where user.id=?";
+		String hql = "from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
-	//	List<PoolRequest> userPoolRequest = qry.list();
-		List<String> dis=(List<String>)qry.list();
+		List<PoolRequest> userPoolRequest = qry.list();
 		// for(PoolRequest individual : userPoolRequest)
 		// {
 		// System.out.println(individual.getId());
@@ -305,8 +304,8 @@ Pool newPool = this.getPoolDetails(pool.getId());
 		// }
 
 		session.close();
-		//return userPoolRequest;
-		return dis;
+		return userPoolRequest;
+
 	}
 
 	@Override
