@@ -93,7 +93,7 @@ public class RequestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
-		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId()));
+		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId() ,(float) 0.0));
 		return restServiceResponse;
 	}
 }

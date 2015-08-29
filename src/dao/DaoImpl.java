@@ -175,7 +175,7 @@ public class DaoImpl implements DaoI {
 				+ true
 				+ " and t.pool.isAvailable="
 				+ true
-				+ " and um.userB.id=t.user.id  group by  t.pool "
+				+ " and um.userB.id=t.user.id  group by  t.pool.id "
 				+ "order by min(um.distance)";
 		Query qry = session.createQuery(hql);
 		// @SuppressWarnings("unchecked")
@@ -321,7 +321,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public boolean joinPoolRequest(String userId, String poolId) {
+	public boolean joinPoolRequest(String userId, String poolId,float distance) {
 		User user = this.getUserDetails(userId);
 		Pool pool = this.getPoolDetails(poolId);
 		PoolRequest poolRequest = new PoolRequest();
@@ -330,6 +330,7 @@ public class DaoImpl implements DaoI {
 		poolRequest.setCreated(null);
 		poolRequest.setPool(pool);
 		poolRequest.setUser(user);
+		poolRequest.setDistance(distance);
 
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
@@ -432,7 +433,7 @@ public class DaoImpl implements DaoI {
 			user.setPool(userOriginalPool);
 			userOriginalPool.setIsAvailable(true);
 			int noOfMembers = pool.getNumberOfMembers();
-			pool.setNumberOfMembers(noOfMembers - 1);
+			pool.setNumberOfMembers((noOfMembers - 1));
 			pool.setIsAvailable(true);
 			// pool.setParticipants( (List<User>) participants);
 			session.saveOrUpdate(pool);
@@ -453,11 +454,11 @@ public class DaoImpl implements DaoI {
 			oldTransaction.setValid_to(currentDateTime);
 			session.update(oldTransaction);
 
-			Transactions homeTransaction = allTransactions.get(1);
+			//Transactions homeTransaction = allTransactions.get(1);
 			Transactions newTransaction = new Transactions();// primary key??
 			newTransaction.setIs_valid(true);
-			newTransaction.setPool(homeTransaction.getPool());
-			newTransaction.setUser(homeTransaction.getUser());
+			newTransaction.setPool(userOriginalPool);
+			newTransaction.setUser(user);
 			newTransaction.setValid_from(currentDateTime);
 			newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 			session.save(newTransaction);
