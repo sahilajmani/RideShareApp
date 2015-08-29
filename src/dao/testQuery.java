@@ -18,7 +18,7 @@ public class testQuery {
 	//	User user1=new User();
 		//user1.setId(id);
 //	System.out.println(db.getUserPoolRecord("user3").size());
-	List<PoolRequest> userPoolRequest =	db.getIncomingPoolRequests("user2");
+	//List<PoolRequest> userPoolRequest =	db.getIncomingPoolRequests("user2");
 //	System.out.println(userPoolRequest.size());
 //	for(PoolRequest individual : userPoolRequest)
 //	{
@@ -30,14 +30,17 @@ public class testQuery {
 //		
 //	}
 //	db.leavePool("user6", "user2");
-	//	System.out.println(db.updatePoolRequest("3",1));
+		//System.out.println(db.updatePoolRequest("acc615af-488c-11e5-b52e-02b93fe38caf",1));
 		//System.out.println(db.leavePool("user6","user2"));
 	//	System.out.println(db.leavePool("user2","user2"));
 	//	System.out.println(db.getmatchedPool("user6").get(0).getDistance());
-	//	System.out.println(db.joinPoolRequest("user6","user3"));
+	//	System.out.println(db.joinPoolRequest("user6","user4",(float) 30.5));
+	//	System.out.println(db.updatePoolRequest("3f39221d-4e32-11e5-a509-02b93fe38caf", 1));
 	//	User user=db.getUserDetails("testrohan");
-	System.out.println(db.getIncomingPoolRequests("user2").size());
+		//System.out.println(user.getName());
+//	System.out.println(db.getIncomingPoolRequests("user2").size());
 	//	System.out.println(db.getmatchedPool("user2").size());
+		System.out.println(db.leavePool("user6","user4"));
 	}
 
 }
