@@ -37,7 +37,7 @@ public class PoolService {
 	public List<MatchedPoolsVO> getMatchedPoolsService(User user){	
 		 List<MatchedPoolsVO> matchPoolsList= new ArrayList<MatchedPoolsVO>();
 		 matchPoolsList = dao.getmatchedPool(user.getId());
-		 System.out.println(matchPoolsList.get(0).getDistance());
+	//	 System.out.println(matchPoolsList.get(0).getDistance());
 		 return  matchPoolsList;
 	}
 }

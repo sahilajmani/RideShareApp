@@ -169,13 +169,11 @@ public class DaoImpl implements DaoI {
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);
-		String hql = "select t.pool,min(um.distance) from Transactions t,UserMapping um where um.userA.id='"
+		String hql = "select user.pool,min(um.distance) from User user,UserMapping um where um.userA.id='"
 				+ userId
-				+ "' and t.is_valid="
-				+ true
-				+ " and t.pool.isAvailable="
-				+ true
-				+ " and um.userB.id=t.user.id  group by  t.pool.id "
+				+ "' and um.userB.id=user.id"+ " and user.pool.isAvailable="
+				+ true+" and user.pool.id<>'"+userId
+				+ "'  group by  user.pool.id "
 				+ "order by min(um.distance)";
 		Query qry = session.createQuery(hql);
 		// @SuppressWarnings("unchecked")
@@ -183,15 +181,16 @@ public class DaoImpl implements DaoI {
 		List<Object[]> result = (List<Object[]>) qry.list();
 		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>();
 		for (Object[] results : result) {
-			Pool pool = (Pool) results[0];
+			Pool pool = ((Pool) results[0]);
 			Float distance = (Float) results[1];
 			System.out.println(pool.getId() + "  " + distance);// able to get
 																// pool and
 																// distance.put
 																// it in java
 																// element
+Pool newPool = this.getPoolDetails(pool.getId());
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
-			matchedPool.setPool(pool);
+			matchedPool.setPool(newPool);
 			matchedPool.setDistance(distance.toString());
 			matchedPools.add(matchedPool);
 		}
@@ -288,12 +287,13 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
+	public List<String> getOutgoingPoolRequests(String userId) { // CHECKED
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where user.id=?";
+		String hql = "select distance from PoolRequest where user.id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
-		List<PoolRequest> userPoolRequest = qry.list();
+	//	List<PoolRequest> userPoolRequest = qry.list();
+		List<String> dis=(List<String>)qry.list();
 		// for(PoolRequest individual : userPoolRequest)
 		// {
 		// System.out.println(individual.getId());
@@ -305,7 +305,8 @@ public class DaoImpl implements DaoI {
 		// }
 
 		session.close();
-		return userPoolRequest;
+		//return userPoolRequest;
+		return dis;
 	}
 
 	@Override
@@ -413,10 +414,11 @@ public class DaoImpl implements DaoI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean leavePool(String userId, String poolId) {
-		Session session = sessionFactory.openSession();
+	
 		boolean result = false;
 		User user = this.getUserDetails(userId);
 		Pool pool = this.getPoolDetails(poolId);
+		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		if (!pool.getHostUserId().equals(user.getId())) {
 
@@ -441,8 +443,7 @@ public class DaoImpl implements DaoI {
 			session.saveOrUpdate(userOriginalPool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
-					+ "' and is_valid=true) or (pool.id='" + user.getId()
-					+ "') order by valid_from desc";
+					+ "' and is_valid=true)";
 
 			Query qry = session.createQuery(hql);
 			System.out.println(qry.list().size());
