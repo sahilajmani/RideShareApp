@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import pojos.ListPoolRequests;
 import pojos.Pool;
 import pojos.PoolRequest;
+import pojos.PoolRequestResponse;
 import pojos.RequestResponseVO;
 import pojos.RestServiceResponse;
 import pojos.User;
@@ -33,11 +34,11 @@ public class RequestService {
 		ListPoolRequests listPoolRequests = new ListPoolRequests();
 
 		List<PoolRequest> poolRequests = dao.getOutgoingPoolRequests(user.getId());
-		List<PoolRequest> responsePoolRequests = new ArrayList<PoolRequest>();
+		List<PoolRequestResponse> responsePoolRequests = new ArrayList<PoolRequestResponse>();
 		for(PoolRequest poolRequest : poolRequests){
-			PoolRequest pReq = new PoolRequest();
+			PoolRequestResponse pReq = new PoolRequestResponse();
 			pReq.setCreated(poolRequest.getCreated());
-			pReq.setDistance(poolRequest.getDistance());
+			pReq.setDistance(poolRequest.getDistance().toString());
 			pReq.setDescription(poolRequest.getDescription());
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
@@ -61,15 +62,15 @@ public class RequestService {
 		ListPoolRequests listPoolRequests = new ListPoolRequests();
 
 		List<PoolRequest> poolRequests = dao.getIncomingPoolRequests(user.getId());
-		List<PoolRequest> responsePoolRequests = new ArrayList<PoolRequest>();
+		List<PoolRequestResponse> responsePoolRequests = new ArrayList<PoolRequestResponse>();
 		for(PoolRequest poolRequest : poolRequests){
-			PoolRequest pReq = new PoolRequest();
+			PoolRequestResponse pReq = new PoolRequestResponse();
 			pReq.setCreated(poolRequest.getCreated());
 			pReq.setDescription(poolRequest.getDescription());
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
 			pReq.setUpdated(poolRequest.getUpdated());
-			pReq.setDistance(poolRequest.getDistance());
+			pReq.setDistance(poolRequest.getDistance().toString());
 			pReq.setUser(dao.getUserDetails(poolRequest.getUser().getId()));
 			responsePoolRequests.add(pReq);
 		}

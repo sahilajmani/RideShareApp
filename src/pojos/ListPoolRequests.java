@@ -9,11 +9,11 @@ import org.json.simple.JSONArray;
 
 public class ListPoolRequests implements Serializable{
 	
-	List<PoolRequest> poolRequests;
-	public List<PoolRequest> getPoolRequests() {
+	List<PoolRequestResponse> poolRequests;
+	public List<PoolRequestResponse> getPoolRequests() {
 		return poolRequests;
 	}
-	public void setPoolRequests(List<PoolRequest> poolRequests) {
+	public void setPoolRequests(List<PoolRequestResponse> poolRequests) {
 		this.poolRequests = poolRequests;
 	}
 

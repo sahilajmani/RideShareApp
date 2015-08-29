@@ -1,10 +1,8 @@
 package pojos;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
-@SuppressWarnings("serial")
-public class PoolRequest implements Serializable {
+public class PoolRequestResponse {
 
 	private String id;
 	private Pool pool;
@@ -13,70 +11,56 @@ public class PoolRequest implements Serializable {
 	private Timestamp created;
 	private Timestamp updated;
 	private String description;
-	private Float distance;
-
-	public Float getDistance() {
-		return distance;
-	}
-
-	public void setDistance(Float distance) {
-		this.distance = distance;
-	}
-
+	private String distance;
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 	public Pool getPool() {
 		return pool;
 	}
-
 	public void setPool(Pool pool) {
 		this.pool = pool;
 	}
-
 	public User getUser() {
 		return user;
 	}
-
 	public void setUser(User user) {
 		this.user = user;
 	}
-
 	public int getStatus() {
 		return status;
 	}
-
 	public void setStatus(int status) {
 		this.status = status;
 	}
-
 	public Timestamp getCreated() {
 		return created;
 	}
-
 	public void setCreated(Timestamp created) {
 		this.created = created;
 	}
-
 	public Timestamp getUpdated() {
 		return updated;
 	}
-
 	public void setUpdated(Timestamp updated) {
 		this.updated = updated;
 	}
-
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getDistance() {
+		return distance;
+	}
+	public void setDistance(String distance) {
+		this.distance = distance;
+	}
+	
+	
 
 }
