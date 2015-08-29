@@ -3,6 +3,7 @@ package rest;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.util.logging.Logger;
 
 import javax.transaction.SystemException;
 import javax.ws.rs.Consumes;
@@ -21,6 +22,7 @@ import dao.DaoI;
 @Path("/profile")
 public class ProfileService {
 	DaoI dao = RideSharingUtil.getDaoInstance();
+	Logger logger = Logger.getLogger("debug");
 
 	@POST
 	@Path("insertUserProfile")
@@ -34,21 +36,27 @@ public class ProfileService {
 					.getHomeAddress().getLattitude(), user.getHomeAddress()
 					.getLongitude(), user.getOfficeAddress().getLattitude(),
 					user.getOfficeAddress().getLongitude());
+			logger.info("distance stored for user : " + distance);
 			user.setDistance((float) distance);
 			if (dao.insertUser(user)) {
 				serviceResponse.setResponse(true);
+				logger.info("User["+ user.getId() +"] Inserted");
 			} else {
 				serviceResponse.setResponse(false);
+				logger.info("Failed to insert User["+ user.getId() +"]");
 			}
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			serviceResponse.setResponse(false);
 		} catch (ProtocolException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			serviceResponse.setResponse(false);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			serviceResponse.setResponse(false);
+		} catch(Exception e){
+			logger.info(e.getMessage());
+			serviceResponse.setResponse(false);			
 		}
 		return serviceResponse;
 	}
