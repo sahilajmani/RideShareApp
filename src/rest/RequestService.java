@@ -16,6 +16,7 @@ import pojos.PoolRequestResponse;
 import pojos.RequestResponseVO;
 import pojos.RestServiceResponse;
 import pojos.User;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import vo.UserIdPoolIdVO;
 import dao.DaoI;
@@ -97,4 +98,19 @@ public class RequestService {
 		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId() ,(float) 0.0));
 		return restServiceResponse;
 	}
+	
+	@POST
+	@Path("cancelpoolrequest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean cancelPoolRequest(RequestResponseVO requestResponseVO) {
+		String requestId = requestResponseVO.getRequestId();
+		try{
+			dao.updatePoolRequest(requestId, GlobalConstants.REQUEST_CANCEL);
+		}catch(Exception e){
+			return false;
+		}
+		return true;
+	}
+
 }
