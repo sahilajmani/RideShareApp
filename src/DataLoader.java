@@ -8,7 +8,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 import pojos.Address;
-import pojos.Time;
 import pojos.User;
 import utility.UserUtil;
 

@@ -2,6 +2,7 @@ package pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class User implements Serializable{
 private String id;
@@ -9,12 +10,12 @@ private String name;
 private String	companyName;
 private String email;
 private String contact;
-private Time startTime_pickUp;
-private Time startTime_drop;
-private Time officeTime_pickup;
-private Time officeTime_drop;
-private String company_joined_month;
-private String company_joined_year;
+private Date reachDestinationTime;
+private Date leaveDestinationTime;
+//private Date officeTime_pickup;
+//private Date officeTime_drop;
+//private String company_joined_month;
+//private String company_joined_year;
 private boolean hasCar;
 private boolean isCurrentPoolActive;
 private boolean isMobileVerified;
@@ -27,31 +28,16 @@ private Address homeAddress;
 private Address officeAddress;
 private int duration;
 private Pool pool;
-public Pool getPool() {
-	return pool;
-}
-
-
-public void setPool(Pool pool) {
-	this.pool = pool;
-}
-
-
-public String getName() {
-	return name;
-}
-
 
 public String getId() {
 	return id;
 }
-
-
 public void setId(String id) {
 	this.id = id;
 }
-
-
+public String getName() {
+	return name;
+}
 public void setName(String name) {
 	this.name = name;
 }
@@ -73,41 +59,17 @@ public String getContact() {
 public void setContact(String contact) {
 	this.contact = contact;
 }
-public Time getStartTime_pickUp() {
-	return startTime_pickUp;
+public Date getReachDestinationTime() {
+	return reachDestinationTime;
 }
-public void setStartTime_pickUp(Time startTime_pickUp) {
-	this.startTime_pickUp = startTime_pickUp;
+public void setReachDestinationTime(Date reachDestinationTime) {
+	this.reachDestinationTime = reachDestinationTime;
 }
-public Time getStartTime_drop() {
-	return startTime_drop;
+public Date getLeaveDestinationTime() {
+	return leaveDestinationTime;
 }
-public void setStartTime_drop(Time startTime_drop) {
-	this.startTime_drop = startTime_drop;
-}
-public Time getOfficeTime_pickup() {
-	return officeTime_pickup;
-}
-public void setOfficeTime_pickup(Time officeTime_pickup) {
-	this.officeTime_pickup = officeTime_pickup;
-}
-public Time getOfficeTime_drop() {
-	return officeTime_drop;
-}
-public void setOfficeTime_drop(Time officeTime_drop) {
-	this.officeTime_drop = officeTime_drop;
-}
-public String getCompany_joined_month() {
-	return company_joined_month;
-}
-public void setCompany_joined_month(String company_joined_month) {
-	this.company_joined_month = company_joined_month;
-}
-public String getCompany_joined_year() {
-	return company_joined_year;
-}
-public void setCompany_joined_year(String company_joined_year) {
-	this.company_joined_year = company_joined_year;
+public void setLeaveDestinationTime(Date leaveDestinationTime) {
+	this.leaveDestinationTime = leaveDestinationTime;
 }
 public boolean isHasCar() {
 	return hasCar;
@@ -175,9 +137,10 @@ public int getDuration() {
 public void setDuration(int duration) {
 	this.duration = duration;
 }
-@Override
-public String toString(){
-	return "\n Name - "+this.getName()+"\n Company -"+this.getCompanyName()+"\n Mobile - "+this.getContact()+"\n Email -"+this.getEmail();
-	
+public Pool getPool() {
+	return pool;
+}
+public void setPool(Pool pool) {
+	this.pool = pool;
 }
 }

@@ -19,24 +19,12 @@
         </property>
         <property name="contact" type="java.lang.String">
             <column name="CONTACT" />
+            </property>
+        <property name="reachDestinationTime" type="java.util.Date">
+            <column name="REACH_TIME" />
         </property>
-        <many-to-one name="startTime_pickUp" class="pojos.Time" fetch="join" cascade="save-update">
-            <column name="STARTTIME_PICKUP" />
-        </many-to-one>
-        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
-            <column name="STARTTIME_DROP" />
-        </many-to-one>
-        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join" cascade="save-update">
-            <column name="OFFICETIME_PICKUP" />
-        </many-to-one>
-        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join" cascade="save-update">
-            <column name="OFFICETIME_DROP" />
-        </many-to-one>
-        <property name="company_joined_month" type="java.lang.String">
-            <column name="COMPANY_JOINED_MONTH" />
-        </property>
-        <property name="company_joined_year" type="java.lang.String">
-            <column name="COMPANY_JOINED_YEAR" />
+        <property name="leaveDestinationTime" type="java.util.Date">
+            <column name="LEAVE_TIME" />
         </property>
         <property name="hasCar" type="boolean">
             <column name="HASCAR" />

@@ -38,7 +38,7 @@ public class testQuery {
 	//	System.out.println(db.updatePoolRequest("3f39221d-4e32-11e5-a509-02b93fe38caf", 1));
 	//	User user=db.getUserDetails("testrohan");
 		//System.out.println(user.getName());
-	System.out.println(db.getOutgoingPoolRequests("user2").size());
+//	System.out.println(db.getOutgoingPoolRequests("user2").size());
 	//	System.out.println(db.getmatchedPool("user2").size());
 	//	System.out.println(db.leavePool("user6","user4"));
 		db.getmatchedPool("user2");

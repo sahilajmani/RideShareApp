@@ -20,8 +20,8 @@
         <property name="fetchCount" type="java.lang.Integer">
             <column name="FETCHCOUNT" />
         </property>
-        <many-to-one name="timeStamp" class="pojos.Time" fetch="join">
+        <property name="timeStamp" type="java.util.Date">
             <column name="TIMESTAMP" />
-        </many-to-one>
+        </property>
     </class>
 </hibernate-mapping>

@@ -1,12 +1,14 @@
 package pojos;
 
+import java.util.Date;
+
 public class GroupChat {
  Integer id;
  Pool pool_id;
  User sender;
  String message;
  Integer fetchCount;
- Time timeStamp;
+ Date timeStamp;
 public Integer getId() {
 	return id;
 }
@@ -37,10 +39,10 @@ public Integer getFetchCount() {
 public void setFetchCount(Integer fetchCount) {
 	this.fetchCount = fetchCount;
 }
-public Time getTimeStamp() {
+public Date getTimeStamp() {
 	return timeStamp;
 }
-public void setTimeStamp(Time timeStamp) {
+public void setTimeStamp(Date timeStamp) {
 	this.timeStamp = timeStamp;
 }
  

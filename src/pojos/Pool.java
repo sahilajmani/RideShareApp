@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @SuppressWarnings("serial")
@@ -13,11 +14,12 @@ private boolean is_active;
 private String hostUserId;
 private Address sourceAddress;
 private Address destinationAddress;
-private Time startTime_pickup;
-private Time startTime_drop;
-private Time officeTime_pickup;
-private Time officeTime_drop;
-private String comments;
+//private Time startTime_pickup;
+//private Time startTime_drop;
+//private Time officeTime_pickup;
+//private Time officeTime_drop;
+private Date reachDestinationTime;
+private Date leaveDestinationTime;
 private Integer numberOfMembers;
 private Integer max_members;
 private Integer costPerMonth;
@@ -43,14 +45,12 @@ public boolean isIs_active() {
 public void setIs_active(boolean is_active) {
 	this.is_active = is_active;
 }
-/*private Collection <String> participantsUserId= new ArrayList();
-public Collection<String> getParticipantsUserId() {
-	return participantsUserId;
+public String getHostUserId() {
+	return hostUserId;
 }
-public void setParticipantsUserId(Collection<String> participantsUserId) {
-	this.participantsUserId = participantsUserId;
+public void setHostUserId(String hostUserId) {
+	this.hostUserId = hostUserId;
 }
-*/
 public Address getSourceAddress() {
 	return sourceAddress;
 }
@@ -63,36 +63,19 @@ public Address getDestinationAddress() {
 public void setDestinationAddress(Address destinationAddress) {
 	this.destinationAddress = destinationAddress;
 }
-public Time getStartTime_pickup() {
-	return startTime_pickup;
+public Date getReachDestinationTime() {
+	return reachDestinationTime;
 }
-public void setStartTime_pickup(Time startTime_pickup) {
-	this.startTime_pickup = startTime_pickup;
+public void setReachDestinationTime(Date reachDestinationTime) {
+	this.reachDestinationTime = reachDestinationTime;
 }
-public Time getStartTime_drop() {
-	return startTime_drop;
+public Date getLeaveDestinationTime() {
+	return leaveDestinationTime;
 }
-public void setStartTime_drop(Time startTime_drop) {
-	this.startTime_drop = startTime_drop;
+public void setLeaveDestinationTime(Date leaveDestinationTime) {
+	this.leaveDestinationTime = leaveDestinationTime;
 }
-public Time getOfficeTime_pickup() {
-	return officeTime_pickup;
-}
-public void setOfficeTime_pickup(Time officeTime_pickup) {
-	this.officeTime_pickup = officeTime_pickup;
-}
-public Time getOfficeTime_drop() {
-	return officeTime_drop;
-}
-public void setOfficeTime_drop(Time officeTime_drop) {
-	this.officeTime_drop = officeTime_drop;
-}
-public String getComments() {
-	return comments;
-}
-public void setComments(String comments) {
-	this.comments = comments;
-}
+
 public Integer getNumberOfMembers() {
 	return numberOfMembers;
 }
@@ -128,12 +111,6 @@ public Timestamp getModifyDate() {
 }
 public void setModifyDate(Timestamp modifyDate) {
 	this.modifyDate = modifyDate;
-}public String getHostUserId() {
-		return hostUserId;
 }
-public void setHostUserId(String hostUserId) {
-	this.hostUserId = hostUserId;
-}
-
 
 }

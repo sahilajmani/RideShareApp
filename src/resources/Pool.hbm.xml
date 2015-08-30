@@ -20,20 +20,11 @@
         <many-to-one name="destinationAddress" class="pojos.Address" fetch="join">
             <column name="DESTINATIONADDRESS" />
         </many-to-one>
-        <many-to-one name="startTime_pickup" class="pojos.Time" fetch="join">
-            <column name="STARTTIME_PICKUP" />
-        </many-to-one>
-        <many-to-one name="startTime_drop" class="pojos.Time" fetch="join">
-            <column name="STARTTIME_DROP" />
-        </many-to-one>
-        <many-to-one name="officeTime_pickup" class="pojos.Time" fetch="join">
-            <column name="OFFICETIME_PICKUP" />
-        </many-to-one>
-        <many-to-one name="officeTime_drop" class="pojos.Time" fetch="join">
-            <column name="OFFICETIME_DROP" />
-        </many-to-one>
-        <property name="comments" type="java.lang.String">
-            <column name="COMMENTS" />
+                <property name="reachDestinationTime" type="java.util.Date">
+            <column name="REACH_TIME" />
+        </property>
+        <property name="leaveDestinationTime" type="java.util.Date">
+            <column name="LEAVE_TIME" />
         </property>
         <property name="numberOfMembers" type="java.lang.Integer">
             <column name="NUMBEROFMEMBERS" />
