@@ -134,7 +134,7 @@ public class DaoImpl implements DaoI {
 
 	private Pool createPool(User user) {
 		Pool pool = new Pool();
-		pool.setId(user.getId());
+		pool.setId("randomvalue");
 		pool.setHostUserId(user.getId());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
@@ -585,6 +585,20 @@ public class DaoImpl implements DaoI {
 			tx.rollback();
 			return false;
 		} finally {
+			session.close();
+		}
+		try{
+		session = sessionFactory.openSession();			
+		tx = session.beginTransaction();
+		Pool tempPool = this.getPoolDetails("randomvalue");
+		User tempUser = this.getUserDetailsByEmail(user.getEmail());
+		tempPool.setId(tempUser.getId());
+		tempUser.setPool(tempPool);
+		session.update(tempUser.getId(), tempUser);
+		tx.commit();			
+		}catch(Exception e){
+			tx.rollback();
+		}finally{
 			session.close();
 		}
 		return true;
