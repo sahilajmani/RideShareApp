@@ -659,7 +659,6 @@ public class DaoImpl implements DaoI {
 				user.setOfficeAddress(tempUser.getOfficeAddress());
 			}
 			// update user
-			user.setPool(this.getPoolDetails(user.getId()));
 			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
 			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
