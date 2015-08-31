@@ -565,16 +565,22 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public boolean insertUser(User user) {
+		if(user!=null){
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		// session.save(user); //why here save?? doubt??
 		try {
 			Pool pool = createPool(user);
 			user.setPool(pool);
+			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
+			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
+			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
+			}
+			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
+			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
+			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
+			}
 			// insert user
 			session.save(user);
-			// insert transaction
-			insertTransaction(user, session);
 			// persist matched users
 			List<UserMapping> userMatch = findMatchedUser(user.getId());
 			if (null != userMatch && userMatch.size() > 0) {
@@ -594,14 +600,19 @@ public class DaoImpl implements DaoI {
 		User tempUser = this.getUserDetailsByEmail(user.getEmail());
 		tempPool.setId(tempUser.getId());
 		tempUser.setPool(tempPool);
+		// insert transaction
+		insertTransaction(tempUser, session);
+
 		session.update(tempUser.getId(), tempUser);
-		tx.commit();			
+		tx.commit();
 		}catch(Exception e){
 			tx.rollback();
 		}finally{
 			session.close();
 		}
 		return true;
+		}
+		return false;
 	}
 
 	private void insertTransaction(User user, Session session) {
@@ -648,6 +659,15 @@ public class DaoImpl implements DaoI {
 				user.setOfficeAddress(tempUser.getOfficeAddress());
 			}
 			// update user
+			user.setPool(this.getPoolDetails(user.getId()));
+			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
+			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
+			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
+			}
+			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
+			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
+			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
+			}
 			session.update(user.getId(), user);
 			tx.commit();
 		} catch (Exception e) {

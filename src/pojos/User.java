@@ -12,6 +12,9 @@ private String email;
 private String contact;
 private Date reachDestinationTime;
 private Date leaveDestinationTime;
+private String reachDestinationTimeInMilliseconds;
+private String leaveDestinationTimeInMilliseconds;
+
 //private Date officeTime_pickup;
 //private Date officeTime_drop;
 //private String company_joined_month;
@@ -142,5 +145,19 @@ public Pool getPool() {
 }
 public void setPool(Pool pool) {
 	this.pool = pool;
+}
+public String getLeaveDestinationTimeInMilliseconds() {
+	return leaveDestinationTimeInMilliseconds;
+}
+public void setLeaveDestinationTimeInMilliseconds(
+		String leaveDestinationTimeInMilliseconds) {
+	this.leaveDestinationTimeInMilliseconds = leaveDestinationTimeInMilliseconds;
+}
+public String getReachDestinationTimeInMilliseconds() {
+	return reachDestinationTimeInMilliseconds;
+}
+public void setReachDestinationTimeInMilliseconds(
+		String reachDestinationTimeInMilliseconds) {
+	this.reachDestinationTimeInMilliseconds = reachDestinationTimeInMilliseconds;
 }
 }
