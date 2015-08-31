@@ -28,9 +28,8 @@ public class ProfileService {
 	@Path("insertUserProfile")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse insertUserProfile(User user)
+	public User insertUserProfile(User user)
 			throws SystemException {
-		RestServiceResponse serviceResponse = new RestServiceResponse();
 		try {
 			double distance = DistanceBwPlaces.getDistanceandDuration(user
 					.getHomeAddress().getLattitude(), user.getHomeAddress()
@@ -39,26 +38,25 @@ public class ProfileService {
 			logger.info("distance stored for user : " + distance);
 			user.setDistance((float) distance);
 			if (dao.insertUser(user)) {
-				serviceResponse.setResponse(true);
 				logger.info("User["+ user.getId() +"] Inserted");
+				return dao.getUserDetailsByEmail(user.getEmail());
 			} else {
-				serviceResponse.setResponse(false);
 				logger.info("Failed to insert User["+ user.getId() +"]");
+				return null;
 			}
 		} catch (MalformedURLException e) {
 			logger.info(e.getMessage());
-			serviceResponse.setResponse(false);
+			return null;
 		} catch (ProtocolException e) {
 			logger.info(e.getMessage());
-			serviceResponse.setResponse(false);
+			return null;
 		} catch (IOException e) {
 			logger.info(e.getMessage());
-			serviceResponse.setResponse(false);
+			return null;
 		} catch(Exception e){
 			logger.info(e.getMessage());
-			serviceResponse.setResponse(false);			
+			return null;
 		}
-		return serviceResponse;
 	}
 
 	@POST
