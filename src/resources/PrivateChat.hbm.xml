@@ -22,7 +22,7 @@
         </property>
          -->
               <property name="createTime" type="java.util.Date">
-            <column name="createTime" />
+            <column name="CREATETIME" />
         </property>
          <!-- <property name="createTime" column="CREATETIME" type="java.util.Date"/> -->
          <property name="isDelivered" type="java.lang.Boolean">

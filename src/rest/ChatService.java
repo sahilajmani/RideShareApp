@@ -1,5 +1,7 @@
 package rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -55,7 +57,7 @@ public class ChatService {
 	@Path("sendChat")
 //	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult sendChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id,@FormParam("message") String message){
+	public GetChatResult sendChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id,@FormParam("message") String message) throws ParseException{
 		System.out.println(sender_Id+"\t"+receiver_id);
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
@@ -71,9 +73,13 @@ public class ChatService {
 		chat.setSender(sender);
 		chat.setMsg(message);
 		chat.setIsDelivered(false);
-//		chat.setCreateTime(new Timestamp(System.currentTimeMillis()));
+		System.out.println(new Date().getTime());
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		
+		chat.setCreateTime(sdf.parse(sdf.format(date)));//new Date().getTime()));
 		//chat.setCreateTime(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-		chat.setCreateTime(new Date(System.currentTimeMillis()));
+//		chat.setCreateTime(new Date(System.currentTimeMillis()));
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
 		System.out.println("chat id -"+chat.getId());
