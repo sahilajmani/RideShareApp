@@ -20,11 +20,11 @@ public class IChatImpl implements IChat {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
 	Logger logger = Logger.getLogger("debug");
 	@Override
-	public Collection<PrivateChat> getPrivateChats(String senderId, String receiverId, boolean markAsDelivered) {
+	public Collection<PrivateChat> getPrivateChats(String receiverId, boolean markAsDelivered) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		Criteria criteria = session.createCriteria(PrivateChat.class);
-		criteria.add(Restrictions.eq("sender.id", senderId))/*.add(Restrictions.eq("receiver.id", receiverId))*/.add(Restrictions.eqOrIsNull("isDelivered", false));
+		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId)).add(Restrictions.eqOrIsNull("isDelivered", false));
 		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTime")).list();
 		if(result != null && result.size() > 0){
 			int resultCount = 0;

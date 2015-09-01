@@ -24,11 +24,11 @@ public class ChatService {
 	@Path("getChat")
 //	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id){
+	public GetChatResult getChat(/*@FormParam("sender_Id") String sender_Id,*/ @FormParam("receiver_Id") String receiver_id){
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats(sender_Id, receiver_id, true);
+		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( receiver_id, true);
 		Collection <ChatResults> chats = new ArrayList<ChatResults>();
 		ChatResults chatres = null;
 		if(result!=null && result.size() > 0){
@@ -64,7 +64,7 @@ public class ChatService {
 		// validate senderId and receiverId
 		User sender = RideSharingUtil.getDaoInstance().getUserDetails(sender_Id);
 		User receiver = RideSharingUtil.getDaoInstance().getUserDetails(receiver_id);
-		if(sender == null || receiver == null){
+		if( receiver == null){
 			chatResult.setErrorMsg("Invalid user/reciver ID");
 			chatResult.setSuccess(false);
 			return chatResult;
