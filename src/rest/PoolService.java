@@ -15,6 +15,7 @@ import pojos.MatchedPoolsVO;
 import pojos.Pool;
 import pojos.User;
 import utility.RideSharingUtil;
+import vo.UsersList;
 
 @Path("/poolservice")
 public class PoolService {
@@ -49,5 +50,22 @@ public class PoolService {
 			return null;
 		}
 		return matchPoolsList;
+	}
+	
+	@POST
+	@Path("getpoolusers")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public UsersList getPoolUsers(Pool pool) {
+		UsersList users = new UsersList();
+		List<User> participants = new ArrayList<User>();
+		try {
+			participants = dao.fetchPoolParticipants(pool.getId());
+			users.setUsers(participants);
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+		return users;
 	}
 }

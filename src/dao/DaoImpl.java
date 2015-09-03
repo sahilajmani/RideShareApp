@@ -558,7 +558,7 @@ public class DaoImpl implements DaoI {
 	private List<User> getParticipants(String poolId, Session session) {
 		String hql = "from User where pool.id<>'" + poolId + "'";
 		Query qry = session.createQuery(hql);
-		List participants = qry.list();
+		List<User> participants = qry.list();
 		// TODO Auto-generated method stub
 		return participants;
 	}
@@ -774,5 +774,23 @@ public class DaoImpl implements DaoI {
 		tx.commit();
 		session.close();
 		return true;
+	}
+
+	@Override
+	public List<User> fetchPoolParticipants(String poolId) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(User.class);
+		Pool pool = new Pool();
+		pool.setId(poolId);
+		cr.add(Restrictions.eq("pool", pool));
+		List<User> participants = new ArrayList<User>();
+		if (cr.list() != null && cr.list().size() > 0) {
+			participants = cr.list();
+		}
+/*		for(User user:poolParticipants){
+			participants.add(user);
+		}*/
+		session.close();
+		return participants;
 	}
 }

@@ -81,8 +81,13 @@ public class User implements Serializable {
 	public void setReachDestinationTime(Date reachDestinationTime) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
+			System.out.println(reachDestinationTime);
+			if(this.reachDestinationTime!=null){
 			this.reachDestinationTime = sdf.parse(sdf
 					.format(reachDestinationTime));
+			}else{
+				this.reachDestinationTime = reachDestinationTime;
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -95,8 +100,12 @@ public class User implements Serializable {
 	public void setLeaveDestinationTime(Date leaveDestinationTime) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		try {
+			if(leaveDestinationTime!=null){
 			this.leaveDestinationTime = sdf.parse(sdf
 					.format(leaveDestinationTime));
+			}else{
+				this.leaveDestinationTime = leaveDestinationTime;
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

@@ -28,8 +28,9 @@ public class ProfileService {
 	@Path("insertUserProfile")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User insertUserProfile(User user)
+	public RestServiceResponse insertUserProfile(User user)
 			throws SystemException {
+		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		try {
 			double distance = DistanceBwPlaces.getDistanceandDuration(user
 					.getHomeAddress().getLattitude(), user.getHomeAddress()
@@ -39,23 +40,30 @@ public class ProfileService {
 			user.setDistance((float) distance);
 			if (dao.insertUser(user)) {
 				logger.info("User["+ user.getId() +"] Inserted");
-				return dao.getUserDetailsByEmail(user.getEmail());
+				restServiceResponse.setUser(user);
+				restServiceResponse.setResponse(true);
+				return restServiceResponse;
 			} else {
 				logger.info("Failed to insert User["+ user.getId() +"]");
-				return null;
+				restServiceResponse.setResponse(false);
+				return restServiceResponse;
 			}
 		} catch (MalformedURLException e) {
 			logger.info(e.getMessage());
-			return null;
+			restServiceResponse.setResponse(false);
+			return restServiceResponse;
 		} catch (ProtocolException e) {
 			logger.info(e.getMessage());
-			return null;
+			restServiceResponse.setResponse(false);
+			return restServiceResponse;
 		} catch (IOException e) {
 			logger.info(e.getMessage());
-			return null;
+			restServiceResponse.setResponse(false);
+			return restServiceResponse;
 		} catch(Exception e){
 			logger.info(e.getMessage());
-			return null;
+			restServiceResponse.setResponse(false);
+			return restServiceResponse;
 		}
 	}
 
