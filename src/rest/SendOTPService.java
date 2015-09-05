@@ -101,7 +101,7 @@ public class SendOTPService {
 	}
 
 	private int generateOTP() {
-		int OTP = (int) (Math.random() * 10000);
+		int OTP = (int) (1000 + Math.random() * 8999);
 		return OTP;
 	}
 }
