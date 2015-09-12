@@ -36,12 +36,12 @@ public class testQuery {
 	//	System.out.println(db.getmatchedPool("user6").get(0).getDistance());
 	//	System.out.println(db.joinPoolRequest("user6","user4",(float) 30.5));
 	//	System.out.println(db.updatePoolRequest("3f39221d-4e32-11e5-a509-02b93fe38caf", 1));
-	//	User user=db.getUserDetails("testrohan");
-		//System.out.println(user.getName());
+		User user=db.getUserDetailsByEmail("rohan_h255@hotmail.com");
+		System.out.println(user.getName());
 //	System.out.println(db.getOutgoingPoolRequests("user2").size());
 	//	System.out.println(db.getmatchedPool("user2").size());
 	//	System.out.println(db.leavePool("user6","user4"));
-		db.matchTest("745be031-5167-11e5-a9c3-02b93fe38caf");
+	//	db.matchTest("745be031-5167-11e5-a9c3-02b93fe38caf");
 	}
 
 }

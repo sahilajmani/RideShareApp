@@ -287,9 +287,14 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(User.class);
 		cr.add(Restrictions.eq("email", email));
-		User userVO = null;
+		User userVO =null;
 		if (cr.list() != null && cr.list().size() > 0) {
 			userVO = (User) cr.list().get(0);
+		}
+		else
+		{
+			userVO=new User();
+			userVO.setName("doesntexist");
 		}
 		session.close();
 		return userVO;

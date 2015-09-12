@@ -111,4 +111,13 @@ public class ProfileService {
 			return dao.getUserDetails(user.getId());
 	}
 
+	
+	@POST
+	@Path("getUserDetailsViaEmail")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User fetchUserDetailsViaEmail(User user) {
+			return dao.getUserDetailsByEmail(user.getEmail());
+	}
+	
 }
