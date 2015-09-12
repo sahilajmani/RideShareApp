@@ -138,8 +138,8 @@ public class DaoImpl implements DaoI {
 		pool.setHostUserId(user.getId());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
-		pool.setSourceAddress(user.getHomeAddress());
-		pool.setDestinationAddress(user.getOfficeAddress());
+		pool.setNumberOfMembers(1);
+		pool.setMax_members(4);
 		return pool;
 	}
 
@@ -576,6 +576,7 @@ public class DaoImpl implements DaoI {
 		try {
 			Pool pool = createPool(user);
 			user.setPool(pool);
+			user.setActive(true);
 			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
 			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
@@ -604,6 +605,8 @@ public class DaoImpl implements DaoI {
 		Pool tempPool = this.getPoolDetails("randomvalue");
 		User tempUser = this.getUserDetailsByEmail(user.getEmail());
 		tempPool.setId(tempUser.getId());
+		tempPool.setSourceAddress(tempUser.getHomeAddress());
+		tempPool.setDestinationAddress(tempUser.getOfficeAddress());
 		tempUser.setPool(tempPool);
 		// insert transaction
 		insertTransaction(tempUser, session);
@@ -627,6 +630,7 @@ public class DaoImpl implements DaoI {
 		transaction.setUser(user);
 		Date date = new Date();
 		transaction.setValid_from(date);
+		transaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 		session.save(transaction);
 	}
 

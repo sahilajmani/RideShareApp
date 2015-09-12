@@ -14,18 +14,14 @@ private boolean is_active;
 private String hostUserId;
 private Address sourceAddress;
 private Address destinationAddress;
-//private Time startTime_pickup;
-//private Time startTime_drop;
-//private Time officeTime_pickup;
-//private Time officeTime_drop;
-private Date reachDestinationTime;
-private Date leaveDestinationTime;
+private Date reachDestinationTime; 
+private Date leaveDestinationTime; 
 private Integer numberOfMembers;
 private Integer max_members;
 private Integer costPerMonth;
 private Car car;
 private Boolean isAvailable;
-private Timestamp modifyDate;
+private Timestamp modifyDate; //nt req
 //private List<User> participants;
 //public List<User> getParticipants() {
 //	return participants;

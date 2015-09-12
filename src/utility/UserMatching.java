@@ -46,7 +46,7 @@ public class UserMatching {
 										.getOfficeAddress().getLongitude())
 								&& ((user.getOfficeAddress().getLongitude() + rangeLatLong) > currentUser
 										.getOfficeAddress().getLongitude())) {
-							System.out.println("live within acceptabledistance of"+ acceptDist);
+						//	System.out.println("live within acceptabledistance of"+ acceptDist);
 							UserMapping userMatchRow=new UserMapping();
 							userMatchRow.setUserA(currentUser);
 							userMatchRow.setUserB(user);
@@ -55,7 +55,7 @@ public class UserMatching {
 									user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude(),
 									currentUser.getHomeAddress().getLattitude(),
 									currentUser.getHomeAddress().getLongitude());
-							userMatchRow.setDistance((float) homeToHome);
+							userMatchRow.setDistance((float) Math.abs(homeToHome));
 							resultUsers.add(userMatchRow);
 							continue;
 						} else {
@@ -85,9 +85,9 @@ public class UserMatching {
 							UserMapping userMatchRow=new UserMapping();
 							userMatchRow.setUserA(currentUser);
 							userMatchRow.setUserB(user);
-							userMatchRow.setDistance((float) (homeToHome + currentUserDistance
+							userMatchRow.setDistance((float) Math.abs( (homeToHome + currentUserDistance
 									+ officetoOffice-user
-									.getDistance()));
+									.getDistance())));
 							resultUsers.add(userMatchRow);
 							continue;
 						} else {
@@ -114,7 +114,7 @@ public class UserMatching {
 							.getDistanceandDuration(currentUser.getHomeAddress().getLattitude(),
 									currentUser.getHomeAddress().getLongitude(),
 									user.getOfficeAddress().getLattitude(), user.getOfficeAddress().getLongitude());
-					double setDistance=0.0;
+					double setDistance=0.0000001;
 					
 					if (homeToHomme + user.getDistance() + officetoOffice < currentUser
 							.getDistance() + acceptDist
@@ -162,7 +162,7 @@ public class UserMatching {
 					UserMapping userMatchRow=new UserMapping();
 					userMatchRow.setUserA(currentUser);
 					userMatchRow.setUserB(user);
-					userMatchRow.setDistance((float) setDistance);
+					userMatchRow.setDistance((float) Math.abs(setDistance));
 					resultUsers.add(userMatchRow);
 						continue;
 					}
@@ -191,9 +191,9 @@ public class UserMatching {
 							UserMapping userMatchRow=new UserMapping();
 							userMatchRow.setUserA(currentUser);
 							userMatchRow.setUserB(user);
-							userMatchRow.setDistance((float) (homeToHome + user.getDistance()
+							userMatchRow.setDistance((float) Math.abs((homeToHome + user.getDistance()
 									+ officetoOffice-currentUser
-									.getDistance()));
+									.getDistance())));
 							resultUsers.add(userMatchRow);
 							continue;
 						}
@@ -209,7 +209,7 @@ public class UserMatching {
 								UserMapping userMatchRow=new UserMapping();
 								userMatchRow.setUserA(currentUser);
 								userMatchRow.setUserB(user);
-								userMatchRow.setDistance((float) (homeToHome + currentUserDistance
+								userMatchRow.setDistance((float) Math.abs(homeToHome + currentUserDistance
 										+ officetoOffice - user.getDistance()));
 								resultUsers.add(userMatchRow);
 								continue;
@@ -230,10 +230,10 @@ public class UserMatching {
 						UserMapping userMatchRow=new UserMapping();
 						userMatchRow.setUserA(currentUser);
 						userMatchRow.setUserB(user);
-						userMatchRow.setDistance((float) (homeToHome + user.getDistance() + officetoOffice - currentUser
-								.getDistance()));
+						userMatchRow.setDistance((float) Math.abs((homeToHome + user.getDistance() + officetoOffice - currentUser
+								.getDistance())));
 						resultUsers.add(userMatchRow);
-						continue;
+					
 					}
 
 				}
