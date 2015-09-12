@@ -135,7 +135,7 @@ public class DaoImpl implements DaoI {
 	private Pool createPool(User user) {
 		Pool pool = new Pool();
 		pool.setId("randomvalue");
-		pool.setHostUserId(user.getId());
+	//	pool.setHostUserId(user.getId());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1);
@@ -325,7 +325,7 @@ public class DaoImpl implements DaoI {
 	@Override
 	public List<PoolRequest> getIncomingPoolRequests(String userId) {
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where pool.hostUserId=? and status ="
+		String hql = "from PoolRequest where pool.id=? and status ="
 				+ GlobalConstants.REQUEST_PENDING;
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
@@ -433,7 +433,7 @@ public class DaoImpl implements DaoI {
 		Pool pool = this.getPoolDetails(poolId);
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		if (!pool.getHostUserId().equals(user.getId())) {
+		if (!pool.getId().equals(user.getId())) {
 
 			// Iterator<User> participants = pool.getParticipants().iterator();
 			// // participants.remove(user);

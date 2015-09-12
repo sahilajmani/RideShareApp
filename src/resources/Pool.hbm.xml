@@ -11,9 +11,6 @@
         <property name="is_active" type="boolean">
             <column name="IS_ACTIVE" />
         </property>
-        <property name="hostUserId" type="java.lang.String">
-            <column name="HOSTUSERID" />
-        </property>
         <many-to-one name="sourceAddress" class="pojos.Address" fetch="join">
             <column name="SOURCEADDRESS" />
         </many-to-one>

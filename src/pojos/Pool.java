@@ -11,7 +11,6 @@ import java.util.List;
 public class Pool implements Serializable{
 private String id;
 private boolean is_active;
-private String hostUserId;
 private Address sourceAddress;
 private Address destinationAddress;
 private Date reachDestinationTime; 
@@ -41,12 +40,7 @@ public boolean isIs_active() {
 public void setIs_active(boolean is_active) {
 	this.is_active = is_active;
 }
-public String getHostUserId() {
-	return hostUserId;
-}
-public void setHostUserId(String hostUserId) {
-	this.hostUserId = hostUserId;
-}
+
 public Address getSourceAddress() {
 	return sourceAddress;
 }
