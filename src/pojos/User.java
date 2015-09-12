@@ -22,12 +22,12 @@ public class User implements Serializable {
 	// private String company_joined_month;
 	// private String company_joined_year;
 	private boolean hasCar;
-	private boolean isCurrentPoolActive;
+	
 	private boolean isMobileVerified;
 	private boolean isEmailVerified;
 	private boolean isActive;
 	private Timestamp registerDate;
-	private Timestamp modifyDate;
+	
 	private float distance;
 	private Address homeAddress;
 	private Address officeAddress;
@@ -119,14 +119,7 @@ public class User implements Serializable {
 		this.hasCar = hasCar;
 	}
 
-	public boolean isCurrentPoolActive() {
-		return isCurrentPoolActive;
-	}
-
-	public void setCurrentPoolActive(boolean isCurrentPoolActive) {
-		this.isCurrentPoolActive = isCurrentPoolActive;
-	}
-
+	
 	public boolean isMobileVerified() {
 		return isMobileVerified;
 	}
@@ -159,14 +152,7 @@ public class User implements Serializable {
 		this.registerDate = registerDate;
 	}
 
-	public Timestamp getModifyDate() {
-		return modifyDate;
-	}
-
-	public void setModifyDate(Timestamp modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-
+	
 	public float getDistance() {
 		return distance;
 	}

@@ -41,7 +41,7 @@ public class testQuery {
 //	System.out.println(db.getOutgoingPoolRequests("user2").size());
 	//	System.out.println(db.getmatchedPool("user2").size());
 	//	System.out.println(db.leavePool("user6","user4"));
-		db.getmatchedPool("user2");
+		db.matchTest("745be031-5167-11e5-a9c3-02b93fe38caf");
 	}
 
 }

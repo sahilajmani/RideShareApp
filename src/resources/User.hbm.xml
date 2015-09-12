@@ -29,9 +29,6 @@
         <property name="hasCar" type="boolean">
             <column name="HASCAR" />
         </property>
-        <property name="isCurrentPoolActive" type="boolean" access="field">
-            <column name="ISCURRENTPOOLACTIVE" />
-        </property>
         <property name="isMobileVerified" type="boolean" access="field">
             <column name="ISMOBILEVERIFIED" />
         </property>
@@ -43,9 +40,6 @@
         </property>
         <property name="registerDate" type="java.sql.Timestamp">
             <column name="REGISTERDATE" />
-        </property>
-        <property name="modifyDate" type="java.sql.Timestamp">
-            <column name="MODIFYDATE" />
         </property>
         <property name="distance" type="float">
             <column name="DISTANCE" />
