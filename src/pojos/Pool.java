@@ -2,6 +2,8 @@ package pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -13,7 +15,9 @@ private String id;
 private boolean is_active;
 private Address sourceAddress;
 private Address destinationAddress;
-private Date reachDestinationTime; 
+private Date reachDestinationTime;
+private String reachDestinationTimeInMilliseconds;
+private String leaveDestinationTimeInMilliseconds;
 private Date leaveDestinationTime; 
 private Integer numberOfMembers;
 private Integer max_members;
@@ -57,13 +61,37 @@ public Date getReachDestinationTime() {
 	return reachDestinationTime;
 }
 public void setReachDestinationTime(Date reachDestinationTime) {
-	this.reachDestinationTime = reachDestinationTime;
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	try {
+		System.out.println(reachDestinationTime);
+		if(this.reachDestinationTime!=null){
+		this.reachDestinationTime = sdf.parse(sdf
+				.format(reachDestinationTime));
+		}else{
+			this.reachDestinationTime = reachDestinationTime;
+		}
+		this.reachDestinationTimeInMilliseconds=String.valueOf(reachDestinationTime.getTime());
+	} catch (ParseException e) {
+		e.printStackTrace();
+	}
 }
 public Date getLeaveDestinationTime() {
 	return leaveDestinationTime;
 }
 public void setLeaveDestinationTime(Date leaveDestinationTime) {
-	this.leaveDestinationTime = leaveDestinationTime;
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	try {
+		System.out.println(leaveDestinationTime);
+		if(this.leaveDestinationTime!=null){
+		this.leaveDestinationTime = sdf.parse(sdf
+				.format(leaveDestinationTime));
+		}else{
+			this.leaveDestinationTime = leaveDestinationTime;
+		}
+		this.leaveDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
+	} catch (ParseException e) {
+		e.printStackTrace();
+	}
 }
 
 public Integer getNumberOfMembers() {
@@ -102,5 +130,18 @@ public Timestamp getModifyDate() {
 public void setModifyDate(Timestamp modifyDate) {
 	this.modifyDate = modifyDate;
 }
-
+public String getLeaveDestinationTimeInMilliseconds() {
+	return leaveDestinationTimeInMilliseconds;
+}
+public void setLeaveDestinationTimeInMilliseconds(
+		String leaveDestinationTimeInMilliseconds) {
+	this.leaveDestinationTimeInMilliseconds = leaveDestinationTimeInMilliseconds;
+}
+public String getReachDestinationTimeInMilliseconds() {
+	return reachDestinationTimeInMilliseconds;
+}
+public void setReachDestinationTimeInMilliseconds(
+		String reachDestinationTimeInMilliseconds) {
+	this.reachDestinationTimeInMilliseconds = reachDestinationTimeInMilliseconds;
+}
 }
