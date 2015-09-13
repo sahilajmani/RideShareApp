@@ -175,7 +175,7 @@ public class DaoImpl implements DaoI {
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);
-		String hql = "select user.pool,min(um.distance) from User user,UserMapping um where um.userA.id='"
+		String hql = "select user.pool.id,min(um.distance) from User user,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and um.userB.id=user.id"
 				+ " and user.pool.isAvailable="
@@ -190,14 +190,14 @@ public class DaoImpl implements DaoI {
 		List<Object[]> result = (List<Object[]>) qry.list();
 		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>();
 		for (Object[] results : result) {
-			Pool pool = ((Pool) results[0]);
+			String poolId = ((String) results[0]);
 			Float distance = (Float) results[1];
-			System.out.println(pool.getId() + "  " + distance);// able to get
+			//System.out.println(pool.getId() + "  " + distance);// able to get
 																// pool and
 																// distance.put
 																// it in java
 																// element
-			Pool newPool = this.getPoolDetails(pool.getId());
+			Pool newPool = this.getPoolDetails(poolId);
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(newPool);
 			matchedPool.setDistance(distance.toString());
@@ -588,10 +588,7 @@ public class DaoImpl implements DaoI {
 			// insert user
 			session.save(user);
 			// persist matched users
-			List<UserMapping> userMatch = findMatchedUser(user.getId());
-			if (null != userMatch && userMatch.size() > 0) {
-				persistUserMatch(userMatch, session);
-			}
+			
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
@@ -599,10 +596,16 @@ public class DaoImpl implements DaoI {
 		} finally {
 			session.close();
 		}
+		
+		List<UserMapping> userMatch = findMatchedUser(user.getId());
+		if (null != userMatch && userMatch.size() > 0) {
+			persistUserMatch(userMatch, session);
+		}
 		try{
 		session = sessionFactory.openSession();			
 		tx = session.beginTransaction();
-		Pool tempPool = this.getPoolDetails("randomvalue");
+		//Pool tempPool = this.getPoolDetails("randomvalue");
+		Pool tempPool =new Pool();
 		User tempUser = this.getUserDetailsByEmail(user.getEmail());
 		tempPool.setId(tempUser.getId());
 		tempPool.setSourceAddress(tempUser.getHomeAddress());
@@ -628,8 +631,13 @@ public class DaoImpl implements DaoI {
 		transaction.setIs_valid(true);
 		transaction.setPool(user.getPool());
 		transaction.setUser(user);
-		Date date = new Date();
-		transaction.setValid_from(date);
+		//Date date = new Date();
+		try {
+			transaction.setValid_from(this.getCurrentTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		transaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 		session.save(transaction);
 	}
@@ -765,8 +773,7 @@ public class DaoImpl implements DaoI {
 
 	// made by vidur- helped to put data
 	public boolean matchTest(String userId) {
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+	
 		// session.save(user);
 		// Pool pool = createPool(user);
 		// user.setPool(pool);
@@ -777,6 +784,8 @@ public class DaoImpl implements DaoI {
 		// persist matched users
 		List<UserMapping> userMatch = findMatchedUser(userId);
 		System.out.println(userMatch.size());
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		if (null != userMatch && userMatch.size() > 0) {
 			persistUserMatch(userMatch, session);
 		}
@@ -785,6 +794,8 @@ public class DaoImpl implements DaoI {
 		return true;
 	}
 
+	
+	
 	@Override
 	public List<User> fetchPoolParticipants(String poolId) {
 		Session session = sessionFactory.openSession();
