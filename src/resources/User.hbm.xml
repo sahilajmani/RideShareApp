@@ -14,6 +14,12 @@
         <property name="companyName" type="java.lang.String">
             <column name="COMPANYNAME" />
         </property>
+         <property name="reachDestinationTimeInMilliseconds" type="java.lang.String">
+            <column name="reachDestinationTimeInMilliseconds" />
+        </property>
+        <property name="leaveDestinationTimeInMilliseconds" type="java.lang.String">
+            <column name="leaveDestinationTimeInMilliseconds" />
+        </property>
         <property name="email" type="java.lang.String">
             <column name="EMAIL" unique="true" unique-key="true"/>
         </property>

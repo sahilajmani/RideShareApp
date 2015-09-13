@@ -21,7 +21,7 @@ Configuration configuration = new Configuration();
            configuration.getProperties()).build();
    SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 Session session=sessionFactory.openSession();
-Transaction tx = session.beginTransaction();
+//Transaction tx = session.beginTransaction();
 	
 User user= new User();
 user.setName("Test2");
@@ -56,13 +56,10 @@ add2.setLattitude(28.495781);
 add2.setLongitude(77.08826);
 user.setHomeAddress(addr);
 user.setOfficeAddress(add2);
-session.save(user);
+//session.save(user);
 System.out.println("address saved successfully ! "+user.getId());
-tx.commit();
+//tx.commit();
 session.close();
-session=sessionFactory.openSession();
-Collection<User> result = UserUtil.getByName(session, "Test1");
-System.out.println(result);
 sessionFactory.close();
 }
 }

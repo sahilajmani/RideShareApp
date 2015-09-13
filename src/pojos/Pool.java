@@ -70,7 +70,9 @@ public void setReachDestinationTime(Date reachDestinationTime) {
 		}else{
 			this.reachDestinationTime = reachDestinationTime;
 		}
+		if(reachDestinationTime!=null){
 		this.reachDestinationTimeInMilliseconds=String.valueOf(reachDestinationTime.getTime());
+		}
 	} catch (ParseException e) {
 		e.printStackTrace();
 	}
@@ -88,7 +90,9 @@ public void setLeaveDestinationTime(Date leaveDestinationTime) {
 		}else{
 			this.leaveDestinationTime = leaveDestinationTime;
 		}
+		if(leaveDestinationTime!=null){
 		this.leaveDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
+		}
 	} catch (ParseException e) {
 		e.printStackTrace();
 	}

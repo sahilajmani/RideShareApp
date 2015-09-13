@@ -32,6 +32,12 @@
         <property name="costPerMonth" type="java.lang.Integer">
             <column name="COSTPERMONTH" />
         </property>
+        <property name="leaveDestinationTimeInMilliseconds" type="java.lang.String">
+            <column name="leaveDestinationTimeInMilliseconds" />
+        </property>
+        <property name="reachDestinationTimeInMilliseconds" type="java.lang.String">
+            <column name="reachDestinationTimeInMilliseconds" />
+        </property>
         <many-to-one name="car" class="pojos.Car" fetch="join">
             <column name="CAR" />
         </many-to-one>
