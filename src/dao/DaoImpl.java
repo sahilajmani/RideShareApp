@@ -126,8 +126,8 @@ public class DaoImpl implements DaoI {
 		} catch (Exception e) {
 			tx.rollback();
 			return false;
-		}finally{
-		session.close();
+		} finally {
+			session.close();
 		}
 		return true;
 	}
@@ -136,10 +136,12 @@ public class DaoImpl implements DaoI {
 		Pool pool = new Pool();
 		pool.setId("randomvalue");
 		pool.setReachDestinationTime(user.getReachDestinationTime());
-		pool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
+		pool.setReachDestinationTimeInMilliseconds(user
+				.getReachDestinationTimeInMilliseconds());
 		pool.setLeaveDestinationTime(user.getLeaveDestinationTime());
-		pool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
-	//	pool.setHostUserId(user.getId());
+		pool.setLeaveDestinationTimeInMilliseconds(user
+				.getLeaveDestinationTimeInMilliseconds());
+		// pool.setHostUserId(user.getId());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1);
@@ -196,11 +198,11 @@ public class DaoImpl implements DaoI {
 		for (Object[] results : result) {
 			String poolId = ((String) results[0]);
 			Float distance = (Float) results[1];
-			//System.out.println(pool.getId() + "  " + distance);// able to get
-																// pool and
-																// distance.put
-																// it in java
-																// element
+			// System.out.println(pool.getId() + "  " + distance);// able to get
+			// pool and
+			// distance.put
+			// it in java
+			// element
 			Pool newPool = this.getPoolDetails(poolId);
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(newPool);
@@ -264,11 +266,20 @@ public class DaoImpl implements DaoI {
 
 	}
 
-	private void persistUserMatch(List<UserMapping> userMapping, Session session) {
-		if (userMapping != null && userMapping.size() > 0) {
-			for (UserMapping userMatch : userMapping) {
-				session.save(userMatch);
+	private void persistUserMatch(List<UserMapping> userMapping) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			if (userMapping != null && userMapping.size() > 0) {
+				for (UserMapping userMatch : userMapping) {
+					session.save(userMatch);
+				}
 			}
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+		} finally {
+			session.close();
 		}
 	}
 
@@ -291,15 +302,15 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Criteria cr = session.createCriteria(User.class);
 		cr.add(Restrictions.eq("email", email));
-		User userVO =null;
+		User userVO = null;
 		if (cr.list() != null && cr.list().size() > 0) {
 			userVO = (User) cr.list().get(0);
-			userVO.setReachDestinationTimeInMilliseconds(String.valueOf(userVO.getReachDestinationTime().getTime()));
-			userVO.setLeaveDestinationTimeInMilliseconds(String.valueOf(userVO.getLeaveDestinationTime().getTime()));
-		}
-		else
-		{
-			userVO=new User();
+			userVO.setReachDestinationTimeInMilliseconds(String.valueOf(userVO
+					.getReachDestinationTime().getTime()));
+			userVO.setLeaveDestinationTimeInMilliseconds(String.valueOf(userVO
+					.getLeaveDestinationTime().getTime()));
+		} else {
+			userVO = new User();
 			userVO.setName("doesntexist");
 		}
 		session.close();
@@ -576,57 +587,62 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public boolean insertUser(User user) {
-		if(user!=null){
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
-		try {
-			Pool pool = createPool(user);
-			user.setPool(pool);
-			user.setActive(true);
-			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
-			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
-			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
+		if (user != null) {
+			Session session = sessionFactory.openSession();
+			Transaction tx = session.beginTransaction();
+			try {
+				Pool pool = createPool(user);
+				user.setPool(pool);
+				user.setActive(true);
+				if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
+					logger.info("Leave Destination Time : "
+							+ user.getLeaveDestinationTimeInMilliseconds());
+					user.setLeaveDestinationTime(new Date(Long.parseLong(user
+							.getLeaveDestinationTimeInMilliseconds())));
+				}
+				if (!user.getReachDestinationTimeInMilliseconds().isEmpty()) {
+					logger.info("Reach Destination Time : "
+							+ user.getReachDestinationTimeInMilliseconds());
+					user.setReachDestinationTime(new Date(Long.parseLong(user
+							.getReachDestinationTimeInMilliseconds())));
+				}
+				// insert user
+				session.save(user);
+				// persist matched users
+				tx.commit();
+
+			} catch (Exception e) {
+				tx.rollback();
+				return false;
+			} finally {
+				session.close();
 			}
-			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
-			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
-			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
-			}
-			// insert user
-			session.save(user);
-			// persist matched users
 			List<UserMapping> userMatch = findMatchedUser(user.getId());
 			if (null != userMatch && userMatch.size() > 0) {
-				persistUserMatch(userMatch, session);
-			}			
-			tx.commit();
-		} catch (Exception e) {
-			tx.rollback();
-			return false;
-		} finally {
-			session.close();
-		}
-		
-		try{
-		session = sessionFactory.openSession();			
-		tx = session.beginTransaction();
-		Pool tempPool = this.getPoolDetails("randomvalue");
-		//Pool tempPool =new Pool();
-		User tempUser = this.getUserDetailsByEmail(user.getEmail());
-		tempPool.setId(tempUser.getId());
-		tempPool.setSourceAddress(tempUser.getHomeAddress());
-		tempPool.setDestinationAddress(tempUser.getOfficeAddress());
-		tempUser.setPool(tempPool);
-		// insert transaction
-		insertTransaction(tempUser, session);
+				persistUserMatch(userMatch);
+			}
 
-		session.update(tempUser.getId(), tempUser);
-		tx.commit();
-		}catch(Exception e){
-			tx.rollback();
-		}finally{
-			session.close();
-		}
-		return true;
+			try {
+				session = sessionFactory.openSession();
+				tx = session.beginTransaction();
+				Pool tempPool = this.getPoolDetails("randomvalue");
+				// Pool tempPool =new Pool();
+				User tempUser = this.getUserDetailsByEmail(user.getEmail());
+				tempPool.setId(tempUser.getId());
+				tempPool.setSourceAddress(tempUser.getHomeAddress());
+				tempPool.setDestinationAddress(tempUser.getOfficeAddress());
+				tempUser.setPool(tempPool);
+				// insert transaction
+				insertTransaction(tempUser, session);
+
+				session.update(tempUser.getId(), tempUser);
+				tx.commit();
+			} catch (Exception e) {
+				tx.rollback();
+			} finally {
+				session.close();
+			}
+			return true;
 		}
 		return false;
 	}
@@ -636,7 +652,7 @@ public class DaoImpl implements DaoI {
 		transaction.setIs_valid(true);
 		transaction.setPool(user.getPool());
 		transaction.setUser(user);
-		//Date date = new Date();
+		// Date date = new Date();
 		try {
 			transaction.setValid_from(this.getCurrentTime());
 		} catch (ParseException e) {
@@ -659,7 +675,7 @@ public class DaoImpl implements DaoI {
 			if (changeAddress) {
 				if (deleteMatchedUsers(user.getId())) {
 					List<UserMapping> userMatch = findMatchedUser(user.getId());
-					persistUserMatch(userMatch, session);
+					persistUserMatch(userMatch);
 					String poolId = getPoolForUser(user.getId(), session);
 					if (poolId != null
 							&& !poolId.equalsIgnoreCase(user.getId())) {
@@ -681,28 +697,38 @@ public class DaoImpl implements DaoI {
 				User tempUser = this.getUserDetails(user.getId());
 				user.setHomeAddress(tempUser.getHomeAddress());
 				user.setOfficeAddress(tempUser.getOfficeAddress());
-				tmpPool=tempUser.getPool();
+				tmpPool = tempUser.getPool();
 			}
-			
+
 			// update user
-			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
-			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
-			if(tmpPool!=null){
-			tmpPool.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
-			tmpPool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
+			if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
+				logger.info("Leave Destination Time : "
+						+ user.getLeaveDestinationTimeInMilliseconds());
+				if (tmpPool != null) {
+					tmpPool.setLeaveDestinationTime(new Date(Long
+							.parseLong(user
+									.getLeaveDestinationTimeInMilliseconds())));
+					tmpPool.setLeaveDestinationTimeInMilliseconds(user
+							.getLeaveDestinationTimeInMilliseconds());
+				}
+				user.setLeaveDestinationTime(new Date(Long.parseLong(user
+						.getLeaveDestinationTimeInMilliseconds())));
 			}
-			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
+			if (!user.getReachDestinationTimeInMilliseconds().isEmpty()) {
+				logger.info("Reach Destination Time : "
+						+ user.getReachDestinationTimeInMilliseconds());
+				if (tmpPool != null) {
+					tmpPool.setReachDestinationTime(new Date(Long
+							.parseLong(user
+									.getReachDestinationTimeInMilliseconds())));
+					tmpPool.setReachDestinationTimeInMilliseconds(user
+							.getReachDestinationTimeInMilliseconds());
+				}
+				user.setReachDestinationTime(new Date(Long.parseLong(user
+						.getReachDestinationTimeInMilliseconds())));
 			}
-			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
-			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
-			if(tmpPool!=null){
-			tmpPool.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
-			tmpPool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
-			}
-			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
-			}
-			if(tmpPool!=null){
-			user.setPool(tmpPool);
+			if (tmpPool != null) {
+				user.setPool(tmpPool);
 			}
 			session.update(user.getId(), user);
 			tx.commit();
@@ -710,7 +736,7 @@ public class DaoImpl implements DaoI {
 			logger.info(e.getMessage());
 			e.printStackTrace();
 			tx.rollback();
-			
+
 			return false;
 		} finally {
 			session.close();
@@ -795,7 +821,7 @@ public class DaoImpl implements DaoI {
 
 	// made by vidur- helped to put data
 	public boolean matchTest(String userId) {
-	
+
 		// session.save(user);
 		// Pool pool = createPool(user);
 		// user.setPool(pool);
@@ -809,15 +835,13 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		if (null != userMatch && userMatch.size() > 0) {
-			persistUserMatch(userMatch, session);
+			persistUserMatch(userMatch);
 		}
 		tx.commit();
 		session.close();
 		return true;
 	}
 
-	
-	
 	@Override
 	public List<User> fetchPoolParticipants(String poolId) {
 		Session session = sessionFactory.openSession();
@@ -829,9 +853,9 @@ public class DaoImpl implements DaoI {
 		if (cr.list() != null && cr.list().size() > 0) {
 			participants = cr.list();
 		}
-/*		for(User user:poolParticipants){
-			participants.add(user);
-		}*/
+		/*
+		 * for(User user:poolParticipants){ participants.add(user); }
+		 */
 		session.close();
 		return participants;
 	}
