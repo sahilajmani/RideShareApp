@@ -88,6 +88,7 @@ public class User implements Serializable {
 			}else{
 				this.reachDestinationTime = reachDestinationTime;
 			}
+			this.reachDestinationTimeInMilliseconds=String.valueOf(reachDestinationTime.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -106,6 +107,7 @@ public class User implements Serializable {
 			}else{
 				this.leaveDestinationTime = leaveDestinationTime;
 			}
+			this.reachDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
