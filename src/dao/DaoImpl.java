@@ -594,7 +594,10 @@ public class DaoImpl implements DaoI {
 			// insert user
 			session.save(user);
 			// persist matched users
-			
+			List<UserMapping> userMatch = findMatchedUser(user.getId());
+			if (null != userMatch && userMatch.size() > 0) {
+				persistUserMatch(userMatch, session);
+			}			
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
@@ -603,10 +606,6 @@ public class DaoImpl implements DaoI {
 			session.close();
 		}
 		
-		List<UserMapping> userMatch = findMatchedUser(user.getId());
-		if (null != userMatch && userMatch.size() > 0) {
-			persistUserMatch(userMatch, session);
-		}
 		try{
 		session = sessionFactory.openSession();			
 		tx = session.beginTransaction();

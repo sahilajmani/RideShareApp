@@ -107,7 +107,7 @@ public class User implements Serializable {
 			}else{
 				this.leaveDestinationTime = leaveDestinationTime;
 			}
-			this.reachDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
+			this.leaveDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
