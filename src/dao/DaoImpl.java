@@ -682,14 +682,20 @@ public class DaoImpl implements DaoI {
 				user.setOfficeAddress(tempUser.getOfficeAddress());
 			}
 			// update user
+			Pool tmpPool = user.getPool();
 			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
+			tmpPool.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
+			tmpPool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
 			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
 			}
 			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
+			tmpPool.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
+			tmpPool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
 			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
 			}
+			user.setPool(tmpPool);
 			session.update(user.getId(), user);
 			tx.commit();
 		} catch (Exception e) {
