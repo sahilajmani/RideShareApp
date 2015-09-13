@@ -40,8 +40,6 @@ public class ProfileService {
 			user.setDistance((float) distance);
 			if (dao.insertUser(user)) {
 				logger.info("User["+ user.getId() +"] Inserted");
-				user.setReachDestinationTimeInMilliseconds(String.valueOf(user.getReachDestinationTime().getTime()));
-				user.setLeaveDestinationTimeInMilliseconds(String.valueOf(user.getLeaveDestinationTime().getTime()));
 				restServiceResponse.setUser(user);
 				restServiceResponse.setResponse(true);
 				return restServiceResponse;
@@ -88,6 +86,8 @@ public class ProfileService {
 			}
 			if (dao.updateUser(updateUserVO.getUser(),
 					updateUserVO.isChangeAddress())) {
+				User user = dao.getUserDetails(updateUserVO.getUser().getId());
+				serviceResponse.setUser(user);
 				serviceResponse.setResponse(true);
 			} else {
 				serviceResponse.setResponse(false);

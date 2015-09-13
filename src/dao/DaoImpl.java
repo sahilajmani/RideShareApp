@@ -609,8 +609,8 @@ public class DaoImpl implements DaoI {
 		try{
 		session = sessionFactory.openSession();			
 		tx = session.beginTransaction();
-		//Pool tempPool = this.getPoolDetails("randomvalue");
-		Pool tempPool =new Pool();
+		Pool tempPool = this.getPoolDetails("randomvalue");
+		//Pool tempPool =new Pool();
 		User tempUser = this.getUserDetailsByEmail(user.getEmail());
 		tempPool.setId(tempUser.getId());
 		tempPool.setSourceAddress(tempUser.getHomeAddress());
@@ -653,6 +653,8 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		int flag = 0;
 		// if change in address
+		Pool tmpPool = null;
+
 		try {
 			if (changeAddress) {
 				if (deleteMatchedUsers(user.getId())) {
@@ -679,27 +681,36 @@ public class DaoImpl implements DaoI {
 				User tempUser = this.getUserDetails(user.getId());
 				user.setHomeAddress(tempUser.getHomeAddress());
 				user.setOfficeAddress(tempUser.getOfficeAddress());
+				tmpPool=tempUser.getPool();
 			}
+			
 			// update user
-			Pool tmpPool = user.getPool();
 			if(!user.getLeaveDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Leave Destination Time : "+user.getLeaveDestinationTimeInMilliseconds());
+			if(tmpPool!=null){
 			tmpPool.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
 			tmpPool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
+			}
 			user.setLeaveDestinationTime(new Date(Long.parseLong(user.getLeaveDestinationTimeInMilliseconds())));
 			}
 			if(!user.getReachDestinationTimeInMilliseconds().isEmpty()){
 			logger.info("Reach Destination Time : "+user.getReachDestinationTimeInMilliseconds());	
+			if(tmpPool!=null){
 			tmpPool.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
 			tmpPool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
+			}
 			user.setReachDestinationTime(new Date(Long.parseLong(user.getReachDestinationTimeInMilliseconds())));
 			}
+			if(tmpPool!=null){
 			user.setPool(tmpPool);
+			}
 			session.update(user.getId(), user);
 			tx.commit();
 		} catch (Exception e) {
 			logger.info(e.getMessage());
+			e.printStackTrace();
 			tx.rollback();
+			
 			return false;
 		} finally {
 			session.close();

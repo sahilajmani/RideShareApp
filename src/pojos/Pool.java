@@ -63,15 +63,11 @@ public Date getReachDestinationTime() {
 public void setReachDestinationTime(Date reachDestinationTime) {
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	try {
-		System.out.println(reachDestinationTime);
-		if(this.reachDestinationTime!=null){
+		if(reachDestinationTime!=null){
 		this.reachDestinationTime = sdf.parse(sdf
 				.format(reachDestinationTime));
 		}else{
 			this.reachDestinationTime = reachDestinationTime;
-		}
-		if(reachDestinationTime!=null){
-		this.reachDestinationTimeInMilliseconds=String.valueOf(reachDestinationTime.getTime());
 		}
 	} catch (ParseException e) {
 		e.printStackTrace();
@@ -83,15 +79,11 @@ public Date getLeaveDestinationTime() {
 public void setLeaveDestinationTime(Date leaveDestinationTime) {
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	try {
-		System.out.println(leaveDestinationTime);
-		if(this.leaveDestinationTime!=null){
+		if(leaveDestinationTime!=null){
 		this.leaveDestinationTime = sdf.parse(sdf
 				.format(leaveDestinationTime));
 		}else{
 			this.leaveDestinationTime = leaveDestinationTime;
-		}
-		if(leaveDestinationTime!=null){
-		this.leaveDestinationTimeInMilliseconds=String.valueOf(leaveDestinationTime.getTime());
 		}
 	} catch (ParseException e) {
 		e.printStackTrace();
