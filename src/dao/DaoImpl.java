@@ -136,9 +136,9 @@ public class DaoImpl implements DaoI {
 		Pool pool = new Pool();
 		pool.setId("randomvalue");
 		pool.setReachDestinationTime(user.getReachDestinationTime());
-		pool.setReachDestinationTimeInMillisecond(user.getReachDestinationTimeInMilliseconds());
+		pool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
 		pool.setLeaveDestinationTime(user.getLeaveDestinationTime());
-		pool.setLeaveDestinationTimeInMillisecond(user.getLeaveDestinationTimeInMilliseconds());
+		pool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
 	//	pool.setHostUserId(user.getId());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
