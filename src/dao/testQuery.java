@@ -4,6 +4,7 @@ import java.util.List;
 
 import pojos.MatchedPoolsVO;
 import pojos.PoolRequest;
+import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
 
@@ -43,9 +44,10 @@ public class testQuery {
 	//	System.out.println(db.getmatchedPool("user2").size());
 	//	System.out.println(db.leavePool("user6","user4"));
 	//	db.matchTest("745be031-5167-11e5-a9c3-02b93fe38caf");
-		List<MatchedPoolsVO> map =db.getmatchedPool("7d3697e0-59f2-11e5-9624-02b93fe38caf");
+	//	List<MatchedPoolsVO> map =db.getmatchedPool("7d3697e0-59f2-11e5-9624-02b93fe38caf");
 	//	System.out.println(db.matchTest("fef5eb9a-59f3-11e5-9624-02b93fe38caf"));
-		System.out.println(map.size());
+	//	System.out.println(db.updatePoolRequest("958f932b-5a39-11e5-869d-02b93fe38caf",1));
+List<Transactions> t =	db.getUserPoolRecord("17e1794b-5a20-11e5-869d-02b93fe38caf");
 	}
 
 }
