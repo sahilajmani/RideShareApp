@@ -663,7 +663,7 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		int flag = 0;
 		// if change in address
-		Pool tmpPool = null;
+		Pool tmpPool = user.getPool();
 
 		try {
 			if (changeAddress) {
@@ -691,9 +691,7 @@ public class DaoImpl implements DaoI {
 				User tempUser = this.getUserDetails(user.getId());
 				user.setHomeAddress(tempUser.getHomeAddress());
 				user.setOfficeAddress(tempUser.getOfficeAddress());
-				tmpPool = tempUser.getPool();
 			}
-
 			// update user
 			if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
 				logger.info("Leave Destination Time : "
