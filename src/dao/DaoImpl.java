@@ -134,7 +134,7 @@ public class DaoImpl implements DaoI {
 
 	private Pool createPool(User user) {
 		Pool pool = new Pool();
-		pool.setId("randomvalue");
+		pool.setId(user.getId());
 		pool.setReachDestinationTime(user.getReachDestinationTime());
 		pool.setReachDestinationTimeInMilliseconds(user
 				.getReachDestinationTimeInMilliseconds());
@@ -142,6 +142,8 @@ public class DaoImpl implements DaoI {
 		pool.setLeaveDestinationTimeInMilliseconds(user
 				.getLeaveDestinationTimeInMilliseconds());
 		// pool.setHostUserId(user.getId());
+		pool.setSourceAddress(user.getHomeAddress());
+		pool.setDestinationAddress(user.getOfficeAddress());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1);
@@ -591,8 +593,6 @@ public class DaoImpl implements DaoI {
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
 			try {
-				Pool pool = createPool(user);
-				user.setPool(pool);
 				user.setActive(true);
 				if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
 					logger.info("Leave Destination Time : "
@@ -625,17 +625,11 @@ public class DaoImpl implements DaoI {
 			try {
 				session = sessionFactory.openSession();
 				tx = session.beginTransaction();
-				Pool tempPool = this.getPoolDetails("randomvalue");
-				// Pool tempPool =new Pool();
-				User tempUser = this.getUserDetailsByEmail(user.getEmail());
-				tempPool.setId(tempUser.getId());
-				tempPool.setSourceAddress(tempUser.getHomeAddress());
-				tempPool.setDestinationAddress(tempUser.getOfficeAddress());
-				tempUser.setPool(tempPool);
+				Pool pool = createPool(user);
+				user.setPool(pool);
 				// insert transaction
-				insertTransaction(tempUser, session);
-
-				session.update(tempUser.getId(), tempUser);
+				insertTransaction(user, session);
+				session.update(user.getId(), user);
 				tx.commit();
 			} catch (Exception e) {
 				tx.rollback();
