@@ -24,11 +24,11 @@ public class IChatImpl implements IChat {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		Criteria criteria = session.createCriteria(PrivateChat.class);
-		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId)).add(Restrictions.eqOrIsNull("isDelivered", false));
+		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId));///*.add(Restrictions.eqOrIsNull("isDelivered", false)*/);
 		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTime")).list();
 		if(result != null && result.size() > 0){
 			int resultCount = 0;
-			if(markAsDelivered){
+			/*if(markAsDelivered){
 				for(PrivateChat chat : result){
 					chat.setIsDelivered(true);
 					session.update(chat);
@@ -36,7 +36,7 @@ public class IChatImpl implements IChat {
 					
 				}
 			logger.log( Level.INFO, "updated private chats, marked as read "+resultCount);
-			}
+			}*/
 		}
 		tx.commit();
 		session.close();

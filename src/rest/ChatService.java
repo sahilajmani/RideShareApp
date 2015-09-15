@@ -46,6 +46,7 @@ public class ChatService {
 //		chatResult.setResult(msgs);
 		chatResult.setChats(chats);
 		}catch(Exception e){
+			e.printStackTrace();
 			chatResult.setSuccess(false);
 			chatResult.setErrorMsg(e.getMessage());
 			return chatResult;
@@ -58,13 +59,12 @@ public class ChatService {
 //	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetChatResult sendChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id,@FormParam("message") String message) throws ParseException{
-		System.out.println(sender_Id+"\t"+receiver_id);
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
 		// validate senderId and receiverId
 		User sender = RideSharingUtil.getDaoInstance().getUserDetails(sender_Id);
 		User receiver = RideSharingUtil.getDaoInstance().getUserDetails(receiver_id);
-		if( receiver == null){
+		if( receiver == null ||sender ==null){
 			chatResult.setErrorMsg("Invalid user/reciver ID");
 			chatResult.setSuccess(false);
 			return chatResult;
