@@ -144,7 +144,7 @@ public class DaoImpl implements DaoI {
 		// pool.setHostUserId(user.getId());
 		pool.setSourceAddress(user.getHomeAddress());
 		pool.setDestinationAddress(user.getOfficeAddress());
-		pool.setIs_active(true);
+		pool.setIs_active(false);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1);
 		pool.setMax_members(4);
@@ -413,6 +413,7 @@ public class DaoImpl implements DaoI {
 		// Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		// pool.getParticipants().add(user);
+		pool.setIs_active(true);
 		user.setPool(pool);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
@@ -505,6 +506,7 @@ public class DaoImpl implements DaoI {
 				// Session session = sessionFactory.openSession();
 				// pool.getParticipants().removeAll(c);
 				// int noOfMembers = pool.getNumberOfMembers();
+				pool.setIs_active(false);
 				pool.setNumberOfMembers(1);
 				String hostUserId = "";
 				// Collection<User> participants = pool.getParticipants();
@@ -658,12 +660,12 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public boolean updateUser(User user, boolean changeAddress) {
+	public User updateUser(User user, boolean changeAddress) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		int flag = 0;
 		// if change in address
-		Pool tmpPool = user.getPool();
+		Pool tmpPool = this.getPoolDetails(user.getPool().getId());
 
 		try {
 			if (changeAddress) {
@@ -683,7 +685,25 @@ public class DaoImpl implements DaoI {
 							}
 						}
 						if (flag != 1) {
-							return false;
+							//If no pools match, then remove from the existing pool and set the default pool
+							tmpPool = this.getPoolDetails(user.getId());
+							tmpPool.setSourceAddress(user.getHomeAddress());
+							tmpPool.setDestinationAddress(user.getOfficeAddress());
+							tmpPool.setIs_active(false);							
+						}
+					}else{
+						tmpPool.setSourceAddress(user.getHomeAddress());
+						tmpPool.setDestinationAddress(user.getOfficeAddress());
+						if(tmpPool.isIs_active()){
+							//set the default pool of all the participants
+							List<User> participants = this.fetchPoolParticipants(tmpPool.getId());
+							for(User guestUser:participants){
+								if(!guestUser.getId().equalsIgnoreCase(user.getId())){
+									guestUser.setPool(this.getPoolDetails(guestUser.getId()));
+									session.update(guestUser.getId(), guestUser);
+								}
+							}
+							
 						}
 					}
 				}
@@ -729,11 +749,11 @@ public class DaoImpl implements DaoI {
 			e.printStackTrace();
 			tx.rollback();
 
-			return false;
+			return null;
 		} finally {
 			session.close();
 		}
-		return true;
+		return user;
 	}
 
 	private String getPoolForUser(String userId, Session session) {

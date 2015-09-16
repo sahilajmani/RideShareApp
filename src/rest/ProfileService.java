@@ -84,10 +84,10 @@ public class ProfileService {
 								.getOfficeAddress().getLongitude());
 				updateUserVO.getUser().setDistance((float) distance);
 			}
-			if (dao.updateUser(updateUserVO.getUser(),
-					updateUserVO.isChangeAddress())) {
-				User user = dao.getUserDetails(updateUserVO.getUser().getId());
-				serviceResponse.setUser(user);
+			User updatedUser = dao.updateUser(updateUserVO.getUser(),
+					updateUserVO.isChangeAddress());
+			if (null != updatedUser) {
+				serviceResponse.setUser(updatedUser);
 				serviceResponse.setResponse(true);
 			} else {
 				serviceResponse.setResponse(false);

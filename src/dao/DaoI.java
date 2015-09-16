@@ -19,7 +19,7 @@ public interface DaoI{
 	public List<Transactions> getUserPoolRecord(String userId);
 	public Pool getPoolDetails(String poolId);
 	boolean insertUser(User user);
-	public boolean updateUser(User user,boolean changeAddress);
+	public User updateUser(User user,boolean changeAddress);
 	public User getUserDetailsByEmail(String email);
 	public List<PoolRequest> getIncomingPoolRequests(String userId);
 	boolean updatePoolRequest(String requestId, int response);
