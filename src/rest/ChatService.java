@@ -3,10 +3,10 @@ package rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -18,17 +18,18 @@ import RestResponse.GetChatResult;
 import pojos.PrivateChat;
 import pojos.User;
 import utility.RideSharingUtil;
+import vo.ChatJson;
 @Path("/chat")
 public class ChatService {
 	@POST
 	@Path("getChat")
-//	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(/*@FormParam("sender_Id") String sender_Id,*/ @FormParam("receiver_Id") String receiver_id){
+	public GetChatResult getChat(ChatJson chatJson){
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( receiver_id, true);
+		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( chatJson.getReceiver_Id(), true);
 		Collection <ChatResults> chats = new ArrayList<ChatResults>();
 		ChatResults chatres = null;
 		if(result!=null && result.size() > 0){
@@ -56,14 +57,14 @@ public class ChatService {
 	}
 	@POST
 	@Path("sendChat")
-//	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult sendChat(@FormParam("sender_Id") String sender_Id, @FormParam("receiver_Id") String receiver_id,@FormParam("message") String message) throws ParseException{
+	public GetChatResult sendChat(ChatJson chatJson) throws ParseException{
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
 		// validate senderId and receiverId
-		User sender = RideSharingUtil.getDaoInstance().getUserDetails(sender_Id);
-		User receiver = RideSharingUtil.getDaoInstance().getUserDetails(receiver_id);
+		User sender = RideSharingUtil.getDaoInstance().getUserDetails(chatJson.getSender_Id());
+		User receiver = RideSharingUtil.getDaoInstance().getUserDetails(chatJson.getReceiver_Id());
 		if( receiver == null ||sender ==null){
 			chatResult.setErrorMsg("Invalid user/reciver ID");
 			chatResult.setSuccess(false);
@@ -71,7 +72,7 @@ public class ChatService {
 		}
 		chat.setReceiver(receiver);
 		chat.setSender(sender);
-		chat.setMsg(message);
+		chat.setMsg(chatJson.getMessage());
 		chat.setIsDelivered(false);
 		System.out.println(new Date().getTime());
 		Date date = new Date();
