@@ -8,11 +8,18 @@ public class ChatResults {
 	private String senderId;
 	private String message;
 	private String senderName;
+	private Long createTimeSeconds;
 	public String getReceiverId() {
 		return receiverId;
 	}
 	public void setReceiverId(String receiverId) {
 		this.receiverId = receiverId;
+	}
+	public Long getCreateTimeSeconds() {
+		return createTimeSeconds;
+	}
+	public void setCreateTimeSeconds(Long createTimeSeconds) {
+		this.createTimeSeconds = createTimeSeconds;
 	}
 	public String getSenderId() {
 		return senderId;

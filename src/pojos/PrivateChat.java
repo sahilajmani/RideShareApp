@@ -10,7 +10,14 @@ public class PrivateChat {
 	private User receiver;
 	private String msg;
 	private Date createTime;
+	private Long createTimeSeconds;
 	
+	public Long getCreateTimeSeconds() {
+		return createTimeSeconds;
+	}
+	public void setCreateTimeSeconds(Long createTimeSeconds) {
+		this.createTimeSeconds = createTimeSeconds;
+	}
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -64,5 +71,22 @@ public class PrivateChat {
 	public void setIsDelivered(Boolean isDelivered) {
 		this.isDelivered = isDelivered;
 	}
+	/*@Override
+	public boolean equals(Object ob2){
+		if(ob2 instanceof PrivateChat){
+			if((((PrivateChat) ob2).getSender().getId()).equals(getSender().getId())){
+				if((((PrivateChat) ob2).getReceiver().getId()).equals(getReceiver().getId())){
+					if(getMsg().equals(((PrivateChat) ob2).getMsg())){
+						if(getCreateTimeSeconds()!=null &&(getCreateTimeSeconds() == ((PrivateChat) ob2).getCreateTimeSeconds())){
+						return true;
+						}
+					}
+				}	
+			}
+		}
+		return isDelivered;
+		
+		
+	}*/
 	
 }

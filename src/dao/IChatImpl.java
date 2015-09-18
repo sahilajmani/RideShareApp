@@ -1,6 +1,8 @@
 package dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,10 +24,24 @@ public class IChatImpl implements IChat {
 	@Override
 	public Collection<PrivateChat> getPrivateChats(String receiverId, boolean markAsDelivered) {
 		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+//		Transaction tx = session.beginTransaction();
 		Criteria criteria = session.createCriteria(PrivateChat.class);
-		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId));///*.add(Restrictions.eqOrIsNull("isDelivered", false)*/);
-		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTime")).list();
+		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId)).addOrder(Order.asc("sender.id"));///*.add(Restrictions.eqOrIsNull("isDelivered", false)*/);
+		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTimeSeconds")).list();
+		if(result!=null){
+		Collection<PrivateChat> copyResult = new ArrayList<PrivateChat>();
+		PrivateChat lastChat = null;
+		for(PrivateChat chat : result){
+			if(lastChat!=null&& (chat.getSender().getId().equals(lastChat.getSender().getId()))){
+				lastChat.setMsg(lastChat.getMsg()+" <eom> "+chat.getMsg());
+				copyResult.add(chat);
+			}else{
+				lastChat=chat;
+				
+			}
+		}
+		result.removeAll(copyResult);
+		}
 		if(result != null && result.size() > 0){
 			int resultCount = 0;
 			/*if(markAsDelivered){
@@ -38,7 +54,7 @@ public class IChatImpl implements IChat {
 			logger.log( Level.INFO, "updated private chats, marked as read "+resultCount);
 			}*/
 		}
-		tx.commit();
+//		tx.commit();
 		session.close();
 		return result;
 	}

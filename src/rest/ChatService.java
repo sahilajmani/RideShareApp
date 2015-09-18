@@ -40,6 +40,7 @@ public class ChatService {
 			chatres.setSenderId(chat.getSender().getId());
 			chatres.setSenderName(chat.getSender().getName());
 			chatres.setCreateTime(chat.getCreateTime());
+			chatres.setCreateTimeSeconds(chat.getCreateTimeSeconds());
 //			msgs.add(chat.getMsg());
 			chats.add(chatres);
 		} 
@@ -79,6 +80,7 @@ public class ChatService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		
 		chat.setCreateTime(sdf.parse(sdf.format(date)));//new Date().getTime()));
+		chat.setCreateTimeSeconds(System.currentTimeMillis());
 		//chat.setCreateTime(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
 //		chat.setCreateTime(new Date(System.currentTimeMillis()));
 		try{

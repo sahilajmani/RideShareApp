@@ -21,6 +21,9 @@
             <column name="CREATETIME" />
         </property>
          -->
+         <property name="createTimeSeconds" type="java.lang.Long">
+            <column name="createTimeSeconds" />
+        </property>
               <property name="createTime" type="java.util.Date">
             <column name="CREATETIME" />
         </property>
