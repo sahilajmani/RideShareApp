@@ -144,10 +144,10 @@ public class DaoImpl implements DaoI {
 		// pool.setHostUserId(user.getId());
 		pool.setSourceAddress(user.getHomeAddress());
 		pool.setDestinationAddress(user.getOfficeAddress());
-		pool.setIs_active(false);
+		pool.setIs_active(true);
 		pool.setIsAvailable(true);
-		pool.setNumberOfMembers(1);
-		pool.setMax_members(4);
+		pool.setNumberOfMembers(1); //to be made dynamic
+		pool.setMax_members(4);// to be made dynamic
 		return pool;
 	}
 
@@ -663,49 +663,53 @@ public class DaoImpl implements DaoI {
 	public User updateUser(User user, boolean changeAddress) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		int flag = 0;
+/*		int flag = 0;*/
 		// if change in address
-		Pool tmpPool = this.getPoolDetails(user.getPool().getId());
+		Pool tmpPool = new Pool();
+		if(user.getPool()!=null){
+		 tmpPool = this.getPoolDetails(user.getPool().getId());
+		}else{
+			tmpPool= this.getPoolDetails(user.getId());
+		}
 
 		try {
 			if (changeAddress) {
 				if (deleteMatchedUsers(user.getId())) {
 					List<UserMapping> userMatch = findMatchedUser(user.getId());
-					persistUserMatch(userMatch);
-					String poolId = getPoolForUser(user.getId(), session);
-					if (poolId != null
-							&& !poolId.equalsIgnoreCase(user.getId())) {
-						List<Pool> recommendedPools = recommendedPools(user
-								.getId());
-						for (Pool pool : recommendedPools) {
-							if (user.getPool().getId()
-									.equalsIgnoreCase(pool.getId())) {
-								flag = 1;
-								break;
-							}
-						}
-						if (flag != 1) {
-							//If no pools match, then remove from the existing pool and set the default pool
-							tmpPool = this.getPoolDetails(user.getId());
-							tmpPool.setSourceAddress(user.getHomeAddress());
-							tmpPool.setDestinationAddress(user.getOfficeAddress());
-							tmpPool.setIs_active(false);							
-						}
-					}else{
-						tmpPool.setSourceAddress(user.getHomeAddress());
-						tmpPool.setDestinationAddress(user.getOfficeAddress());
-						if(tmpPool.isIs_active()){
-							//set the default pool of all the participants
-							List<User> participants = this.fetchPoolParticipants(tmpPool.getId());
-							for(User guestUser:participants){
-								if(!guestUser.getId().equalsIgnoreCase(user.getId())){
-									guestUser.setPool(this.getPoolDetails(guestUser.getId()));
-									session.update(guestUser.getId(), guestUser);
-								}
-							}
-							
-						}
+					persistUserMatch(userMatch);					
+					if (user.getPool() !=null && leavePool(user.getId(), user.getPool().getId())) {
+						user.getPool().setSourceAddress(user.getHomeAddress());
+						user.getPool().setDestinationAddress(
+								user.getOfficeAddress());
 					}
+					/*
+					 * String poolId = getPoolForUser(user.getId(), session); if
+					 * (poolId != null &&
+					 * !poolId.equalsIgnoreCase(user.getId())) { List<Pool>
+					 * recommendedPools = recommendedPools(user .getId()); for
+					 * (Pool pool : recommendedPools) { if
+					 * (user.getPool().getId() .equalsIgnoreCase(pool.getId()))
+					 * { flag = 1; break; } } if (flag != 1) { //If no pools
+					 * match, then remove from the existing pool and set the
+					 * default pool tmpPool = this.getPoolDetails(user.getId());
+					 * tmpPool.setSourceAddress(user.getHomeAddress());
+					 * tmpPool.setDestinationAddress(user.getOfficeAddress());
+					 * tmpPool.setIs_active(false); } }else{
+					 */
+					/*
+					 * tmpPool.setSourceAddress(user.getHomeAddress());
+					 * tmpPool.setDestinationAddress(user.getOfficeAddress());
+					 * if(tmpPool.isIs_active()){ //set the default pool of all
+					 * the participants List<User> participants =
+					 * this.fetchPoolParticipants(tmpPool.getId()); for(User
+					 * guestUser:participants){
+					 * if(!guestUser.getId().equalsIgnoreCase(user.getId())){
+					 * guestUser
+					 * .setPool(this.getPoolDetails(guestUser.getId()));
+					 * session.update(guestUser.getId(), guestUser); } }
+					 * 
+					 * } }
+					 */
 				}
 			} else {
 				User tempUser = this.getUserDetails(user.getId());
