@@ -8,8 +8,10 @@ import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -21,15 +23,14 @@ import utility.RideSharingUtil;
 import vo.ChatJson;
 @Path("/chat")
 public class ChatService {
-	@POST
+	@GET
 	@Path("getChat")
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(ChatJson chatJson){
+	public GetChatResult getChat(@PathParam("userId")String chatJson){
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( chatJson.getReceiver_Id(), true);
+		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( chatJson, true);
 		Collection <ChatResults> chats = new ArrayList<ChatResults>();
 		ChatResults chatres = null;
 		if(result!=null && result.size() > 0){
