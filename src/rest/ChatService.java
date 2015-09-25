@@ -26,7 +26,7 @@ public class ChatService {
 	@GET
 	@Path("getChat")
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(@PathParam("userId")String chatJson){
+	public GetChatResult getChat(@PathParam("receiverId")String chatJson){
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
