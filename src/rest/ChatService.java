@@ -23,14 +23,15 @@ import utility.RideSharingUtil;
 import vo.ChatJson;
 @Path("/chat")
 public class ChatService {
+	
 	@GET
 	@Path("getChat")
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(@PathParam("receiverId")String chatJson){
+	public GetChatResult getChat(@PathParam("receiverId")String receiverId){
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( chatJson, true);
+		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats(receiverId, true);
 		Collection <ChatResults> chats = new ArrayList<ChatResults>();
 		ChatResults chatres = null;
 		if(result!=null && result.size() > 0){
