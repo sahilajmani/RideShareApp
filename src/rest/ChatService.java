@@ -7,12 +7,11 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import RestResponse.ChatResults;
@@ -23,15 +22,16 @@ import utility.RideSharingUtil;
 import vo.ChatJson;
 @Path("/chat")
 public class ChatService {
-	
 	@GET
 	@Path("getChat")
 	@Produces(MediaType.APPLICATION_JSON)
-	public GetChatResult getChat(@PathParam("receiverId")String receiverId){
+	public GetChatResult getChat(@QueryParam("receiverId") String chatJson1){
+		ChatJson chatJson= new ChatJson();
+		chatJson.setReceiver_Id(chatJson1);
 		GetChatResult chatResult = new GetChatResult();
 		Collection<String> msgs = new ArrayList<String>();
 		try{
-		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats(receiverId, true);
+		Collection <PrivateChat> result = RideSharingUtil.getChatInstance().getPrivateChats( chatJson.getReceiver_Id(), true);
 		Collection <ChatResults> chats = new ArrayList<ChatResults>();
 		ChatResults chatres = null;
 		if(result!=null && result.size() > 0){
@@ -42,7 +42,6 @@ public class ChatService {
 			chatres.setSenderId(chat.getSender().getId());
 			chatres.setSenderName(chat.getSender().getName());
 			chatres.setCreateTime(chat.getCreateTime());
-			chatres.setCreateTimeSeconds(chat.getCreateTimeSeconds());
 //			msgs.add(chat.getMsg());
 			chats.add(chatres);
 		} 
