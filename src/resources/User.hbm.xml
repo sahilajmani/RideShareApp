@@ -50,10 +50,10 @@
         <property name="distance" type="float">
             <column name="DISTANCE" />
         </property>
-        <many-to-one name="homeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="homeAddress" class="pojos.Address" fetch="join" cascade="save-update" lazy="false">
             <column name="HOMEADDRESS" />
         </many-to-one>
-        <many-to-one name="officeAddress" class="pojos.Address" fetch="join" cascade="save-update">
+        <many-to-one name="officeAddress" class="pojos.Address" fetch="join" cascade="save-update" lazy="false">
             <column name="OFFICEADDRESS" />
         </many-to-one>
         <property name="duration" type="int">

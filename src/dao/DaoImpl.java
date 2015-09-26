@@ -146,7 +146,7 @@ public class DaoImpl implements DaoI {
 		pool.setDestinationAddress(user.getOfficeAddress());
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
-		pool.setNumberOfMembers(1); //to be made dynamic
+		pool.setNumberOfMembers(1); // to be made dynamic
 		pool.setMax_members(4);// to be made dynamic
 		return pool;
 	}
@@ -249,6 +249,7 @@ public class DaoImpl implements DaoI {
 			Query qry = session.createQuery(hql);
 
 			List<User> userList = qry.list();
+			session.close();
 			System.out.println(userList.size());
 			UserMatching userMatch = new UserMatching();
 			try {
@@ -619,11 +620,18 @@ public class DaoImpl implements DaoI {
 			} finally {
 				session.close();
 			}
+			System.out.println("inserted success1");
 			List<UserMapping> userMatch = findMatchedUser(user.getId());
 			if (null != userMatch && userMatch.size() > 0) {
 				persistUserMatch(userMatch);
 			}
-
+			System.out.println("inserted success2");
+			List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
+			
+			if (null != matchForOneUser && matchForOneUser.size() > 0) {
+				persistUserMatch(matchForOneUser);
+			}
+			System.out.println("inserted success2");
 			try {
 				session = sessionFactory.openSession();
 				tx = session.beginTransaction();
@@ -663,21 +671,22 @@ public class DaoImpl implements DaoI {
 	public User updateUser(User user, boolean changeAddress) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-/*		int flag = 0;*/
+		/* int flag = 0; */
 		// if change in address
 		Pool tmpPool = new Pool();
-		if(user.getPool()!=null){
-		 tmpPool = this.getPoolDetails(user.getPool().getId());
-		}else{
-			tmpPool= this.getPoolDetails(user.getId());
+		if (user.getPool() != null) {
+			tmpPool = this.getPoolDetails(user.getPool().getId());
+		} else {
+			tmpPool = this.getPoolDetails(user.getId());
 		}
 
 		try {
 			if (changeAddress) {
 				if (deleteMatchedUsers(user.getId())) {
 					List<UserMapping> userMatch = findMatchedUser(user.getId());
-					persistUserMatch(userMatch);					
-					if (user.getPool() !=null && leavePool(user.getId(), user.getPool().getId())) {
+					persistUserMatch(userMatch);
+					if (user.getPool() != null
+							&& leavePool(user.getId(), user.getPool().getId())) {
 						user.getPool().setSourceAddress(user.getHomeAddress());
 						user.getPool().setDestinationAddress(
 								user.getOfficeAddress());
@@ -874,5 +883,57 @@ public class DaoImpl implements DaoI {
 		 */
 		session.close();
 		return participants;
+	}
+
+	private List<UserMapping> matchForOneUser(String userId) {
+		Session session = sessionFactory.openSession();
+		// Criteria cr = session.createCriteria(User.class);
+		// cr.add(Restrictions.neOrIsNotNull("id", userId));
+		// List<User> users=cr.list();
+		// System.out.println(users.size());
+		// session.close();
+		User currentUser = this.getUserDetails(userId);
+		if (null != currentUser && null != currentUser.getHomeAddress()
+				&& null != currentUser.getOfficeAddress()
+				&& currentUser.getHomeAddress().getLattitude() != 0.0
+				&& currentUser.getHomeAddress().getLongitude() != 0.0
+				&& currentUser.getOfficeAddress().getLattitude() != 0.0
+				&& currentUser.getOfficeAddress().getLongitude() != 0.0) {
+			String hql = "from User user where user.id<>'" + userId
+					+ "' and (user.homeAddress.lattitude between "
+					+ (currentUser.getHomeAddress().getLattitude() - 1)
+					+ " and "
+					+ (currentUser.getHomeAddress().getLattitude() + 1)
+					+ ") and (user.homeAddress.longitude between "
+					+ (currentUser.getHomeAddress().getLongitude() - 1)
+					+ " and "
+					+ (currentUser.getHomeAddress().getLongitude() + 1)
+					+ ") and (user.officeAddress.longitude between "
+					+ (currentUser.getOfficeAddress().getLongitude() - 1)
+					+ " and "
+					+ (currentUser.getOfficeAddress().getLongitude() + 1)
+					+ ") and (user.officeAddress.lattitude between "
+					+ (currentUser.getOfficeAddress().getLattitude() - 1)
+					+ " and "
+					+ (currentUser.getOfficeAddress().getLattitude() + 1) + ")";
+
+			Query qry = session.createQuery(hql);
+			List<User> userList = new ArrayList<User>();
+			userList = qry.list();
+			session.close();
+			System.out.println(userList.size());
+			UserMatching userMatch = new UserMatching();
+			try {
+				return userMatch.checkMatchedUsersForUser(userList, currentUser);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (ProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+
 	}
 }

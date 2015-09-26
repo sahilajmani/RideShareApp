@@ -244,6 +244,238 @@ public class UserMatching {
 
 		return resultUsers;
 	}
+	
+	public  List<UserMapping> checkMatchedUsersForUser(List<User> users, User comparedUser)
+			throws MalformedURLException, ProtocolException, IOException {
+		double rangeLatLong = 0.02;
+		double acceptDist = 5.0;
+		double comparedUserDistance=comparedUser.getDistance();
+		List<UserMapping> resultUsers = new ArrayList<UserMapping>();
+		// current user has no car
+			for (User user : users) {
+				if (!user.isHasCar()) {//i have no car
+				if(comparedUser.isHasCar()) {// other person has car
+					if (comparedUserDistance < user.getDistance()) {// but
+																			// i
+																			// travel
+																			// more
+						// we can send homelat/long of both user to find if they
+						// live within acceptabledistance
+						if (((user.getHomeAddress().getLattitude() - rangeLatLong) < comparedUser
+								.getHomeAddress().getLattitude())
+								&& ((user.getHomeAddress().getLattitude() + rangeLatLong) > comparedUser
+										.getHomeAddress().getLattitude())
+								&& ((user.getHomeAddress().getLongitude() - rangeLatLong) < comparedUser
+										.getHomeAddress().getLongitude())
+								&& ((user.getHomeAddress().getLongitude() + rangeLatLong) > comparedUser
+										.getHomeAddress().getLongitude())
+								&& ((user.getOfficeAddress().getLattitude() - rangeLatLong) < comparedUser
+										.getOfficeAddress().getLattitude())
+								&& ((user.getOfficeAddress().getLattitude() + rangeLatLong) > comparedUser
+										.getOfficeAddress().getLattitude())
+								&& ((user.getOfficeAddress().getLongitude() - rangeLatLong) < comparedUser
+										.getOfficeAddress().getLongitude())
+								&& ((user.getOfficeAddress().getLongitude() + rangeLatLong) > comparedUser
+										.getOfficeAddress().getLongitude())) {
+						//	System.out.println("live within acceptabledistance of"+ acceptDist);
+							UserMapping userMatchRow=new UserMapping();
+							userMatchRow.setUserA(user);
+							userMatchRow.setUserB(comparedUser);
+
+							double homeToHome=DistanceBwPlaces.getDistanceandDuration(
+									user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude(),
+									comparedUser.getHomeAddress().getLattitude(),
+									comparedUser.getHomeAddress().getLongitude());
+							userMatchRow.setDistance((float) Math.abs(homeToHome));
+							resultUsers.add(userMatchRow);
+							continue;
+						} else {
+							continue;// reject me
+						}
+					} else { // other person travel more
+
+						double homeToHome=DistanceBwPlaces.getDistanceandDuration(
+								user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude(),
+								comparedUser.getHomeAddress().getLattitude(),
+								comparedUser.getHomeAddress().getLongitude());
+					
+						double officetoOffice = DistanceBwPlaces
+								.getDistanceandDuration(comparedUser.getOfficeAddress().getLattitude(),
+										comparedUser.getOfficeAddress().getLongitude(),
+										user.getOfficeAddress().getLattitude(), user.getOfficeAddress().getLongitude());
+						
+						if (homeToHome + user.getDistance()
+								+ officetoOffice < comparedUserDistance
+								 + acceptDist)// feasaible
+						// for
+						// other
+						{
+							System.out.println("Extra distance "+(homeToHome + comparedUserDistance
+									+ officetoOffice-user
+									.getDistance()));
+							UserMapping userMatchRow=new UserMapping();
+							userMatchRow.setUserA(user);
+							userMatchRow.setUserB(comparedUser);
+							userMatchRow.setDistance((float) Math.abs( (homeToHome + user.getDistance()
+									+ officetoOffice-comparedUserDistance)));
+							resultUsers.add(userMatchRow);
+							continue;
+						} else {
+							continue;// else reject
+						}
+					}
+				}
+				 else {// the other person has no car
+
+					double homeToHomme = DistanceBwPlaces
+							.getDistanceandDuration(user.getHomeAddress().getLattitude(),
+									user.getHomeAddress().getLongitude(),
+									comparedUser.getHomeAddress().getLattitude(),
+									comparedUser.getHomeAddress().getLongitude());
+					double officetoOffice = DistanceBwPlaces
+							.getDistanceandDuration(comparedUser.getOfficeAddress().getLattitude(),
+									comparedUser.getOfficeAddress().getLongitude(),
+									user.getOfficeAddress().getLattitude(), user.getOfficeAddress().getLongitude());
+					double hisHomeToMyOffice = DistanceBwPlaces
+							.getDistanceandDuration(comparedUser.getHomeAddress().getLattitude(),
+									comparedUser.getHomeAddress().getLongitude(),
+									user.getOfficeAddress().getLattitude(),
+									user.getOfficeAddress().getLongitude());
+					double myHomeToHisOffice = DistanceBwPlaces
+							.getDistanceandDuration(user.getHomeAddress().getLattitude(),
+									user.getHomeAddress().getLongitude(),
+									comparedUser.getOfficeAddress().getLattitude(), comparedUser.getOfficeAddress().getLongitude());
+					double setDistance=0.0000001;
+					
+					if (homeToHomme + comparedUserDistance + officetoOffice < user
+							.getDistance() + acceptDist
+							)
+					{
+						setDistance=homeToHomme + comparedUserDistance + officetoOffice - user
+								.getDistance();
+					}
+					else if (homeToHomme + hisHomeToMyOffice < user.getDistance() + acceptDist && hisHomeToMyOffice
+									+ officetoOffice < comparedUserDistance
+									+ acceptDist)
+					{
+						if((homeToHomme + hisHomeToMyOffice - user
+									.getDistance()) >( hisHomeToMyOffice
+									+ officetoOffice - comparedUserDistance))
+					setDistance=homeToHomme + hisHomeToMyOffice - comparedUserDistance;
+						else
+							setDistance=hisHomeToMyOffice
+									+ officetoOffice - comparedUserDistance;
+						}
+					else if (homeToHomme + myHomeToHisOffice < user
+									.getDistance() + acceptDist && myHomeToHisOffice
+									+ officetoOffice < comparedUserDistance + acceptDist)
+					{
+					if((homeToHomme + myHomeToHisOffice - user.getDistance())>(myHomeToHisOffice
+							+ officetoOffice - comparedUserDistance
+							))
+						setDistance=homeToHomme + myHomeToHisOffice - user.getDistance();
+					else
+						setDistance=myHomeToHisOffice
+								+ officetoOffice - user
+								.getDistance();
+						
+					}else if(homeToHomme + comparedUserDistance
+									+ officetoOffice < user.getDistance()
+									+ acceptDist) {
+						setDistance=user.getDistance()
+								+ acceptDist-(homeToHomme + comparedUserDistance
+								+ officetoOffice) ;						
+					}
+					else
+					{continue;}
+					UserMapping userMatchRow=new UserMapping();
+					userMatchRow.setUserA(user);
+					userMatchRow.setUserB(comparedUser);
+					userMatchRow.setDistance((float) Math.abs(setDistance));
+					resultUsers.add(userMatchRow);
+						continue;
+					}
+				}		
+			
+		else { // current user has car
+
+			
+
+				double homeToHome = DistanceBwPlaces.getDistanceandDuration(
+						comparedUser.getHomeAddress().getLattitude(), comparedUser.getHomeAddress().getLongitude(),
+						user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude());
+				double officetoOffice = DistanceBwPlaces
+						.getDistanceandDuration(comparedUser.getOfficeAddress().getLattitude(),
+								comparedUser.getOfficeAddress().getLongitude(),
+								user.getOfficeAddress().getLattitude(), user.getOfficeAddress().getLongitude());
+				if (comparedUser.isHasCar()) {
+					if (comparedUserDistance < user.getDistance())// i
+																		// travel
+																		// more
+					{
+						if (homeToHome +  comparedUserDistance + officetoOffice < user.getDistance()
+								+ acceptDist) {
+							System.out.println("extra distance by me "+(homeToHome + comparedUserDistance + officetoOffice-user
+								.getDistance()));
+							UserMapping userMatchRow=new UserMapping();
+							userMatchRow.setUserA(user);
+							userMatchRow.setUserB(comparedUser);
+							userMatchRow.setDistance((float) Math.abs((homeToHome + comparedUserDistance
+									+ officetoOffice-user
+									.getDistance())));
+							resultUsers.add(userMatchRow);
+							continue;
+						}
+					} else// user travel more
+					{
+						if (homeToHome + user.getDistance()
+								+ officetoOffice < comparedUserDistance
+								+ acceptDist) {
+							{
+								System.out.println("extra distance by other person "+(homeToHome + user.getDistance()
+										+ officetoOffice - comparedUserDistance
+										));
+								UserMapping userMatchRow=new UserMapping();
+								userMatchRow.setUserA(user);
+								userMatchRow.setUserB(comparedUser);
+								userMatchRow.setDistance((float) Math.abs(homeToHome + user.getDistance()
+										+ officetoOffice - comparedUserDistance
+										));
+								resultUsers.add(userMatchRow);
+								continue;
+							}
+
+						}
+
+					}
+
+				} else// i have the car--i need to see if it is feasable for me
+						// to take the other prson.
+				{
+					if (homeToHome + comparedUserDistance + officetoOffice < user
+							.getDistance() + acceptDist) {
+						System.out.println("extra distance by me "+(homeToHome + comparedUserDistance + officetoOffice - user
+								.getDistance()
+								));
+						UserMapping userMatchRow=new UserMapping();
+						userMatchRow.setUserA(user);
+						userMatchRow.setUserB(comparedUser);
+						userMatchRow.setDistance((float) Math.abs((homeToHome + comparedUserDistance + officetoOffice - user
+								.getDistance())));
+						resultUsers.add(userMatchRow);
+					
+					}
+
+				}
+
+			}
+
+		
+			}
+		return resultUsers;
+		
+	}
+
 
 	
 }
