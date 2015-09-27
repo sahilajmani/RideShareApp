@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import dao.DaoI;
@@ -67,5 +69,24 @@ public class PoolService {
 			return null;
 		}
 		return users;
+	}
+	
+	@GET
+	@Path("leavepoolservice")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean leavePoolService(@QueryParam("userId")String userId) {
+		if(!userId.isEmpty()){
+		try {
+			User user = dao.getUserDetails(userId);
+			if(user!=null){
+			dao.leavePool(userId, user.getPool().getId());	
+			}
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return false;
+		}
+		return true;
+		}
+		return false;
 	}
 }
