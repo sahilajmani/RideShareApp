@@ -33,7 +33,7 @@ public class IChatImpl implements IChat {
 		PrivateChat lastChat = null;
 		for(PrivateChat chat : result){
 			if(lastChat!=null&& (chat.getSender().getId().equals(lastChat.getSender().getId()))){
-				lastChat.setMsg(lastChat.getMsg()+" <eom> "+chat.getMsg());
+				lastChat.setMsg(lastChat.getMsg()+" . "+chat.getMsg());
 				copyResult.add(chat);
 			}else{
 				lastChat=chat;
