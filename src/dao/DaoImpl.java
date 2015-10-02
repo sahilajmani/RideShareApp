@@ -30,6 +30,7 @@ import pojos.UserMapping;
 import utility.RideSharingUtil;
 import utility.UserMatching;
 import utility.GlobalConstants;
+import vo.UserIdPoolIdVO;
 
 public class DaoImpl implements DaoI {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
@@ -627,7 +628,7 @@ public class DaoImpl implements DaoI {
 			}
 			System.out.println("inserted success2");
 			List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
-			
+
 			if (null != matchForOneUser && matchForOneUser.size() > 0) {
 				persistUserMatch(matchForOneUser);
 			}
@@ -924,7 +925,8 @@ public class DaoImpl implements DaoI {
 			System.out.println(userList.size());
 			UserMatching userMatch = new UserMatching();
 			try {
-				return userMatch.checkMatchedUsersForUser(userList, currentUser);
+				return userMatch
+						.checkMatchedUsersForUser(userList, currentUser);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (ProtocolException e) {
@@ -935,5 +937,27 @@ public class DaoImpl implements DaoI {
 		}
 		return null;
 
+	}
+
+	@Override
+	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(PoolRequest.class);
+		Pool pool = new Pool();
+		pool.setId(userIdPoolIdVO.getPoolId());
+		cr.add(Restrictions.eq("pool", pool));
+		User user = new User();
+		user.setId(userIdPoolIdVO.getUserId());
+		cr.add(Restrictions.eq("user", user));
+
+		PoolRequest poolRequest = new PoolRequest();
+		try {
+			poolRequest = (PoolRequest) cr.uniqueResult();
+		} catch (Exception e) {
+			poolRequest = null;
+		} finally {
+			session.close();
+		}
+		return poolRequest;
 	}
 }

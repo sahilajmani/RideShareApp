@@ -14,6 +14,7 @@ import pojos.Pool;
 import pojos.PoolRequest;
 import pojos.PoolRequestResponse;
 import pojos.RequestResponseVO;
+import pojos.RequestStatusVO;
 import pojos.RestServiceResponse;
 import pojos.User;
 import utility.GlobalConstants;
@@ -24,19 +25,21 @@ import dao.DaoI;
 @Path("/requests")
 public class RequestService {
 	DaoI dao = RideSharingUtil.getDaoInstance();
+
 	@POST
 	@Path("outgoingrequests")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListPoolRequests getOutgoingRequest(User user){
-		if(user==null || user.getId()==null)
+	public ListPoolRequests getOutgoingRequest(User user) {
+		if (user == null || user.getId() == null)
 			return null;
-		
+
 		ListPoolRequests listPoolRequests = new ListPoolRequests();
 
-		List<PoolRequest> poolRequests = dao.getOutgoingPoolRequests(user.getId());
+		List<PoolRequest> poolRequests = dao.getOutgoingPoolRequests(user
+				.getId());
 		List<PoolRequestResponse> responsePoolRequests = new ArrayList<PoolRequestResponse>();
-		for(PoolRequest poolRequest : poolRequests){
+		for (PoolRequest poolRequest : poolRequests) {
 			PoolRequestResponse pReq = new PoolRequestResponse();
 			pReq.setCreated(poolRequest.getCreated());
 			pReq.setDistance(poolRequest.getDistance().toString());
@@ -44,27 +47,29 @@ public class RequestService {
 			pReq.setId(poolRequest.getId());
 			pReq.setStatus(poolRequest.getStatus());
 			pReq.setUpdated(poolRequest.getUpdated());
-			Pool poolDetails = dao.getPoolDetails(poolRequest.getPool().getId());
+			Pool poolDetails = dao
+					.getPoolDetails(poolRequest.getPool().getId());
 			pReq.setPool(poolDetails);
 			responsePoolRequests.add(pReq);
 		}
 		listPoolRequests.setPoolRequests(responsePoolRequests);
 		return listPoolRequests;
-	}	
-	
+	}
+
 	@POST
 	@Path("incomingrequests")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ListPoolRequests getIncomingRequest(User user) {
-		if(user==null || user.getId()==null)
+		if (user == null || user.getId() == null)
 			return null;
-		
+
 		ListPoolRequests listPoolRequests = new ListPoolRequests();
 
-		List<PoolRequest> poolRequests = dao.getIncomingPoolRequests(user.getId());
+		List<PoolRequest> poolRequests = dao.getIncomingPoolRequests(user
+				.getId());
 		List<PoolRequestResponse> responsePoolRequests = new ArrayList<PoolRequestResponse>();
-		for(PoolRequest poolRequest : poolRequests){
+		for (PoolRequest poolRequest : poolRequests) {
 			PoolRequestResponse pReq = new PoolRequestResponse();
 			pReq.setCreated(poolRequest.getCreated());
 			pReq.setDescription(poolRequest.getDescription());
@@ -83,34 +88,70 @@ public class RequestService {
 	@Path("requestresponseservice")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse sendRequestResponse(RequestResponseVO requestResponseVO) {
+	public RestServiceResponse sendRequestResponse(
+			RequestResponseVO requestResponseVO) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
-		restServiceResponse.setResponse(dao.updatePoolRequest(requestResponseVO.getRequestId(), requestResponseVO.getResponse()));
+		restServiceResponse.setResponse(dao.updatePoolRequest(
+				requestResponseVO.getRequestId(),
+				requestResponseVO.getResponse()));
 		return restServiceResponse;
 	}
-	
+
 	@POST
 	@Path("joinpoolrequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
-		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId() ,(float) 0.0));
+		restServiceResponse.setResponse(dao.joinPoolRequest(
+				userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId(),
+				(float) 0.0));
 		return restServiceResponse;
 	}
-	
+
 	@POST
 	@Path("cancelpoolrequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean cancelPoolRequest(RequestResponseVO requestResponseVO) {
 		String requestId = requestResponseVO.getRequestId();
-		try{
+		try {
 			dao.updatePoolRequest(requestId, GlobalConstants.REQUEST_CANCEL);
-		}catch(Exception e){
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
 
+	@POST
+	@Path("getrequeststatus")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public RequestStatusVO getRequestStatus(UserIdPoolIdVO userIdPoolIdVO) {
+		RequestStatusVO requestStatusVO = new RequestStatusVO();
+		if (userIdPoolIdVO != null && !userIdPoolIdVO.getPoolId().isEmpty()
+				&& !userIdPoolIdVO.getUserId().isEmpty()) {
+			try {
+				PoolRequest poolRequest = dao.getPoolRequestVO(userIdPoolIdVO);
+				if (poolRequest != null) {
+					if(poolRequest.getStatus()>=0){
+					requestStatusVO.setStatus(poolRequest.getStatus());
+					}else{
+						requestStatusVO.setStatus(-1);						
+					}
+					requestStatusVO.setResponse(true);
+				} else {
+					requestStatusVO.setStatus(-1);
+					requestStatusVO.setResponse(false);
+				}
+			} catch (Exception e) {
+				requestStatusVO.setStatus(-1);
+				requestStatusVO.setResponse(false);
+			}
+		}else{
+		requestStatusVO.setStatus(-1);
+		requestStatusVO.setResponse(false);
+		}
+		return requestStatusVO;
+	}
 }

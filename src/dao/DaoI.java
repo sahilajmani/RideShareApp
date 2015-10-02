@@ -8,6 +8,7 @@ import pojos.Pool;
 import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
+import vo.UserIdPoolIdVO;
 
 public interface DaoI{
 	public boolean insertOTPEmail(String userEmail, int otp);
@@ -28,4 +29,5 @@ public interface DaoI{
 	public boolean joinPoolRequest(String userId, String poolId,float distance);
 	void deleteUser(String userId);
 	public List<User> fetchPoolParticipants(String poolId);
+	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO);
 }
