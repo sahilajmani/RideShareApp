@@ -455,6 +455,15 @@ public class DaoImpl implements DaoI {
 		Pool pool = this.getPoolDetails(poolId);
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
+		try{
+		if(pool.getId().equals(user.getId()) && pool.getNumberOfMembers()==1 )
+		{
+			tx.commit();
+			session.close();
+
+			System.out.println("take no acktion");
+			return false;
+		}else
 		if (!pool.getId().equals(user.getId())) {
 
 			// Iterator<User> participants = pool.getParticipants().iterator();
@@ -502,37 +511,35 @@ public class DaoImpl implements DaoI {
 			result = true;
 
 		} else// if hostuser is leaving the pool
+			
 		{
-			if (pool.getId().equals(user.getId())) {
+			//if (pool.getId().equals(user.getId())) 
+			{
 
 				// Session session = sessionFactory.openSession();
 				// pool.getParticipants().removeAll(c);
 				// int noOfMembers = pool.getNumberOfMembers();
-				pool.setIs_active(false);
+				pool.setIs_active(true);
+				pool.setIsAvailable(true);
 				pool.setNumberOfMembers(1);
 				String hostUserId = "";
 				// Collection<User> participants = pool.getParticipants();
 				// participants.remove(user);
 				// pool.getParticipants().removeAll(participants);
 				List<User> participants = new ArrayList<User>();
-				participants = this.getParticipants(poolId, session);
+				participants = this.getParticipantsExceptHost(poolId, session);
 
 				for (User participant : participants) {
 					float dis = 0;
-					if (participant.getId().equalsIgnoreCase(userId)) {
-						User host = participant;
-						participants.remove(host);
-					}
-
-					else if (participant.getDistance() > dis) {
+					if(participant.getDistance() > dis) {
 						dis = participant.getDistance(); // new host user
 						hostUserId = participant.getId();
 					}
 				}
 				pool.setIsAvailable(true);
-				session.saveOrUpdate(pool);
+				session.update(pool);
 
-				String hql = "from Transactions where user.id<>'"
+				String hql = "from Transactions where user.id!='"
 						+ user.getId() + "' and is_valid=true and pool.id='"
 						+ user.getId() + "'";
 				Query qry = session.createQuery(hql);
@@ -542,21 +549,23 @@ public class DaoImpl implements DaoI {
 				for (Transactions oldTransaction : oldTransactions) {
 					oldTransaction.setIs_valid(false);
 					oldTransaction.setValid_to(currentDateTime);
+					session.update(oldTransaction);
 				}
-				session.saveOrUpdate(oldTransactions);
-
+//				session.saveOrUpdate(oldTransactions);
+System.out.println("hostuseris "+hostUserId);
 				String hql1 = "from Pool where id='" + hostUserId + "'";
 				Query qry1 = session.createQuery(hql1);
 				Pool hostUserPool = (Pool) qry.uniqueResult();
 				// hostUserPool.setParticipants((List<User>) participants);
 				pool.setNumberOfMembers(participants.size());
-				session.saveOrUpdate(hostUserPool);
+				session.update(hostUserPool);
 
 				for (User participant : participants) {
 					participant.setPool(hostUserPool);
+					session.update(participant);
 
 				}
-				session.save(participants);
+			//	session.save(participants);
 				List<Transactions> newTransactions = new ArrayList<Transactions>();
 				{
 					for (User participant : participants) {
@@ -567,14 +576,18 @@ public class DaoImpl implements DaoI {
 						newTransaction.setValid_to(new Date(8000, 12, 31, 00,
 								00, 00));
 						newTransaction.setPool(hostUserPool);
+						session.save(newTransaction);
 						newTransactions.add(newTransaction);
 					}
 
 				}
 
-				session.save(newTransactions);
+				
 
 			}
+		}}catch(Exception e)
+		{
+			tx.rollback();
 		}
 		tx.commit();
 		session.close();
@@ -590,6 +603,15 @@ public class DaoImpl implements DaoI {
 		// TODO Auto-generated method stub
 		return participants;
 	}
+	
+	private List<User> getParticipantsExceptHost(String poolId, Session session) {
+		String hql = "from User user where pool.id='" + poolId + "' and user.id!='"+poolId+"'";
+		Query qry = session.createQuery(hql);
+		List<User> participants = qry.list();
+		// TODO Auto-generated method stub
+		return participants;
+	}
+
 
 	@Override
 	public boolean insertUser(User user) {
