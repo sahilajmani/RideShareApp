@@ -136,6 +136,7 @@ public class RequestService {
 				if (poolRequest != null) {
 					if(poolRequest.getStatus()>=0){
 					requestStatusVO.setStatus(poolRequest.getStatus());
+					requestStatusVO.setRequestId(poolRequest.getId());
 					}else{
 						requestStatusVO.setStatus(-1);						
 					}
