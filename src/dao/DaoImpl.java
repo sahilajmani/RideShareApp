@@ -388,7 +388,11 @@ public class DaoImpl implements DaoI {
 			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
 					session);
 			if (!result)
+			{
+				
 				return result;
+			}
+			
 		}
 		Transaction tx = session.beginTransaction();
 		poolRequest.setStatus(response);
@@ -398,6 +402,16 @@ public class DaoImpl implements DaoI {
 			session.update(poolRequest);
 			result = true;
 			tx.commit();
+			if(response == GlobalConstants.REQUEST_ACCEPTED)
+			{
+				    Transaction tx1 = session.beginTransaction();	
+				    String hql1="Update PoolRequest set status="+GlobalConstants.REQUEST_CANCEL+" where status="+GlobalConstants.REQUEST_PENDING+" and user.id='"+poolRequest.getUser().getId()+"'";
+				    Query query=session.createQuery(hql1);
+				    int rows = query.executeUpdate();
+				    System.out.println("rows updated"+rows);
+				    tx1.commit();
+			}
+			
 		} catch (Exception e) {
 		} finally {
 			session.close();
