@@ -455,7 +455,7 @@ public class DaoImpl implements DaoI {
 		Pool pool = this.getPoolDetails(poolId);
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
-		try{
+	
 		if(pool.getId().equals(user.getId()) && pool.getNumberOfMembers()==1 )
 		{
 			tx.commit();
@@ -512,7 +512,7 @@ public class DaoImpl implements DaoI {
 
 		} else// if hostuser is leaving the pool
 			
-		{
+		
 			//if (pool.getId().equals(user.getId())) 
 			{
 
@@ -522,22 +522,22 @@ public class DaoImpl implements DaoI {
 				pool.setIs_active(true);
 				pool.setIsAvailable(true);
 				pool.setNumberOfMembers(1);
+				pool.setIsAvailable(true);
+				session.update(pool);
 				String hostUserId = "";
 				// Collection<User> participants = pool.getParticipants();
 				// participants.remove(user);
 				// pool.getParticipants().removeAll(participants);
 				List<User> participants = new ArrayList<User>();
 				participants = this.getParticipantsExceptHost(poolId, session);
-
+				float dis = 0;
 				for (User participant : participants) {
-					float dis = 0;
 					if(participant.getDistance() > dis) {
 						dis = participant.getDistance(); // new host user
 						hostUserId = participant.getId();
 					}
 				}
-				pool.setIsAvailable(true);
-				session.update(pool);
+				
 
 				String hql = "from Transactions where user.id!='"
 						+ user.getId() + "' and is_valid=true and pool.id='"
@@ -553,11 +553,11 @@ public class DaoImpl implements DaoI {
 				}
 //				session.saveOrUpdate(oldTransactions);
 System.out.println("hostuseris "+hostUserId);
-				String hql1 = "from Pool where id='" + hostUserId + "'";
-				Query qry1 = session.createQuery(hql1);
-				Pool hostUserPool = (Pool) qry.uniqueResult();
+			//	String hql1 = "from Pool where id='" + hostUserId + "'";
+			//	Query qry1 = session.createQuery(hql1);
+				Pool hostUserPool = this.getPoolDetails(hostUserId);
 				// hostUserPool.setParticipants((List<User>) participants);
-				pool.setNumberOfMembers(participants.size());
+				hostUserPool.setNumberOfMembers(participants.size());
 				session.update(hostUserPool);
 
 				for (User participant : participants) {
@@ -584,11 +584,9 @@ System.out.println("hostuseris "+hostUserId);
 
 				
 
-			}
-		}}catch(Exception e)
-		{
-			tx.rollback();
+		result=true;	
 		}
+		
 		tx.commit();
 		session.close();
 
