@@ -119,7 +119,7 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		try {
-			String hql = "delete from UserMapping where userA.id=?";
+			String hql = "delete from UserMapping where userA.id=? or userB.id='"+userId+"'";
 			Query qry = session.createQuery(hql);
 			qry.setString(0, userId);
 			qry.executeUpdate();
@@ -368,6 +368,13 @@ public class DaoImpl implements DaoI {
 		poolRequest.setDistance(distance);
 
 		Session session = sessionFactory.openSession();
+		Transaction tx1 = session.beginTransaction();
+		String hql= "delete from PoolRequest where pool.id='"+pool.getId()+"' and  user.id='"+user.getId()+"'";
+		Query query=session.createQuery(hql);
+	    int rows = query.executeUpdate();
+	    System.out.println("rows updated"+rows);
+	    tx1.commit();	
+		
 		Transaction tx = session.beginTransaction();
 		session.save(poolRequest);
 		tx.commit();

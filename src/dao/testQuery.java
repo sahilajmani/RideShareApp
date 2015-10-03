@@ -50,7 +50,7 @@ public class testQuery {
 //List<Transactions> t =	db.getUserPoolRecord("17e1794b-5a20-11e5-869d-02b93fe38caf");
 	//	System.out.println(db.leavePool("026f1f3a-5986-11e5-9624-02b93fe38caf", "026f1f3a-5986-11e5-9624-02b93fe38caf"));
 	
-		System.out.println(db.updatePoolRequest("1", 1));
+		System.out.println(db.joinPoolRequest("d7cd5507-6a11-11e5-8f7b-027a1dc8a973","52abecb2-6a17-11e5-8f7b-027a1dc8a973",0));
 	}
 
 }
