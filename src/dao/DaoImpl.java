@@ -3,6 +3,7 @@ package dao;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import pojos.PoolRequest;
 import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
+import utility.DistanceBwPlaces;
 import utility.RideSharingUtil;
 import utility.UserMatching;
 import utility.GlobalConstants;
@@ -223,6 +225,7 @@ public class DaoImpl implements DaoI {
 	private List<UserMapping> findMatchedUser(String userId) {
 		Session session = sessionFactory.openSession();
 		User currentUser = this.getUserDetails(userId);
+		System.out.println("home: "+currentUser.getHomeAddress().getLattitude()+"   distance "+currentUser.getDistance()); // remove when goes in production
 		if (null != currentUser && null != currentUser.getHomeAddress()
 				&& null != currentUser.getOfficeAddress()
 				&& currentUser.getHomeAddress().getLattitude() != 0.0
@@ -361,8 +364,10 @@ public class DaoImpl implements DaoI {
 		Pool pool = this.getPoolDetails(poolId);
 		PoolRequest poolRequest = new PoolRequest();
 		poolRequest.setStatus(GlobalConstants.REQUEST_PENDING);
-		poolRequest.setUpdated(null);
-		poolRequest.setCreated(null);
+		Date date = new Date();
+		Timestamp time = new java.sql.Timestamp(date.getTime());
+		poolRequest.setUpdated(time);
+		poolRequest.setCreated(time);
 		poolRequest.setPool(pool);
 		poolRequest.setUser(user);
 		poolRequest.setDistance(distance);
@@ -712,63 +717,44 @@ System.out.println("hostuseris "+hostUserId);
 	@Override
 	public User updateUser(User user, boolean changeAddress) {
 		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		Pool curPool=this.getUserDetails(user.getId()).getPool();
+		Pool pool=this.getPoolDetails(user.getId());
 		/* int flag = 0; */
 		// if change in address
-		Pool tmpPool = new Pool();
-		if (user.getPool() != null) {
-			tmpPool = this.getPoolDetails(user.getPool().getId());
-		} else {
-			tmpPool = this.getPoolDetails(user.getId());
-		}
-
-		try {
 			if (changeAddress) {
+				System.out.println("in change address"); //remove - only for testing
 				if (deleteMatchedUsers(user.getId())) {
+			   //	List<UserMapping> userMatch = findMatchedUser(user.getId()); //no sense here
+			   //	persistUserMatch(userMatch);
+					Transaction tx = session.beginTransaction();
+					try {
+					leavePool(user.getId(),curPool.getId()); // leave his existing pool
+					
+					pool.setSourceAddress(user.getHomeAddress()); // pool need to be save before matching an
+					pool.setDestinationAddress(
+								user.getOfficeAddress());
+				    user.setPool(pool);
+					session.update(pool);
+					session.update(user);
+					tx.commit();
 					List<UserMapping> userMatch = findMatchedUser(user.getId());
 					persistUserMatch(userMatch);
-					if (user.getPool() != null
-							&& leavePool(user.getId(), user.getPool().getId())) {
-						user.getPool().setSourceAddress(user.getHomeAddress());
-						user.getPool().setDestinationAddress(
-								user.getOfficeAddress());
+					List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
+
+					if (null != matchForOneUser && matchForOneUser.size() > 0) {
+						persistUserMatch(matchForOneUser);
 					}
-					/*
-					 * String poolId = getPoolForUser(user.getId(), session); if
-					 * (poolId != null &&
-					 * !poolId.equalsIgnoreCase(user.getId())) { List<Pool>
-					 * recommendedPools = recommendedPools(user .getId()); for
-					 * (Pool pool : recommendedPools) { if
-					 * (user.getPool().getId() .equalsIgnoreCase(pool.getId()))
-					 * { flag = 1; break; } } if (flag != 1) { //If no pools
-					 * match, then remove from the existing pool and set the
-					 * default pool tmpPool = this.getPoolDetails(user.getId());
-					 * tmpPool.setSourceAddress(user.getHomeAddress());
-					 * tmpPool.setDestinationAddress(user.getOfficeAddress());
-					 * tmpPool.setIs_active(false); } }else{
-					 */
-					/*
-					 * tmpPool.setSourceAddress(user.getHomeAddress());
-					 * tmpPool.setDestinationAddress(user.getOfficeAddress());
-					 * if(tmpPool.isIs_active()){ //set the default pool of all
-					 * the participants List<User> participants =
-					 * this.fetchPoolParticipants(tmpPool.getId()); for(User
-					 * guestUser:participants){
-					 * if(!guestUser.getId().equalsIgnoreCase(user.getId())){
-					 * guestUser
-					 * .setPool(this.getPoolDetails(guestUser.getId()));
-					 * session.update(guestUser.getId(), guestUser); } }
-					 * 
-					 * } }
-					 */
-				}
-			} else {
-				User tempUser = this.getUserDetails(user.getId());
-				user.setHomeAddress(tempUser.getHomeAddress());
-				user.setOfficeAddress(tempUser.getOfficeAddress());
+						}catch (Exception e) {
+							logger.info(e.getMessage());
+							e.printStackTrace();
+							tx.rollback();
+
+							return null;
+					}
+			} 
 			}
 			// update user
-			if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
+		/*	if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
 				logger.info("Leave Destination Time : "
 						+ user.getLeaveDestinationTimeInMilliseconds());
 				if (tmpPool != null) {
@@ -796,8 +782,19 @@ System.out.println("hostuseris "+hostUserId);
 			}
 			if (tmpPool != null) {
 				user.setPool(tmpPool);
-			}
-			session.update(user.getId(), user);
+			}*/
+			Transaction tx = session.beginTransaction();
+			try{
+		/*	Pool pool=this.getPoolDetails(user.getId());
+			System.out.println(pool.getId());
+			pool.setReachDestinationTimeInMilliseconds(user.getReachDestinationTimeInMilliseconds());
+			System.out.println("here");
+			pool.setLeaveDestinationTimeInMilliseconds(user.getLeaveDestinationTimeInMilliseconds());
+			System.out.println("here2");
+			session.update(pool);
+			tx.commit();
+			Transaction tx1 = session.beginTransaction();
+			*/session.update(user);
 			tx.commit();
 		} catch (Exception e) {
 			logger.info(e.getMessage());
