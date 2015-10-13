@@ -723,7 +723,7 @@ System.out.println("hostuseris "+hostUserId);
 		// if change in address
 			if (changeAddress) {
 				System.out.println("in change address"); //remove - only for testing
-				if (deleteMatchedUsers(user.getId())) {
+				deleteMatchedUsers(user.getId());
 			   //	List<UserMapping> userMatch = findMatchedUser(user.getId()); //no sense here
 			   //	persistUserMatch(userMatch);
 					Transaction tx = session.beginTransaction();
@@ -752,7 +752,7 @@ System.out.println("hostuseris "+hostUserId);
 							return null;
 					}
 			} 
-			}
+			
 			// update user
 		/*	if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
 				logger.info("Leave Destination Time : "
@@ -805,7 +805,7 @@ System.out.println("hostuseris "+hostUserId);
 		} finally {
 			session.close();
 		}
-		return user;
+		return this.getUserDetails(user.getId());
 	}
 
 	private String getPoolForUser(String userId, Session session) {
