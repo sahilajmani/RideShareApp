@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
 import RestResponse.ChatResults;
 import RestResponse.GetChatResult;
 import pojos.PrivateChat;
@@ -76,18 +74,13 @@ public class ChatService {
 		chat.setSender(sender);
 		chat.setMsg(chatJson.getMessage());
 		chat.setIsDelivered(false);
-		System.out.println(new Date().getTime());
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		
 		chat.setCreateTime(sdf.parse(sdf.format(date)));//new Date().getTime()));
 		chat.setCreateTimeSeconds(System.currentTimeMillis());
-		//chat.setCreateTime(new java.sql.Date(Calendar.getInstance().getTime().getTime()));
-//		chat.setCreateTime(new Date(System.currentTimeMillis()));
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
-		System.out.println("chat id -"+chat.getId());
-		System.out.println("chat timestamp --- "+chat.getCreateTime());
 		}catch(Exception e){
 			chatResult.setErrorMsg(e.getMessage());
 			chatResult.setSuccess(false);

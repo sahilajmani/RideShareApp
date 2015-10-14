@@ -28,6 +28,19 @@ public class IChatImpl implements IChat {
 		Criteria criteria = session.createCriteria(PrivateChat.class);
 		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId)).addOrder(Order.asc("sender.id")).add(Restrictions.eq("isDelivered", false));
 		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTimeSeconds")).list();
+		if(result != null && result.size() > 0){
+			int resultCount = 0;
+			if(markAsDelivered){
+				for(PrivateChat chat : result){
+					chat.setIsDelivered(true);
+					session.update(chat);
+					resultCount++;
+					
+				}
+			logger.log( Level.INFO, "updated private chats, marked as read "+resultCount);
+			}
+		}
+		tx.commit();
 		if(result!=null){
 		Collection<PrivateChat> copyResult = new ArrayList<PrivateChat>();
 		PrivateChat lastChat = null;
@@ -42,19 +55,6 @@ public class IChatImpl implements IChat {
 		}
 		result.removeAll(copyResult);
 		}
-		if(result != null && result.size() > 0){
-			int resultCount = 0;
-			if(markAsDelivered){
-				for(PrivateChat chat : result){
-					chat.setIsDelivered(true);
-					session.update(chat);
-					resultCount++;
-					
-				}
-			logger.log( Level.INFO, "updated private chats, marked as read "+resultCount);
-			}
-		}
-		tx.commit();
 		session.close();
 		return result;
 	}
