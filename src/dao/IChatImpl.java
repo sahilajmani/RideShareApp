@@ -27,7 +27,7 @@ public class IChatImpl implements IChat {
 		Transaction tx = session.beginTransaction();
 		Criteria criteria = session.createCriteria(PrivateChat.class);
 		criteria/*.add(Restrictions.eq("sender.id", senderId))*/.add(Restrictions.eq("receiver.id", receiverId)).addOrder(Order.asc("sender.id")).add(Restrictions.eq("isDelivered", false));
-		Collection<PrivateChat> result = criteria.addOrder(Order.desc("createTimeSeconds")).list();
+		Collection<PrivateChat> result = criteria.addOrder(Order.asc("createTimeSeconds")).list();
 		if(result != null && result.size() > 0){
 			int resultCount = 0;
 			if(markAsDelivered){
@@ -68,7 +68,18 @@ public class IChatImpl implements IChat {
 		}catch(Exception e){
 			return false;
 		}
+		session.close();
 		return chat.getId()!=null ? true:false;
+	}
+	@Override
+	public PrivateChat getLastPrivateChat(String receiverId){
+		Session session = sessionFactory.openSession();
+		Criteria criteria = session.createCriteria(PrivateChat.class);
+		criteria= criteria.add(Restrictions.eq("receiver.id", receiverId)).add(Restrictions.eq("isDelivered",true));
+		criteria= criteria.addOrder(Order.desc("createTimeSeconds"));
+		PrivateChat lastChat= (PrivateChat)criteria.list().get(0);
+		session.close();
+		return lastChat;
 	}
 
 }

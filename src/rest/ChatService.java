@@ -16,6 +16,7 @@ import RestResponse.ChatResults;
 import RestResponse.GetChatResult;
 import pojos.PrivateChat;
 import pojos.User;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import vo.ChatJson;
 @Path("/chat")
@@ -78,7 +79,8 @@ public class ChatService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		
 		chat.setCreateTime(sdf.parse(sdf.format(date)));//new Date().getTime()));
-		chat.setCreateTimeSeconds(System.currentTimeMillis());
+		Long currentTime=System.currentTimeMillis();
+		chat.setCreateTimeSeconds(currentTime);
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
 		}catch(Exception e){
@@ -87,8 +89,17 @@ public class ChatService {
 			return chatResult;
 		}
 		chatResult.setSuccess(true);
-		
+		PrivateChat lastChat = (PrivateChat) RideSharingUtil.getChatInstance().getLastPrivateChat(chatJson.getReceiver_Id());
+		System.out.println("Last Chat --   Message - "+lastChat.getMsg()+"\n Time - "+lastChat.getCreateTimeSeconds());
+		Long lastChatTime=lastChat.getCreateTimeSeconds();
+		if(currentTime-lastChatTime > GlobalConstants.NOTIFICATION_CHAT_TIMEOUT){
+			notifyUser(receiver,chat);
+		}
 		return chatResult;
+		
+	}
+	private void notifyUser(User receiver, PrivateChat chat) {
+		// TODO Auto-generated method stub
 		
 	}
 	
