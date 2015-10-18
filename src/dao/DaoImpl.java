@@ -312,10 +312,14 @@ public class DaoImpl implements DaoI {
 		User userVO = null;
 		if (cr.list() != null && cr.list().size() > 0) {
 			userVO = (User) cr.list().get(0);
+			try{
 			userVO.setReachDestinationTimeInMilliseconds(String.valueOf(userVO
 					.getReachDestinationTime().getTime()));
 			userVO.setLeaveDestinationTimeInMilliseconds(String.valueOf(userVO
 					.getLeaveDestinationTime().getTime()));
+			}catch(NullPointerException e){
+				return userVO;
+			}
 		} else {
 			userVO = new User();
 			userVO.setName("doesntexist");
