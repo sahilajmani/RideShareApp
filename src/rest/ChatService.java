@@ -14,7 +14,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import RestResponse.ChatResults;
 import RestResponse.GetChatResult;
+import email.SendMail;
 import pojos.PrivateChat;
+import pojos.RestServiceResponse;
 import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
@@ -93,14 +95,24 @@ public class ChatService {
 		System.out.println("Last Chat --   Message - "+lastChat.getMsg()+"\n Time - "+lastChat.getCreateTimeSeconds());
 		Long lastChatTime=lastChat.getCreateTimeSeconds();
 		if(currentTime-lastChatTime > GlobalConstants.NOTIFICATION_CHAT_TIMEOUT){
-			notifyUser(receiver,chat);
+			notifyUser(receiver,sender,chat);
 		}
 		return chatResult;
 		
 	}
-	private void notifyUser(User receiver, PrivateChat chat) {
+	private void notifyUser(User receiver, User sender, PrivateChat chat) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Sending mail to user -- "+receiver.getName());
+		String userEmail = receiver.getEmail();
+			String message = "Hi "+receiver.getName()+", \n You have received a new message from "+
+					sender.getName()+
+					"Please open the RideEasy app to reply to the user. \n Thanks, \n RideEasy Team";
+			String subject = "You have received a new message from "+sender.getName();
+			String[] to = { userEmail };
+					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+							GlobalConstants.PASSWORD_EMAIL, subject, message,
+							to);
+					
 	}
 	
 	

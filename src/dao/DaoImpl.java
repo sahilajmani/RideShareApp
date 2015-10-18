@@ -396,7 +396,6 @@ public class DaoImpl implements DaoI {
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
 		Session session = sessionFactory.openSession();
-
 		String hql = "from PoolRequest where id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, requestId);

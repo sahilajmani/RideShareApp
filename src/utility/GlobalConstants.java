@@ -9,5 +9,5 @@ public class GlobalConstants {
 	public static final int REQUEST_REJECTED = 0;	
 	public static final int REQUEST_PENDING = 2;
 	public static final int REQUEST_CANCEL = 3;
-	public static final long NOTIFICATION_CHAT_TIMEOUT=1200000L;
+	public static final long NOTIFICATION_CHAT_TIMEOUT=1200000l;
 }
