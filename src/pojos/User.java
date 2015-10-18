@@ -26,7 +26,7 @@ public class User implements Serializable {
 	private boolean isMobileVerified;
 	private boolean isEmailVerified;
 	private boolean isActive;
-	private Timestamp registerDate;
+	private Date registerDate;
 	
 	private float distance;
 	private Address homeAddress;
@@ -143,11 +143,11 @@ public class User implements Serializable {
 		this.isActive = isActive;
 	}
 
-	public Timestamp getRegisterDate() {
+	public Date getRegisterDate() {
 		return registerDate;
 	}
 
-	public void setRegisterDate(Timestamp registerDate) {
+	public void setRegisterDate(Date registerDate) {
 		this.registerDate = registerDate;
 	}
 

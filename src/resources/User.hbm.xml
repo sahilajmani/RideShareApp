@@ -44,7 +44,7 @@
         <property name="isActive" type="boolean" access="field">
             <column name="ISACTIVE" />
         </property>
-        <property name="registerDate" type="java.sql.Timestamp">
+        <property name="registerDate" type="java.util.Date">
             <column name="REGISTERDATE" />
         </property>
         <property name="distance" type="float">

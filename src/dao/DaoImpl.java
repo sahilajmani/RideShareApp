@@ -3,6 +3,7 @@ package dao;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -660,6 +661,7 @@ System.out.println("hostuseris "+hostUserId);
 					user.setReachDestinationTime(new Date(Long.parseLong(user
 							.getReachDestinationTimeInMilliseconds())));
 				}
+				user.setRegisterDate(this.getCurrentTime());
 				// insert user
 				session.save(user);
 				// persist matched users
