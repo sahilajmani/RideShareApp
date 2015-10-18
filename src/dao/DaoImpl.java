@@ -118,6 +118,26 @@ public class DaoImpl implements DaoI {
 		return otpObjectByEmail;
 	}
 
+	public boolean deleteUserOnly(String userId) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			String hql = "delete from User where user.id=?";
+			Query qry = session.createQuery(hql);
+			qry.setString(0, userId);
+			qry.executeUpdate();
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			return false;
+		} finally {
+			session.close();
+		}
+		return true;
+	}
+
+	
+	
 	public boolean deleteMatchedUsers(String userId) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
@@ -695,6 +715,8 @@ System.out.println("hostuseris "+hostUserId);
 				tx.commit();
 			} catch (Exception e) {
 				tx.rollback();
+			this.deleteMatchedUsers(user.getId());
+			this.deleteUserOnly(user.getId());
 			} finally {
 				session.close();
 			}
