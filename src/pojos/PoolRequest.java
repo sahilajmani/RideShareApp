@@ -2,6 +2,9 @@ package pojos;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class PoolRequest implements Serializable {
@@ -14,6 +17,12 @@ public class PoolRequest implements Serializable {
 	private Timestamp updated;
 	private String description;
 	private Float distance;
+	public PoolRequest(){
+		Calendar calendar = Calendar.getInstance();
+		java.util.Date now = calendar.getTime();
+				this.created=new Timestamp(now.getTime());
+				this.updated= new Timestamp(now.getTime());
+	}
 
 	public Float getDistance() {
 		return distance;

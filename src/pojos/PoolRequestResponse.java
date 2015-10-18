@@ -1,6 +1,7 @@
 package pojos;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 
 public class PoolRequestResponse {
 
@@ -12,6 +13,12 @@ public class PoolRequestResponse {
 	private Timestamp updated;
 	private String description;
 	private String distance;
+	public PoolRequestResponse(){
+		Calendar calendar = Calendar.getInstance();
+		java.util.Date now = calendar.getTime();
+				this.created=new Timestamp(now.getTime());
+				this.updated= new Timestamp(now.getTime());
+	}
 	public String getId() {
 		return id;
 	}
