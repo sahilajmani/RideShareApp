@@ -391,8 +391,14 @@ public class DaoImpl implements DaoI {
 		poolRequest.setStatus(GlobalConstants.REQUEST_PENDING);
 		Date date = new Date();
 		Timestamp time = new java.sql.Timestamp(date.getTime());
-		poolRequest.setUpdated(time);
-		poolRequest.setCreated(time);
+		try {
+			poolRequest.setUpdated(this.getCurrentTime());
+			poolRequest.setCreated(this.getCurrentTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		poolRequest.setPool(pool);
 		poolRequest.setUser(user);
 		poolRequest.setDistance(distance);

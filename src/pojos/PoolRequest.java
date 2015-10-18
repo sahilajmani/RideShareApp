@@ -13,16 +13,10 @@ public class PoolRequest implements Serializable {
 	private Pool pool;
 	private User user;
 	private int status;
-	private Timestamp created;
-	private Timestamp updated;
+	private Date created;
+	private Date updated;
 	private String description;
 	private Float distance;
-	public PoolRequest(){
-		Calendar calendar = Calendar.getInstance();
-		java.util.Date now = calendar.getTime();
-				this.created=new Timestamp(now.getTime());
-				this.updated= new Timestamp(now.getTime());
-	}
 
 	public Float getDistance() {
 		return distance;
@@ -64,19 +58,19 @@ public class PoolRequest implements Serializable {
 		this.status = status;
 	}
 
-	public Timestamp getCreated() {
+	public Date getCreated() {
 		return created;
 	}
 
-	public void setCreated(Timestamp created) {
+	public void setCreated(Date created) {
 		this.created = created;
 	}
 
-	public Timestamp getUpdated() {
+	public Date getUpdated() {
 		return updated;
 	}
 
-	public void setUpdated(Timestamp updated) {
+	public void setUpdated(Date updated) {
 		this.updated = updated;
 	}
 
