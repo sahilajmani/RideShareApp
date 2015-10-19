@@ -59,7 +59,7 @@
         <property name="duration" type="int">
             <column name="DURATION" />
         </property>
-        <property name="poolCost" type="int">
+        <property name="poolCost" type="java.lang.Integer">
             <column name="POOL_COST" />
         </property>
          <many-to-one name="pool" class="pojos.Pool" fetch="join" cascade="save-update">
