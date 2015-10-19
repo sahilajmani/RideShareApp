@@ -16,7 +16,8 @@ public class User implements Serializable {
 	private Date leaveDestinationTime;
 	private String reachDestinationTimeInMilliseconds;
 	private String leaveDestinationTimeInMilliseconds;
-
+	private int poolCost;
+	
 	// private Date officeTime_pickup;
 	// private Date officeTime_drop;
 	// private String company_joined_month;
@@ -209,4 +210,13 @@ public class User implements Serializable {
 			String reachDestinationTimeInMilliseconds) {
 		this.reachDestinationTimeInMilliseconds = reachDestinationTimeInMilliseconds;
 	}
+
+	public int getPoolCost() {
+		return poolCost;
+	}
+
+	public void setPoolCost(int poolCost) {
+		this.poolCost = poolCost;
+	}
+	
 }
