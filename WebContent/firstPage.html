@@ -1,23 +1,32 @@
 <html>
 <body ng-app="rideEasyServerApp" ng-controller="firstPageController">
 <div>
-  {{url}}	
-<form method="post" action="https://secure.payu.com/api/v2_1/orders">
-    <input type="hidden" name="continueUrl" value="http://shop.url/continue" >
-    <input type="hidden" name="currencyCode" value="INR" >
-    <input type="hidden" name="customerIp" value="123.123.123.123" >
-    <input type="hidden" name="description" value="Order description" >
-    <input type="hidden" name="merchantPosId" value="145227" >    
-    <input type="hidden" name="notifyUrl" value="http://shop.url/notify" >
-    <input type="hidden" name="products[0].name" value="Product 1" >
-    <input type="hidden" name="products[0].quantity" value="1" >
-    <input type="hidden" name="products[0].unitPrice" value="1" >
-    <input type="hidden" name="totalAmount" value="1" >
-    <input type="hidden" name="OpenPayu-Signature" value="sender=145227;algorithm=MD5;signature=13a980d4f851f3d9a1cfc792fb1f5e50" >
-    <button type="submit" formtarget="_blank" >Pay with PayU</button>
-</form >
+	{{url}}	
+	<form method="post" action="https://secure.payu.com/api/v2_1/orders">
+		<input type="hidden" name="continueUrl" value="http://shop.url/continue" >
+		<input type="hidden" name="currencyCode" value="PLN" >
+		<input type="hidden" name="customerIp" value="123.123.123.123" >
+		<input type="hidden" name="description" value="Order description" >
+		<input type="hidden" name="merchantPosId" value="145227" >    
+		<input type="hidden" name="notifyUrl" value="http://shop.url/notify" >
+		<input type="hidden" name="products[0].name" value="Product 1" >
+		<input type="hidden" name="products[0].quantity" value="1" >
+		<input type="hidden" name="products[0].unitPrice" value="1000" >
+		<input type="hidden" name="totalAmount" value="1000" >
+		<input type="hidden" name="OpenPayu-Signature" value="sender=145227;algorithm=MD5;signature=5fa8d94670eee6d182e930a0ccf9c2c6" >
+		<button type="submit" formtarget="_blank" >Pay with PayU</button>
+	</form >
 
-<a href="/mobile/close">Close</a>
+	<div>
+	<button ng-click="callPayuRestApi()">PayU Rest</button>
+	</div>
+
+	<div>
+		<a href="/mobile/close">Close</a>
+	</div>
+
+	<div id="responseDiv">
+	</div>
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
