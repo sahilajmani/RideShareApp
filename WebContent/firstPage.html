@@ -16,13 +16,15 @@
 		<input type="hidden" name="OpenPayu-Signature" value="sender=145227;algorithm=MD5;signature=5fa8d94670eee6d182e930a0ccf9c2c6" >
 		<button type="submit" formtarget="_blank" >Pay with PayU</button>
 	</form >
-
+    
 	<div>
 		<button ng-click="callPayuRestApi()">PayU Rest</button>
 	</div>
 
 	<div>
-		{{payuResponse}}
+		<textarea style="height:400px; width:100%;">
+			{{payuResponse}}
+		</textarea>
 	</div>
 
 	<div id="rideEasyErrorResponseDiv">
@@ -33,15 +35,18 @@
 	</div>
 
 	<div>
+		<button ng-click="callRideEasyRestApiUpdated()">RideEasy Rest Updated</button>
+	</div>
+
+	<div>
 		{{rideEasyResponse}}
 	</div>
 
 	<div id="payuErrorResponseDiv">
 	</div>
-
-	<div>
-		<a href="/mobile/close">Close</a>
-	</div>
+	
+	<div id="payuSuccessResponseDiv">
+	</div> 
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
