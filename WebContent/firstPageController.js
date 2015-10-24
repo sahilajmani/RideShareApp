@@ -1,6 +1,6 @@
 rideEasyServerApp.controller('firstPageController', function($scope, $http) {
 
-	$http.defaults.useXDomain = true;
+	//$http.defaults.useXDomain = true;
 
   initialize = function(){
     $scope.url = window.location.href;
@@ -29,38 +29,41 @@ rideEasyServerApp.controller('firstPageController', function($scope, $http) {
 				    }
 				]
 		};
-		requestData = {
-			"email" :"rishabhgarg@nsitonline.in"
-		};
 		var requestConfig = {
 			headers:{
 				'Content-Type': 'application/json',
 				'Authorization': 'Basic MTQ1MjI3OjEzYTk4MGQ0Zjg1MWYzZDlhMWNmYzc5MmZiMWY1ZTUw'
 			}
 		};
-		requestConfig = {
+		$http.post('https://secure.payu.com/api/v2_1/orders',requestData,requestConfig).
+			success(function(data, status, headers, config) {
+				$scope.payuResponse = data;
+			}).
+			error(function(data, status, headers, config) {
+				alert(data + status + headers);
+				var divElement = document.getElementById("payuErrorResponseDiv");
+				divElement.innerHTML = data;
+			});
+  };
+
+  $scope.callRideEasyRestApi = function(){
+		var requestData = {
+			"email" :"rishabhgarg@nsitonline.in"
+		};
+		var requestConfig = {
 			headers:{
 				'Content-Type': 'application/json'
 			}
 		};
-		$http.post('http://rideeasy.elasticbeanstalk.com/rest/profile/getUserDetailsViaEmail',requestData,{headers:{'Content-Type': 'application/json'}}).
+		$http.post('http://rideeasy.elasticbeanstalk.com/rest/profile/getUserDetailsViaEmail',requestData,requestConfig).
 			success(function(data, status, headers, config) {
-				alert(data);
+				$scope.rideEasyResponse = data;
 			}).
 			error(function(data, status, headers, config) {
 				alert(data + status + headers);
-				var divElement = document.getElementById("responseDiv");
+				var divElement = document.getElementById("rideEasyErrorResponseDiv");
 				divElement.innerHTML = data;
 			});
-/*
-		$http.jsonp('https://secure.payu.com/api/v2_1/orders' + "&callback=JSON_CALLBACK",requestData,requestConfig).then(
-			function(data, status, headers, config) {
-				alert('success');
-			},
-			function(data, status, headers, config) {
-				alert('error');
-			});
-*/
   };
 
   initialize();

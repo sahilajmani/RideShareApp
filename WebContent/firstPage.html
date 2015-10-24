@@ -18,14 +18,29 @@
 	</form >
 
 	<div>
-	<button ng-click="callPayuRestApi()">PayU Rest</button>
+		<button ng-click="callPayuRestApi()">PayU Rest</button>
+	</div>
+
+	<div>
+		{{payuResponse}}
+	</div>
+
+	<div id="rideEasyErrorResponseDiv">
+	</div>
+
+	<div>
+		<button ng-click="callRideEasyRestApi()">RideEasy Rest</button>
+	</div>
+
+	<div>
+		{{rideEasyResponse}}
+	</div>
+
+	<div id="payuErrorResponseDiv">
 	</div>
 
 	<div>
 		<a href="/mobile/close">Close</a>
-	</div>
-
-	<div id="responseDiv">
 	</div>
 
 </div>
