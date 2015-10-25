@@ -120,10 +120,12 @@ function submitPayuForm() {
       payuForm.submit();
     }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+<script src="rideEasyServerApp.js"></script>
+<script src="firstPageController.js"></script>
+<body onload="submitPayuForm();" ng-app="rideEasyServerApp" ng-controller="firstPageController">
 
-<body onload="submitPayuForm();">
-
-
+{{parameterValues}}
 <form action="<%= action1 %>" method="post" name="payuForm">
 <input type="hidden" name="key" value="<%= merchant_key %>" />
       <input type="hidden" name="hash" value="<%= hash %>"/>
@@ -131,13 +133,15 @@ function submitPayuForm() {
       <input type="hidden" name="udf2" value="<%= txnid %>" />
 	  <input type="hidden" name="service_provider" value="payu_paisa" />
 <!--  Added By Rishabh which were initially part of form -->
-	  <input type="hidden" name="productinfo" value="infojdnwdj" />
-	  <input type="hidden" name="surl" value="http://rideeasy.elasticbeanstalk.com/TransactionSuccess.html" />
-	  <input type="hidden" name="furl" value="http://rideeasy.elasticbeanstalk.com/TransactionFailure.html" />
-	  <input type="hidden" name="amount" value="1" />
-	  <input type="hidden" name="firstname" id="firstname" value="rishabh" />
-	  <input type="hidden" name="email" value="rishabhgarg@nsitonline.in" />
-	  <input type="hidden" name="phone" value="9899519537" />
+		<div style="display:none;">
+	  <input type="text" name="productinfo" ng-model="person.productInfo" />
+	  <input type="text" name="surl" ng-model="person.surl" />
+	  <input type="text" name="furl" ng-model="person.furl" />
+	  <input type="text" name="amount" ng-model="person.cost" />
+	  <input type="text" name="firstname" id="firstname" ng-model="person.firstName" />
+	  <input type="text" name="email" ng-model="person.email" />
+	  <input type="text" name="phone" ng-model="person.phone" />
+		</div>
 	
       <table>
 <%--                 <tr>
