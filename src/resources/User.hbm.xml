@@ -62,6 +62,9 @@
         <property name="poolCost" type="java.lang.Integer">
             <column name="POOL_COST" />
         </property>
+        <property name="wallet_balance" type="java.lang.Integer">
+            <column name="wallet_balance" />
+        </property>
          <many-to-one name="pool" class="pojos.Pool" fetch="join" cascade="save-update">
             <column name="POOL" />
         </many-to-one>

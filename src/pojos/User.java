@@ -34,6 +34,15 @@ public class User implements Serializable {
 	private Address officeAddress;
 	private int duration;
 	private Pool pool;
+	private Integer wallet_balance;
+
+	public Integer getWallet_balance() {
+		return wallet_balance;
+	}
+
+	public void setWallet_balance(Integer wallet_balance) {
+		this.wallet_balance = wallet_balance;
+	}
 
 	public String getId() {
 		return id;
