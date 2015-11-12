@@ -34,7 +34,7 @@ public class User implements Serializable {
 	private Address officeAddress;
 	private int duration;
 	private Pool pool;
-	private Integer wallet_balance;
+	private Integer wallet_balance=0;
 
 	public Integer getWallet_balance() {
 		return wallet_balance;
