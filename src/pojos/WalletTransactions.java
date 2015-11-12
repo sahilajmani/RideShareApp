@@ -8,6 +8,13 @@ public class WalletTransactions {
 	private Boolean isSettled;
 	private Long transaction_timemillis;
 	private Integer amount;
+	private String details;
+	public String getDetails() {
+		return details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
+	}
 	public Integer getAmount() {
 		return amount;
 	}
