@@ -14,7 +14,7 @@ import pojos.WalletTransactions;
 
 public class WalletUtil {
 	
-	public static void addToWallet(WalletTransactions walletRecharge,Session session){
+	public static User addToWallet(WalletTransactions walletRecharge,Session session){
 		if(!TransactionType.CREDIT_TO_WALLET.equals(walletRecharge.getType())){
 			walletRecharge.setType(TransactionType.CREDIT_TO_WALLET);
 		}
@@ -27,7 +27,7 @@ public class WalletUtil {
 		session.save(walletRecharge);
 		session.update(user);
 		tx.commit();
-		
+		return user;
 		
 	}
 	public static void poolRequestAccepted(WalletTransactions walletRecharge,Session session){

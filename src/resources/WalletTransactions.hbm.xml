@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Nov 13, 2015 12:07:32 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.WalletTransactions" table="WALLETTRANSACTIONS">
+        <id name="id" type="java.lang.String">
+            <column name="ID" />
+            <generator class="assigned" />
+        </id>
+        <property name="type" type="java.lang.String">
+            <column name="TYPE" />
+        </property>
+        <many-to-one name="poolOwner" class="pojos.User" fetch="join">
+            <column name="POOLOWNER" />
+        </many-to-one>
+        <many-to-one name="poolParticipant" class="pojos.User" fetch="join">
+            <column name="POOLPARTICIPANT" />
+        </many-to-one>
+        <property name="isSettled" type="java.lang.Boolean">
+            <column name="ISSETTLED" />
+        </property>
+        <property name="transaction_timemillis" type="java.lang.Long">
+            <column name="TRANSACTION_TIMEMILLIS" />
+        </property>
+        <property name="amount" type="java.lang.Integer">
+            <column name="AMOUNT" />
+        </property>
+        <property name="details" type="java.lang.String">
+            <column name="DETAILS" />
+        </property>
+    </class>
+</hibernate-mapping>

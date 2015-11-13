@@ -57,6 +57,7 @@
         <mapping resource="resources/GroupChat.hbm.xml"/> 
         <mapping resource="resources/PoolRequest.hbm.xml"/>
         <mapping resource="resources/PrivateChat.hbm.xml"/>
+        <mapping resource="resources/WalletTransactions.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>
