@@ -79,4 +79,17 @@ public class WalletUtil {
 			
 		}
 	}
+	public static void settleTransactions(Session session){
+		Criteria cr = session.createCriteria(WalletTransactions.class);
+		cr.add(Restrictions.eq("isSettled", false));
+		Collection <WalletTransactions> transactions = cr.list();
+		for(WalletTransactions transaction : transactions){
+			WalletTransactions settlementTx= new WalletTransactions();
+			settlementTx.setAmount(transaction.getAmount());
+			settlementTx.setPoolParticipant(transaction.getPoolOwner());
+			addToWallet(settlementTx, session);
+			
+		}
+		session.close();
+	}
 }
