@@ -77,8 +77,14 @@ public class IChatImpl implements IChat {
 		Criteria criteria = session.createCriteria(PrivateChat.class);
 		criteria= criteria.add(Restrictions.eq("receiver.id", receiverId)).add(Restrictions.eq("isDelivered",true));
 		criteria= criteria.addOrder(Order.desc("createTimeSeconds"));
-		PrivateChat lastChat= (PrivateChat)criteria.list().get(0);
-		session.close();
+		PrivateChat lastChat=null;
+		try{
+	 lastChat= (PrivateChat)criteria.list().get(0);
+		}catch(Exception e){
+			
+		}finally {
+			session.close();
+		}
 		return lastChat;
 	}
 
