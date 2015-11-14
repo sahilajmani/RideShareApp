@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -26,13 +27,16 @@ import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
 import pojos.PoolRequest;
+import pojos.TransactionType;
 import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
+import pojos.WalletTransactions;
 import utility.DistanceBwPlaces;
 import utility.RideSharingUtil;
 import utility.UserMatching;
 import utility.GlobalConstants;
+import utility.WalletUtil;
 import vo.UserIdPoolIdVO;
 
 public class DaoImpl implements DaoI {
@@ -207,7 +211,7 @@ public class DaoImpl implements DaoI {
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);
-		String hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
+		String hql = "select user.pool.id,min(um.distance) from User user,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and um.userB.id=user.id"
 				+ " and user.pool.isAvailable="
@@ -224,8 +228,6 @@ public class DaoImpl implements DaoI {
 		for (Object[] results : result) {
 			String poolId = ((String) results[0]);
 			Float distance = (Float) results[1];
-			String name = ((String) results[2]);
-			Integer poolCost = ((Integer) results[3]);
 			// System.out.println(pool.getId() + "  " + distance);// able to get
 			// pool and
 			// distance.put
@@ -235,8 +237,6 @@ public class DaoImpl implements DaoI {
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(newPool);
 			matchedPool.setDistance(distance.toString());
-			matchedPool.setName(name);
-			matchedPool.setPoolCost(poolCost);
 			matchedPools.add(matchedPool);
 		}
 
@@ -448,8 +448,21 @@ public class DaoImpl implements DaoI {
 			session.update(poolRequest);
 			result = true;
 			tx.commit();
-			if(response == GlobalConstants.REQUEST_ACCEPTED)
+			
+			if(response == GlobalConstants.REQUEST_ACCEPTED)//this part needs to be revisted once basic functionality is done. rollback statements are required.
 			{
+
+				WalletTransactions walletTransaction =new WalletTransactions();
+				walletTransaction.setId("int-456456456"); //generate this..
+				User poolOwner=this.getUserDetails(poolRequest.getPool().getId());
+				walletTransaction.setPoolOwner(poolOwner);
+				walletTransaction.setPoolParticipant(poolRequest.getUser());
+				int days=this.dayDate();
+				System.out.println(days+" :days");
+				walletTransaction.setAmount((int)(poolOwner.getPoolCost()/5.00)*days);//need to set
+				walletTransaction.setType(TransactionType.DEBIT_TO_WALLET);
+				WalletUtil.poolRequestAccepted(walletTransaction,session);
+				
 				    Transaction tx1 = session.beginTransaction();	
 				    String hql1="Update PoolRequest set status="+GlobalConstants.REQUEST_CANCEL+" where status="+GlobalConstants.REQUEST_PENDING+" and user.id='"+poolRequest.getUser().getId()+"'";
 				    Query query=session.createQuery(hql1);
@@ -506,6 +519,17 @@ public class DaoImpl implements DaoI {
 		return true;
 	}
 
+	
+	private int  dayDate()
+	{
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		if(Calendar.DAY_OF_WEEK==Calendar.SATURDAY || Calendar.DAY_OF_WEEK==Calendar.SUNDAY )
+		return 5;
+		else 
+			return 7-Calendar.DAY_OF_WEEK;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean leavePool(String userId, String poolId) {
@@ -535,6 +559,15 @@ public class DaoImpl implements DaoI {
 			// }
 
 			// }
+			
+			WalletTransactions walletTransaction =new WalletTransactions();
+			//		walletTransaction.setId(id); generate this..
+					User poolOwner=this.getUserDetails(pool.getId());
+					walletTransaction.setPoolOwner(poolOwner);
+					walletTransaction.setPoolParticipant(user);
+					WalletUtil.poolLeftByUser(walletTransaction,session);
+					
+			
 			Pool userOriginalPool = this.getPoolDetails(userId);
 			user.setPool(userOriginalPool);
 			userOriginalPool.setIsAvailable(true);
@@ -592,6 +625,15 @@ public class DaoImpl implements DaoI {
 				participants = this.getParticipantsExceptHost(poolId, session);
 				float dis = 0;
 				for (User participant : participants) {
+			
+					WalletTransactions walletTransaction =new WalletTransactions();
+					//		walletTransaction.setId(id); generate this..
+							User poolOwner=this.getUserDetails(pool.getId());
+							walletTransaction.setPoolOwner(poolOwner);
+							walletTransaction.setPoolParticipant(participant);
+							WalletUtil.poolLeftByUser(walletTransaction,session); //settling account for every participant in case poolowner leaves
+					
+					
 					if(participant.getDistance() > dis) {
 						dis = participant.getDistance(); // new host user
 						hostUserId = participant.getId();

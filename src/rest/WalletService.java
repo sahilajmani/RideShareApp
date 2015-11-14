@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import org.hibernate.Session;
 
 import pojos.RestServiceResponse;
+import pojos.TransactionType;
 import pojos.User;
 import pojos.WalletTransactions;
 import utility.RideSharingUtil;
@@ -24,8 +25,11 @@ public class WalletService {
 	public RestServiceResponse creditToWallet(WalletTopUp walletTopUp) {
 		WalletTransactions tx = new WalletTransactions();
 		tx.setPoolParticipant(walletTopUp.getUser());
+		tx.setPoolOwner(walletTopUp.getUser());
+		tx.setDetails("Recharged the wallet by "+walletTopUp.getAmount()+ "Rs");
 		tx.setAmount(walletTopUp.getAmount());
-		tx.setId(walletTopUp.getTransactionId());
+		tx.setId(walletTopUp.getTransactionId()); // external id - add ext in front.
+		tx.setType(TransactionType.CREDIT_TO_WALLET);
 		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 		
 		RestServiceResponse response = new RestServiceResponse();

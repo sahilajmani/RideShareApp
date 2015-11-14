@@ -14,8 +14,8 @@ import pojos.WalletTransactions;
 
 public class WalletUtil {
 	
-	public static User addToWallet(WalletTransactions walletRecharge,Session session){
-		if(!TransactionType.CREDIT_TO_WALLET.equals(walletRecharge.getType())){
+	public static User addToWallet(WalletTransactions walletRecharge,Session session){ //for payU
+		if(!TransactionType.CREDIT_TO_WALLET.equals(walletRecharge.getType())){ //why this if??
 			walletRecharge.setType(TransactionType.CREDIT_TO_WALLET);
 		}
 		// poolOwner  is insignificant in case of add credit to wallet
@@ -30,20 +30,40 @@ public class WalletUtil {
 		return user;
 		
 	}
-	public static void poolRequestAccepted(WalletTransactions walletRecharge,Session session){
+	
+	public static User addToWalletInternal(WalletTransactions walletRecharge,Session session){ //for all crediting internal transactions
+		
+		User user = RideSharingUtil.getDaoInstance().getUserDetails(walletRecharge.getPoolOwner().getId());
+		Transaction tx = session.beginTransaction();
+		user.setWallet_balance(user.getWallet_balance()+walletRecharge.getAmount());
+		walletRecharge.setIsSettled(true);
+		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
+		session.save(walletRecharge);
+		session.update(user);
+		tx.commit();
+		return user;
+		
+	}
+	
+	
+	public static void poolRequestAccepted(WalletTransactions walletRecharge,Session session){   //set an id here//internal transaction // this method will only be initiated once a new request is acceted
 		if(!TransactionType.CREDIT_TO_WALLET.equals(walletRecharge.getType())){
-			walletRecharge.setType(TransactionType.DEBIT_TO_WALLET);
+			walletRecharge.setType(TransactionType.DEBIT_TO_WALLET);  				//significance of if?
 		}
-		User user = RideSharingUtil.getDaoInstance().getUserDetails(walletRecharge.getPoolParticipant().getId());
+	//	User user = RideSharingUtil.getDaoInstance().getUserDetails(walletRecharge.getPoolParticipant().getId());
+		User user = walletRecharge.getPoolParticipant();
 		Transaction tx = session.beginTransaction();
 		user.setWallet_balance(user.getWallet_balance()-walletRecharge.getAmount());
 		walletRecharge.setIsSettled(false);
+		walletRecharge.setDetails("Advance paid for joining "+walletRecharge.getPoolOwner().getName()+"'s pool");
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
 		session.save(walletRecharge);
 		session.update(user);
 		tx.commit();	
 	}
-	public static void poolLeftByUser(WalletTransactions walletRecharge,Session session){
+	
+	
+	public static void poolLeftByUser(WalletTransactions walletRecharge,Session session){ 
 		Criteria cr = session.createCriteria(WalletTransactions.class).add(Restrictions.eq("poolOwner.id",walletRecharge.getPoolOwner().getId())).add
 				(Restrictions.eq("poolParticipant.id", walletRecharge.getId())).add(Restrictions.eq("isSettled",false));
 		Collection <WalletTransactions> unsettledTransaction = (Collection<WalletTransactions>) cr.list();
@@ -55,22 +75,35 @@ public class WalletUtil {
 			User poolParticipant = tx.getPoolParticipant();
 			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
 			int days = numberOfDays.intValue();
-			int ownerShare = (days)/7 * userPool.getCostPerMonth(); // cost per month ?? we should rename 
+			if(days>5)
+			days=5;
+			int ownerShare = (int)((days)/5.00 *poolOwner.getPoolCost()); // cost per month ?? we should rename //havnt we assumed that there are 5 working days only?
 			// this variable
-			int participantRefund = userPool.getCostPerMonth()-ownerShare;
+			tx.setAmount(ownerShare);
+			tx.setIsSettled(true);
+			
+			int participantRefund = poolOwner.getPoolCost()-ownerShare;
 			Transaction t1 = session.beginTransaction();
 			poolOwner.setWallet_balance(poolOwner.getWallet_balance()+ownerShare);
 			WalletTransactions poolOwnerTx = new WalletTransactions();
+			poolOwnerTx.setId(tx.getId());
 			poolOwnerTx.setAmount(ownerShare);
+			poolOwnerTx.setType(TransactionType.CREDIT_TO_WALLET);
 			poolOwnerTx.setIsSettled(true);
+			poolOwnerTx.setPoolParticipant(poolParticipant);
 			poolOwnerTx.setPoolOwner(poolOwner);
-			poolOwnerTx.setDetails("pool left by user - "+poolParticipant.getName());
+			poolOwnerTx.setDetails("Pool left by user - "+poolParticipant.getName()+" Amount credited for "+days+" days");
 			WalletTransactions poolParticipanttx = new WalletTransactions();
+			poolParticipanttx.setType(TransactionType.REFUND);
+			poolParticipanttx.setId(tx.getId());
 			poolParticipanttx.setAmount(participantRefund);
 			poolParticipanttx.setIsSettled(true);
 			poolParticipanttx.setPoolOwner(poolParticipant);
-			poolParticipanttx.setDetails("pool left by user, owned by "+poolOwner.getName());
+			poolParticipanttx.setPoolParticipant(poolParticipant);
+			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwner.getName()+"'s Pool");
 			poolParticipant.setWallet_balance(poolParticipant.getWallet_balance()+participantRefund);
+			
+			session.update(tx);
 			session.save(poolParticipanttx);
 			session.save(poolOwnerTx);
 			session.update(poolParticipant);
@@ -79,15 +112,22 @@ public class WalletUtil {
 			
 		}
 	}
+	
 	public static void settleTransactions(Session session){
 		Criteria cr = session.createCriteria(WalletTransactions.class);
 		cr.add(Restrictions.eq("isSettled", false));
 		Collection <WalletTransactions> transactions = cr.list();
 		for(WalletTransactions transaction : transactions){
+			transaction.setIsSettled(true);
+			session.update(transaction); //optimise the code. In loop it is being called.Dont know when will it commit. If it is only interacting with cache then no need to optimise.
 			WalletTransactions settlementTx= new WalletTransactions();
+			settlementTx.setId(transaction.getId());
+			settlementTx.setDetails(transaction.getAmount()+" Rs paid by "+transaction.getPoolParticipant());
 			settlementTx.setAmount(transaction.getAmount());
-			settlementTx.setPoolParticipant(transaction.getPoolOwner());
-			addToWallet(settlementTx, session);
+			settlementTx.setPoolParticipant(transaction.getPoolParticipant());
+			settlementTx.setType(TransactionType.CREDIT_TO_WALLET);
+			settlementTx.setPoolOwner(transaction.getPoolOwner());
+			addToWalletInternal(settlementTx, session);
 			
 		}
 		session.close();
