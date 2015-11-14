@@ -397,9 +397,14 @@ public class DaoImpl implements DaoI {
 	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance) {
 		User user = this.getUserDetails(userIdPoolIdVO.getUserId());
 		Pool pool = this.getPoolDetails(userIdPoolIdVO.getPoolId());
-		int status = userIdPoolIdVO.getStatus();
+		int status;
+		if(userIdPoolIdVO.getStatus() != 0){
+			status = userIdPoolIdVO.getStatus();
+		} else{
+			status = GlobalConstants.REQUEST_PENDING;
+		}
 		PoolRequest poolRequest = new PoolRequest();
-		poolRequest.setStatus(status);//GlobalConstants.REQUEST_PENDING);
+		poolRequest.setStatus(status);
 		Date date = new Date();
 		Timestamp time = new java.sql.Timestamp(date.getTime());
 		try {
