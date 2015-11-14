@@ -24,6 +24,7 @@ public class WalletUtil {
 		user.setWallet_balance(user.getWallet_balance()+walletRecharge.getAmount());
 		walletRecharge.setIsSettled(true);
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
+		walletRecharge.setId("EXT_"+System.currentTimeMillis()+":"+user.getId().substring(25));
 		session.save(walletRecharge);
 		session.update(user);
 		tx.commit();
@@ -37,6 +38,7 @@ public class WalletUtil {
 		Transaction tx = session.beginTransaction();
 		user.setWallet_balance(user.getWallet_balance()+walletRecharge.getAmount());
 		walletRecharge.setIsSettled(true);
+		walletRecharge.setId("INT_"+System.currentTimeMillis()+":"+user.getId().substring(25));
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
 		session.save(walletRecharge);
 		session.update(user);
@@ -56,6 +58,7 @@ public class WalletUtil {
 		user.setWallet_balance(user.getWallet_balance()-walletRecharge.getAmount());
 		walletRecharge.setIsSettled(false);
 		walletRecharge.setDetails("Advance paid for joining "+walletRecharge.getPoolOwner().getName()+"'s pool");
+		walletRecharge.setId("INT_POOL"+System.currentTimeMillis()+":"+walletRecharge.getPoolOwner().getId().substring(25));
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
 		session.save(walletRecharge);
 		session.update(user);
@@ -75,8 +78,9 @@ public class WalletUtil {
 			User poolParticipant = tx.getPoolParticipant();
 			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
 			int days = numberOfDays.intValue();
-			if(days>5)
+			if(days>5){
 			days=5;
+			}
 			int ownerShare = (int)((days)/5.00 *poolOwner.getPoolCost()); // cost per month ?? we should rename //havnt we assumed that there are 5 working days only?
 			// this variable
 			tx.setAmount(ownerShare);
@@ -117,9 +121,12 @@ public class WalletUtil {
 		Criteria cr = session.createCriteria(WalletTransactions.class);
 		cr.add(Restrictions.eq("isSettled", false));
 		Collection <WalletTransactions> transactions = cr.list();
+		Transaction tx =null;
 		for(WalletTransactions transaction : transactions){
+			tx = session.beginTransaction();
 			transaction.setIsSettled(true);
-			session.update(transaction); //optimise the code. In loop it is being called.Dont know when will it commit. If it is only interacting with cache then no need to optimise.
+			session.update(transaction); //optimize the code. In loop it is being called.Dont know when will it commit. If it is only interacting with cache then no need to optimise.
+			tx.commit();
 			WalletTransactions settlementTx= new WalletTransactions();
 			settlementTx.setId(transaction.getId());
 			settlementTx.setDetails(transaction.getAmount()+" Rs paid by "+transaction.getPoolParticipant());
@@ -128,7 +135,6 @@ public class WalletUtil {
 			settlementTx.setType(TransactionType.CREDIT_TO_WALLET);
 			settlementTx.setPoolOwner(transaction.getPoolOwner());
 			addToWalletInternal(settlementTx, session);
-			
 		}
 		session.close();
 	}
