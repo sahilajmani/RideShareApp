@@ -26,7 +26,7 @@ public interface DaoI{
 	boolean updatePoolRequest(String requestId, int response);
 	boolean leavePool(String userId, String poolId);
 	public List<PoolRequest> getOutgoingPoolRequests(String userId);
-	public boolean joinPoolRequest(String userId, String poolId,float distance);
+	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance);
 	void deleteUser(String userId);
 	public List<User> fetchPoolParticipants(String poolId);
 	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO);

@@ -360,9 +360,11 @@ public class DaoImpl implements DaoI {
 	@Override
 	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where user.id=?";
+		String hql = "from PoolRequest where user.id=? or (pool.id=? and status=?)";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
+		qry.setString(1, userId);
+		qry.setInteger(2, GlobalConstants.JOIN_PENDING);
 		List<PoolRequest> userPoolRequest = qry.list();
 		// for(PoolRequest individual : userPoolRequest)
 		// {
@@ -373,30 +375,31 @@ public class DaoImpl implements DaoI {
 		// System.out.println(individual.getDescription());
 		//
 		// }
-
 		session.close();
 		return userPoolRequest;
-
 	}
 
 	@Override
 	public List<PoolRequest> getIncomingPoolRequests(String userId) {
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where pool.id=? and status ="
-				+ GlobalConstants.REQUEST_PENDING;
+		String hql = "from PoolRequest where (pool.id=? and status =?) or (user.id=? and status=?)";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
+		qry.setInteger(1, GlobalConstants.REQUEST_PENDING);
+		qry.setString(2, userId);
+		qry.setInteger(3, GlobalConstants.JOIN_PENDING);	
 		List<PoolRequest> userPoolRequest = qry.list();
 		session.close();
 		return userPoolRequest;
 	}
 
 	@Override
-	public boolean joinPoolRequest(String userId, String poolId, float distance) {
-		User user = this.getUserDetails(userId);
-		Pool pool = this.getPoolDetails(poolId);
+	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance) {
+		User user = this.getUserDetails(userIdPoolIdVO.getUserId());
+		Pool pool = this.getPoolDetails(userIdPoolIdVO.getPoolId());
+		int status = userIdPoolIdVO.getStatus();
 		PoolRequest poolRequest = new PoolRequest();
-		poolRequest.setStatus(GlobalConstants.REQUEST_PENDING);
+		poolRequest.setStatus(status);//GlobalConstants.REQUEST_PENDING);
 		Date date = new Date();
 		Timestamp time = new java.sql.Timestamp(date.getTime());
 		try {

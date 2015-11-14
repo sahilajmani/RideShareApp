@@ -103,8 +103,7 @@ public class RequestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO) {
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
-		restServiceResponse.setResponse(dao.joinPoolRequest(
-				userIdPoolIdVO.getUserId(), userIdPoolIdVO.getPoolId(),
+		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO,
 				(float) 0.0));
 		return restServiceResponse;
 	}
@@ -134,11 +133,11 @@ public class RequestService {
 			try {
 				PoolRequest poolRequest = dao.getPoolRequestVO(userIdPoolIdVO);
 				if (poolRequest != null) {
-					if(poolRequest.getStatus()>=0){
-					requestStatusVO.setStatus(poolRequest.getStatus());
-					requestStatusVO.setRequestId(poolRequest.getId());
-					}else{
-						requestStatusVO.setStatus(-1);						
+					if (poolRequest.getStatus() >= 0) {
+						requestStatusVO.setStatus(poolRequest.getStatus());
+						requestStatusVO.setRequestId(poolRequest.getId());
+					} else {
+						requestStatusVO.setStatus(-1);
 					}
 					requestStatusVO.setResponse(true);
 				} else {
@@ -149,9 +148,9 @@ public class RequestService {
 				requestStatusVO.setStatus(-1);
 				requestStatusVO.setResponse(false);
 			}
-		}else{
-		requestStatusVO.setStatus(-1);
-		requestStatusVO.setResponse(false);
+		} else {
+			requestStatusVO.setStatus(-1);
+			requestStatusVO.setResponse(false);
 		}
 		return requestStatusVO;
 	}

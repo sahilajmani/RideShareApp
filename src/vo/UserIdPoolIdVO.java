@@ -3,6 +3,7 @@ package vo;
 public class UserIdPoolIdVO {
 	private String userId;
 	private String poolId;
+	private int status;
 
 	public String getPoolId() {
 		return poolId;
@@ -18,5 +19,11 @@ public class UserIdPoolIdVO {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }
