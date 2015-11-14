@@ -207,7 +207,7 @@ public class DaoImpl implements DaoI {
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
 		// User currentUser = this.getUserDetails(userId);
-		String hql = "select user.pool.id,min(um.distance) from User user,UserMapping um where um.userA.id='"
+		String hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and um.userB.id=user.id"
 				+ " and user.pool.isAvailable="
@@ -224,6 +224,8 @@ public class DaoImpl implements DaoI {
 		for (Object[] results : result) {
 			String poolId = ((String) results[0]);
 			Float distance = (Float) results[1];
+			String name = ((String) results[2]);
+			Integer poolCost = ((Integer) results[3]);
 			// System.out.println(pool.getId() + "  " + distance);// able to get
 			// pool and
 			// distance.put
@@ -233,6 +235,8 @@ public class DaoImpl implements DaoI {
 			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
 			matchedPool.setPool(newPool);
 			matchedPool.setDistance(distance.toString());
+			matchedPool.setName(name);
+			matchedPool.setPoolCost(poolCost);
 			matchedPools.add(matchedPool);
 		}
 
