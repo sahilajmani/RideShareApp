@@ -79,6 +79,7 @@ public class RequestService {
 			pReq.setUpdated(poolRequest.getUpdated());
 			pReq.setDistance(poolRequest.getDistance().toString());
 			pReq.setUser(dao.getUserDetails(poolRequest.getUser().getId()));
+			pReq.setPool(dao.getPoolDetails(poolRequest.getPool().getId()));
 			responsePoolRequests.add(pReq);
 		}
 		listPoolRequests.setPoolRequests(responsePoolRequests);
