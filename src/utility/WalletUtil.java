@@ -66,9 +66,9 @@ public class WalletUtil {
 	}
 	
 	
-	public static void poolLeftByUser(WalletTransactions walletRecharge,Session session){ 
+	public static void poolLeftByUser(WalletTransactions walletRecharge,Session session,Transaction t1){ 
 		Criteria cr = session.createCriteria(WalletTransactions.class).add(Restrictions.eq("poolOwner.id",walletRecharge.getPoolOwner().getId())).add
-				(Restrictions.eq("poolParticipant.id", walletRecharge.getId())).add(Restrictions.eq("isSettled",false));
+				(Restrictions.eq("poolParticipant.id", walletRecharge.getPoolParticipant().getId())).add(Restrictions.eq("isSettled",false));
 		Collection <WalletTransactions> unsettledTransaction = (Collection<WalletTransactions>) cr.list();
 		if(unsettledTransaction!= null){
 			WalletTransactions tx = unsettledTransaction.iterator().next();
@@ -76,7 +76,8 @@ public class WalletUtil {
 			Pool userPool = (Pool)cr.list().get(0);
 			User poolOwner = tx.getPoolOwner();
 			User poolParticipant = tx.getPoolParticipant();
-			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
+			Long numberOfDays = ((1447320545000L-tx.getTransaction_timemillis())/(24*60*60*1000));
+			System.out.println(numberOfDays);
 			int days = numberOfDays.intValue();
 			if(days>5){
 			days=5;
@@ -87,10 +88,10 @@ public class WalletUtil {
 			tx.setIsSettled(true);
 			
 			int participantRefund = poolOwner.getPoolCost()-ownerShare;
-			Transaction t1 = session.beginTransaction();
+			//Transaction t1 = session.beginTransaction();
 			poolOwner.setWallet_balance(poolOwner.getWallet_balance()+ownerShare);
 			WalletTransactions poolOwnerTx = new WalletTransactions();
-			poolOwnerTx.setId(tx.getId());
+			poolOwnerTx.setId(tx.getId()+"Credit");
 			poolOwnerTx.setAmount(ownerShare);
 			poolOwnerTx.setType(TransactionType.CREDIT_TO_WALLET);
 			poolOwnerTx.setIsSettled(true);
@@ -99,7 +100,7 @@ public class WalletUtil {
 			poolOwnerTx.setDetails("Pool left by user - "+poolParticipant.getName()+" Amount credited for "+days+" days");
 			WalletTransactions poolParticipanttx = new WalletTransactions();
 			poolParticipanttx.setType(TransactionType.REFUND);
-			poolParticipanttx.setId(tx.getId());
+			poolParticipanttx.setId(tx.getId()+"Refund");
 			poolParticipanttx.setAmount(participantRefund);
 			poolParticipanttx.setIsSettled(true);
 			poolParticipanttx.setPoolOwner(poolParticipant);
@@ -112,7 +113,7 @@ public class WalletUtil {
 			session.save(poolOwnerTx);
 			session.update(poolParticipant);
 			session.update(poolOwner);
-			t1.commit();
+	//		t1.commit();
 			
 		}
 	}

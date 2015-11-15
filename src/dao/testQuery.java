@@ -48,7 +48,7 @@ public class testQuery {
 	//	System.out.println(db.matchTest("fef5eb9a-59f3-11e5-9624-02b93fe38caf"));
 	//	System.out.println(db.updatePoolRequest("958f932b-5a39-11e5-869d-02b93fe38caf",1));
 //List<Transactions> t =	db.getUserPoolRecord("17e1794b-5a20-11e5-869d-02b93fe38caf");
-	//	System.out.println(db.leavePool("026f1f3a-5986-11e5-9624-02b93fe38caf", "026f1f3a-5986-11e5-9624-02b93fe38caf"));
+		System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
 	
 //		System.out.println(db.joinPoolRequest("d7cd5507-6a11-11e5-8f7b-027a1dc8a973","52abecb2-6a17-11e5-8f7b-027a1dc8a973",0));
 	}

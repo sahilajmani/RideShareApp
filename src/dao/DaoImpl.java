@@ -577,7 +577,7 @@ public class DaoImpl implements DaoI {
 					User poolOwner=this.getUserDetails(pool.getId());
 					walletTransaction.setPoolOwner(poolOwner);
 					walletTransaction.setPoolParticipant(user);
-					WalletUtil.poolLeftByUser(walletTransaction,session);
+					WalletUtil.poolLeftByUser(walletTransaction,session,tx);
 					
 			
 			Pool userOriginalPool = this.getPoolDetails(userId);
@@ -643,7 +643,7 @@ public class DaoImpl implements DaoI {
 							User poolOwner=this.getUserDetails(pool.getId());
 							walletTransaction.setPoolOwner(poolOwner);
 							walletTransaction.setPoolParticipant(participant);
-							WalletUtil.poolLeftByUser(walletTransaction,session); //settling account for every participant in case poolowner leaves
+							WalletUtil.poolLeftByUser(walletTransaction,session,tx); //settling account for every participant in case poolowner leaves
 					
 					
 					if(participant.getDistance() > dis) {
