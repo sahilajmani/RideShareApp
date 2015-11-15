@@ -11,10 +11,10 @@
         <property name="type" type="java.lang.String">
             <column name="TYPE" />
         </property>
-        <many-to-one name="poolOwner" class="pojos.User" fetch="join">
+        <many-to-one name="poolOwner" class="pojos.User" fetch="join" lazy="proxy">
             <column name="POOLOWNER" />
         </many-to-one>
-        <many-to-one name="poolParticipant" class="pojos.User" fetch="join">
+        <many-to-one name="poolParticipant" class="pojos.User" fetch="join" lazy = "proxy">
             <column name="POOLPARTICIPANT" />
         </many-to-one>
         <property name="isSettled" type="java.lang.Boolean">

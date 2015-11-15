@@ -397,43 +397,80 @@ public class DaoImpl implements DaoI {
 	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance) {
 		User user = this.getUserDetails(userIdPoolIdVO.getUserId());
 		Pool pool = this.getPoolDetails(userIdPoolIdVO.getPoolId());
+		List<User> participants = new ArrayList<User>();
 		int status;
-		if(userIdPoolIdVO.getStatus() != 0){
+		if (userIdPoolIdVO.getStatus() != 0) {
 			status = userIdPoolIdVO.getStatus();
-		} else{
+		} else {
 			status = GlobalConstants.REQUEST_PENDING;
 		}
-		PoolRequest poolRequest = new PoolRequest();
-		poolRequest.setStatus(status);
-		Date date = new Date();
-		Timestamp time = new java.sql.Timestamp(date.getTime());
-		try {
-			poolRequest.setUpdated(this.getCurrentTime());
-			poolRequest.setCreated(this.getCurrentTime());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		poolRequest.setPool(pool);
-		poolRequest.setUser(user);
-		poolRequest.setDistance(distance);
+		if (status == GlobalConstants.JOIN_PENDING && !user.isHasCar()
+				&& this.getPoolDetails(user.getId()).getNumberOfMembers() > 1) {
+			Session session = sessionFactory.openSession();
+			String hql = "from UserMapping um where um.userA.id='"
+					+ pool.getId() + "' and um.userB.pool.id='" + user.getId()
+					+ "'";
+			Query qry = session.createQuery(hql);
+			try {
+				List<UserMapping> userMap = qry.list();
+				for (UserMapping userMatch : userMap) {
+					PoolRequest poolRequest = new PoolRequest();
+					poolRequest.setStatus(status);
+					Date date = new Date();
+					Timestamp time = new java.sql.Timestamp(date.getTime());
+					try {
+						poolRequest.setUpdated(this.getCurrentTime());
+						poolRequest.setCreated(this.getCurrentTime());
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-		Session session = sessionFactory.openSession();
-		Transaction tx1 = session.beginTransaction();
-		String hql= "delete from PoolRequest where pool.id='"+pool.getId()+"' and  user.id='"+user.getId()+"'";
-		Query query=session.createQuery(hql);
-	    int rows = query.executeUpdate();
-	    System.out.println("rows updated"+rows);
-	    tx1.commit();	
-		
-		Transaction tx = session.beginTransaction();
-		session.save(poolRequest);
-		tx.commit();
-		session.close();
+					poolRequest.setPool(pool);
+					poolRequest.setUser(userMatch.getUserB());
+					poolRequest.setDistance(userMatch.getDistance());
+
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+
+		} else {
+
+			PoolRequest poolRequest = new PoolRequest();
+			poolRequest.setStatus(status);
+			Date date = new Date();
+			Timestamp time = new java.sql.Timestamp(date.getTime());
+			try {
+				poolRequest.setUpdated(this.getCurrentTime());
+				poolRequest.setCreated(this.getCurrentTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			poolRequest.setPool(pool);
+			poolRequest.setUser(user);
+			poolRequest.setDistance(distance);
+
+			Session session = sessionFactory.openSession();
+			Transaction tx1 = session.beginTransaction();
+			String hql = "delete from PoolRequest where pool.id='"
+					+ pool.getId() + "' and  user.id='" + user.getId() + "'";
+			Query query = session.createQuery(hql);
+			int rows = query.executeUpdate();
+			System.out.println("rows updated" + rows);
+			tx1.commit();
+
+			Transaction tx = session.beginTransaction();
+			session.save(poolRequest);
+			tx.commit();
+			session.close();
+		}
 		return true;
 	}
-
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
 		boolean result = false;
@@ -550,14 +587,15 @@ public class DaoImpl implements DaoI {
 		User user = this.getUserDetails(userId);
 		Pool pool = this.getPoolDetails(poolId);
 		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
+		Transaction tx = null;
 	
 		if(pool.getId().equals(user.getId()) && pool.getNumberOfMembers()==1 )
 		{
-			tx.commit();
+			
+//			tx.commit();
 			session.close();
 
-			System.out.println("take no acktion");
+			System.out.println("take no action");
 			return false;
 		}else
 		if (!pool.getId().equals(user.getId())) {
@@ -571,25 +609,38 @@ public class DaoImpl implements DaoI {
 			// }
 
 			// }
-			
+			Transaction tx2 = session.beginTransaction();
+			Pool userOriginalPool = this.getPoolDetails(userId);
+			userOriginalPool.setIsAvailable(true);
+			user.setPool(userOriginalPool);
+			session.update(user);
+			tx2.commit();
 			WalletTransactions walletTransaction =new WalletTransactions();
 			//		walletTransaction.setId(id); generate this..
 					User poolOwner=this.getUserDetails(pool.getId());
 					walletTransaction.setPoolOwner(poolOwner);
 					walletTransaction.setPoolParticipant(user);
-					WalletUtil.poolLeftByUser(walletTransaction,session,tx);
+					WalletUtil.poolLeftByUser(walletTransaction);
+					tx = session.beginTransaction();
+					session.update(walletTransaction.getPoolOwner());
+					session.update(walletTransaction.getPoolParticipant());
 					
-			
-			Pool userOriginalPool = this.getPoolDetails(userId);
-			user.setPool(userOriginalPool);
-			userOriginalPool.setIsAvailable(true);
+			poolOwner= null;
+//			pool=null;
+		//	session.saveOrUpdate(user);
+			Session session2 = RideSharingUtil.getSessionFactoryInstance().openSession();
+			Transaction tx3= session2.beginTransaction();
+			pool = this.getPoolDetails(poolId);
 			int noOfMembers = pool.getNumberOfMembers();
 			pool.setNumberOfMembers((noOfMembers - 1));
 			pool.setIsAvailable(true);
+			session2.update(pool);
+			tx3.commit();
+			session2.close();
+			
 			// pool.setParticipants( (List<User>) participants);
-			session.saveOrUpdate(pool);
-			session.saveOrUpdate(user);
-			session.saveOrUpdate(userOriginalPool);
+//			session.update(pool);
+		//	session.saveOrUpdate(userOriginalPool);
 
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true)";
@@ -620,7 +671,7 @@ public class DaoImpl implements DaoI {
 		
 			//if (pool.getId().equals(user.getId())) 
 			{
-
+				
 				// Session session = sessionFactory.openSession();
 				// pool.getParticipants().removeAll(c);
 				// int noOfMembers = pool.getNumberOfMembers();
@@ -628,6 +679,7 @@ public class DaoImpl implements DaoI {
 				pool.setIsAvailable(true);
 				pool.setNumberOfMembers(1);
 				pool.setIsAvailable(true);
+				tx= session.beginTransaction();
 				session.update(pool);
 				String hostUserId = "";
 				// Collection<User> participants = pool.getParticipants();
@@ -643,8 +695,9 @@ public class DaoImpl implements DaoI {
 							User poolOwner=this.getUserDetails(pool.getId());
 							walletTransaction.setPoolOwner(poolOwner);
 							walletTransaction.setPoolParticipant(participant);
-							WalletUtil.poolLeftByUser(walletTransaction,session,tx); //settling account for every participant in case poolowner leaves
-					
+							WalletUtil.poolLeftByUser(walletTransaction); //settling account for every participant in case poolowner leaves
+							session.update(walletTransaction.getPoolOwner());
+							session.update(walletTransaction.getPoolParticipant());
 					
 					if(participant.getDistance() > dis) {
 						dis = participant.getDistance(); // new host user
@@ -666,7 +719,6 @@ public class DaoImpl implements DaoI {
 					session.update(oldTransaction);
 				}
 //				session.saveOrUpdate(oldTransactions);
-System.out.println("hostuseris "+hostUserId);
 			//	String hql1 = "from Pool where id='" + hostUserId + "'";
 			//	Query qry1 = session.createQuery(hql1);
 				Pool hostUserPool = this.getPoolDetails(hostUserId);
@@ -700,8 +752,9 @@ System.out.println("hostuseris "+hostUserId);
 
 		result=true;	
 		}
-		
+		if(tx!=null){
 		tx.commit();
+		}
 		session.close();
 
 		return result;

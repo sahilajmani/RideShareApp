@@ -62,20 +62,22 @@ public class WalletUtil {
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
 		session.save(walletRecharge);
 		session.update(user);
-		tx.commit();	
+		tx.commit();		
 	}
 	
 	
-	public static void poolLeftByUser(WalletTransactions walletRecharge,Session session,Transaction t1){ 
+	public static void poolLeftByUser(WalletTransactions walletRecharge){ 
+		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 		Criteria cr = session.createCriteria(WalletTransactions.class).add(Restrictions.eq("poolOwner.id",walletRecharge.getPoolOwner().getId())).add
 				(Restrictions.eq("poolParticipant.id", walletRecharge.getPoolParticipant().getId())).add(Restrictions.eq("isSettled",false));
 		Collection <WalletTransactions> unsettledTransaction = (Collection<WalletTransactions>) cr.list();
-		if(unsettledTransaction!= null){
+		if(unsettledTransaction!= null && unsettledTransaction.size()>0){
+		Transaction t1= session.beginTransaction();
 			WalletTransactions tx = unsettledTransaction.iterator().next();
-			cr = session.createCriteria(Pool.class).add(Restrictions.eq("id",tx.getPoolOwner().getId()));
-			Pool userPool = (Pool)cr.list().get(0);
-			User poolOwner = tx.getPoolOwner();
-			User poolParticipant = tx.getPoolParticipant();
+//			cr = session.createCriteria(Pool.class).add(Restrictions.eq("id",tx.getPoolOwner().getId()));
+//			Pool userPool = (Pool)cr.list().get(0);
+			User poolOwner = walletRecharge.getPoolOwner();
+			User poolParticipant = walletRecharge.getPoolParticipant();
 			Long numberOfDays = ((1447320545000L-tx.getTransaction_timemillis())/(24*60*60*1000));
 			System.out.println(numberOfDays);
 			int days = numberOfDays.intValue();
@@ -107,13 +109,16 @@ public class WalletUtil {
 			poolParticipanttx.setPoolParticipant(poolParticipant);
 			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwner.getName()+"'s Pool");
 			poolParticipant.setWallet_balance(poolParticipant.getWallet_balance()+participantRefund);
-			
 			session.update(tx);
-			session.save(poolParticipanttx);
+		    session.save(poolParticipanttx);
 			session.save(poolOwnerTx);
-			session.update(poolParticipant);
-			session.update(poolOwner);
-	//		t1.commit();
+//			session.update(poolOwner);
+//			session.update(poolParticipant);
+			poolOwner = null;
+			poolParticipant= null;
+			tx=null;
+			t1.commit();
+			session.close();
 			
 		}
 	}
