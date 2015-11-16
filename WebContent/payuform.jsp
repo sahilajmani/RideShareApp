@@ -143,7 +143,6 @@ function submitPayuForm() {
 	  <input type="text" name="phone" ng-model="person.phone" />
 		</div>
 	
-      <table>
 <%--                 <tr>
           <td>Amount: </td>
           <td><input name="amount" value="<%= (empty(params.get("amount"))) ? "" : params.get("amount") %>" /></td>
@@ -168,12 +167,9 @@ function submitPayuForm() {
           <td>Failure URI: </td>
           <td colspan="3"><input name="furl" value="<%= (empty(params.get("furl"))) ? "" : params.get("furl") %>" size="64" /></td>
         </tr>--%>
-        <tr>
           <% if(empty(hash)){ %>
-            <td colspan="4"><input type="submit" value="Submit" /></td>
+            <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>
           <% } %>
-        </tr>
-      </table>
     </form>
 
 
