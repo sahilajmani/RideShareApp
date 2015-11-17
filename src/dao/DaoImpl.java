@@ -210,14 +210,15 @@ public class DaoImpl implements DaoI {
 
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
-		// User currentUser = this.getUserDetails(userId);
+		 User currentUser = this.getUserDetails(userId);
 		String hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and um.userB.id=user.id"
 				+ " and user.pool.isAvailable="
 				+ true
 				+ " and user.pool.id<>'"
-				+ userId
+				+ userId + " and user.pool.id<>'"
+						+ currentUser.getPool().getId()
 				+ "'  group by  user.pool.id "
 				+ "order by min(um.distance)";
 		Query qry = session.createQuery(hql);
