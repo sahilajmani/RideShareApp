@@ -217,7 +217,7 @@ public class DaoImpl implements DaoI {
 				+ " and user.pool.isAvailable="
 				+ true
 				+ " and user.pool.id<>'"
-				+ userId + " and user.pool.id<>'"
+				+ userId + "' and user.pool.id<>'"
 						+ currentUser.getPool().getId()
 				+ "'  group by  user.pool.id "
 				+ "order by min(um.distance)";
