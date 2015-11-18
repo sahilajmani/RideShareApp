@@ -43,7 +43,7 @@ public class ProfileService {
 				restServiceResponse.setUser(user);
 				restServiceResponse.setResponse(true);
 				return restServiceResponse;
-			} else {
+			} else {				
 				logger.info("Failed to insert User["+ user.getId() +"]");
 				restServiceResponse.setResponse(false);
 				return restServiceResponse;

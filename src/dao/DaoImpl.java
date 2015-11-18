@@ -781,6 +781,7 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public boolean insertUser(User user) {
+		try{
 		if (user != null) {
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
@@ -839,8 +840,12 @@ public class DaoImpl implements DaoI {
 				session.close();
 			}
 			return true;
-		}
+		}		
 		return false;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private void insertTransaction(User user, Session session) {
