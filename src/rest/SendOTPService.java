@@ -64,6 +64,12 @@ public class SendOTPService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
 		try{
 		OTP otpObjectByEmail = new OTP();
@@ -71,10 +77,11 @@ public class SendOTPService {
 		if (null != otpObj && null != otpObj.getEmail()
 				&& null != otpObj.getPasscode() && !otpObj.getEmail().isEmpty()
 				&& !otpObj.getPasscode().isEmpty()) {
-			otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
+			otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());	
 			if (null != otpObjectByEmail
 					&& otpObjectByEmail.getPasscode() != null
 					&& !otpObjectByEmail.getPasscode().isEmpty()) {
+				System.out.println("Comparing passcodes now   "+otpObjectByEmail);
 				if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
 					response = true;
 				}
@@ -101,10 +108,12 @@ public class SendOTPService {
 			Date otpCreationTime = otpObjectByEmail.getCreate_time();
 			long diffInMinutes = (currentTime.getTime() - otpCreationTime
 					.getTime()) / 60000;
+			System.out.println("Time Diff is --   "+diffInMinutes);
 			if (diffInMinutes <= GlobalConstants.OTPPermissibleTimeInMinutes) {
 				return true;
 			}
 		}
+		System.out.println("Returning false in get OTP Authentications");
 		return false;
 	}
 
