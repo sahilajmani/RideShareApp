@@ -251,9 +251,9 @@ public class DaoImpl implements DaoI {
 
 	}
 
-	private List<UserMapping> findMatchedUser(String userId) {
+	private List<UserMapping> findMatchedUser(User currentUser) {
 		Session session = sessionFactory.openSession();
-		User currentUser = this.getUserDetails(userId);
+//		User currentUser = this.getUserDetails(userId);
 		System.out.println("home: "+currentUser.getHomeAddress().getLattitude()+"   distance "+currentUser.getDistance()); // remove when goes in production
 		if (null != currentUser && null != currentUser.getHomeAddress()
 				&& null != currentUser.getOfficeAddress()
@@ -261,7 +261,7 @@ public class DaoImpl implements DaoI {
 				&& currentUser.getHomeAddress().getLongitude() != 0.0
 				&& currentUser.getOfficeAddress().getLattitude() != 0.0
 				&& currentUser.getOfficeAddress().getLongitude() != 0.0) {
-			String hql = "from User user where user.id<>'" + userId
+			String hql = "from User user where user.id<>'" + currentUser.getId()
 					+ "' and (user.homeAddress.lattitude between "
 					+ (currentUser.getHomeAddress().getLattitude() - 1)
 					+ " and "
@@ -810,7 +810,7 @@ public class DaoImpl implements DaoI {
 				session.close();
 			}
 			System.out.println("inserted success1");
-			List<UserMapping> userMatch = findMatchedUser(user.getId());
+			List<UserMapping> userMatch = findMatchedUser(user);
 			if (null != userMatch && userMatch.size() > 0) {
 				persistUserMatch(userMatch);
 			}
@@ -881,7 +881,7 @@ public class DaoImpl implements DaoI {
 					session.update(pool);
 					session.update(user);
 					tx.commit();
-					List<UserMapping> userMatch = findMatchedUser(user.getId());
+					List<UserMapping> userMatch = findMatchedUser(user);
 					persistUserMatch(userMatch);
 					List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
 
@@ -1026,7 +1026,7 @@ public class DaoImpl implements DaoI {
 
 		System.out.println("end");
 	}
-
+/*
 	// made by vidur- helped to put data
 	public boolean matchTest(String userId) {
 
@@ -1048,7 +1048,7 @@ public class DaoImpl implements DaoI {
 		tx.commit();
 		session.close();
 		return true;
-	}
+	}*/
 
 	@Override
 	public List<User> fetchPoolParticipants(String poolId) {
