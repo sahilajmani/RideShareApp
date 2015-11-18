@@ -175,7 +175,7 @@ public class DaoImpl implements DaoI {
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1); // to be made dynamic
-		pool.setMax_members(4);// to be made dynamic
+		pool.setMax_members(5);// to be made dynamic
 		return pool;
 	}
 
@@ -210,14 +210,15 @@ public class DaoImpl implements DaoI {
 
 		// List of pools returned for particular user.
 		Session session = sessionFactory.openSession();
-		// User currentUser = this.getUserDetails(userId);
+		 User currentUser = this.getUserDetails(userId);
 		String hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
 				+ userId
 				+ "' and um.userB.id=user.id"
 				+ " and user.pool.isAvailable="
 				+ true
 				+ " and user.pool.id<>'"
-				+ userId
+				+ userId + " and user.pool.id<>'"
+						+ currentUser.getPool().getId()
 				+ "'  group by  user.pool.id "
 				+ "order by min(um.distance)";
 		Query qry = session.createQuery(hql);
@@ -780,6 +781,7 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public boolean insertUser(User user) {
+		try{
 		if (user != null) {
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
@@ -826,9 +828,9 @@ public class DaoImpl implements DaoI {
 				tx = session.beginTransaction();
 				Pool pool = createPool(user);
 				user.setPool(pool);
+				session.update(user.getId(), user);
 				// insert transaction
 				insertTransaction(user, session);
-				session.update(user.getId(), user);
 				tx.commit();
 			} catch (Exception e) {
 				tx.rollback();
@@ -838,8 +840,12 @@ public class DaoImpl implements DaoI {
 				session.close();
 			}
 			return true;
-		}
+		}		
 		return false;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private void insertTransaction(User user, Session session) {

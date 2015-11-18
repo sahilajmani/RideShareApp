@@ -63,13 +63,15 @@ public class SendOTPService {
 	@Path("OTPAuthenticationService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {
+	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {		
 		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
+		try{
+		OTP otpObjectByEmail = new OTP();
 		boolean response = false;
 		if (null != otpObj && null != otpObj.getEmail()
 				&& null != otpObj.getPasscode() && !otpObj.getEmail().isEmpty()
 				&& !otpObj.getPasscode().isEmpty()) {
-			OTP otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
+			otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
 			if (null != otpObjectByEmail
 					&& otpObjectByEmail.getPasscode() != null
 					&& !otpObjectByEmail.getPasscode().isEmpty()) {
@@ -84,6 +86,12 @@ public class SendOTPService {
 			otpAuthenticationResponse.setUser(user);
 		}
 		otpAuthenticationResponse.setResponse(response);
+		if(!response){
+			System.out.println("DB otp " + otpObjectByEmail.getPasscode() + "\n User OTP " + otpObj.getPasscode());			
+		}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return otpAuthenticationResponse;
 	}
 
