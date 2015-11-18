@@ -175,7 +175,7 @@ public class DaoImpl implements DaoI {
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1); // to be made dynamic
-		pool.setMax_members(4);// to be made dynamic
+		pool.setMax_members(5);// to be made dynamic
 		return pool;
 	}
 
@@ -827,9 +827,9 @@ public class DaoImpl implements DaoI {
 				tx = session.beginTransaction();
 				Pool pool = createPool(user);
 				user.setPool(pool);
+				session.update(user.getId(), user);
 				// insert transaction
 				insertTransaction(user, session);
-				session.update(user.getId(), user);
 				tx.commit();
 			} catch (Exception e) {
 				tx.rollback();
