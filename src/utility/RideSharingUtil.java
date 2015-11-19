@@ -9,6 +9,7 @@ import dao.DaoI;
 import dao.DaoImpl;
 import dao.IChat;
 import dao.IChatImpl;
+import pojos.User;
 
 public class RideSharingUtil {
 	private static DaoI dao = null;
@@ -46,5 +47,8 @@ public class RideSharingUtil {
 			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 		}
 		return sessionFactory;
+	}
+	public static void sendMail(User user, String body){
+		
 	}
 }

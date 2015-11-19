@@ -8,10 +8,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
 
+import email.SendMail;
 import pojos.RestServiceResponse;
 import pojos.TransactionType;
 import pojos.User;
 import pojos.WalletTransactions;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import utility.WalletUtil;
 import vo.WalletTopUp;
