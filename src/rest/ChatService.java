@@ -93,8 +93,9 @@ public class ChatService {
 		chatResult.setSuccess(true);
 		PrivateChat lastChat = (PrivateChat) RideSharingUtil.getChatInstance().getLastPrivateChat(chatJson.getReceiver_Id());
 		if(lastChat!= null){
-		System.out.println("Last Chat --   Message - "+lastChat.getMsg()+"\n Time - "+lastChat.getCreateTimeSeconds());
 		Long lastChatTime=lastChat.getCreateTimeSeconds();
+		System.out.println("Last Chat --   Message - "+lastChat.getMsg()+"\n Time - "+lastChat.getCreateTimeSeconds()+
+				"Diff -- \t"+(currentTime-lastChatTime));
 		if(currentTime-lastChatTime > GlobalConstants.NOTIFICATION_CHAT_TIMEOUT){
 			notifyUser(receiver,sender,chat);
 		}

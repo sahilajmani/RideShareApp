@@ -48,7 +48,5 @@ public class RideSharingUtil {
 		}
 		return sessionFactory;
 	}
-	public static void sendMail(User user, String body){
-		
-	}
+	
 }

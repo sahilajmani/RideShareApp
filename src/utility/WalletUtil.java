@@ -81,7 +81,7 @@ public class WalletUtil {
 		session.update(user);
 		String message = "Hi "+user.getName()+"\n Your request to join pool owned by  "+walletRecharge.getPoolOwner().getName()+""
 				+ "just got approved. Your new wallet balance is INR "+user.getWallet_balance()+"\n Thanks for using RideEasy, Keep riding, Keep sharing !";
-		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+walletRecharge.getAmount();
+		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+user.getWallet_balance();
 		String[] to = { user.getEmail() };
 				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
