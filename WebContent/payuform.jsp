@@ -141,7 +141,7 @@ button {
   text-align: center;
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 17px;
+  font-size: 25px;
   /*font-size: 0.75rem;*/
   color: #fafafa;
   background-color: #E9633B;
@@ -208,13 +208,17 @@ function submitPayuForm() {
           <td colspan="3"><input name="furl" value="<%= (empty(params.get("furl"))) ? "" : params.get("furl") %>" size="64" /></td>
         </tr>--%>
           <% if(empty(hash)){ %>
-          <div style="text-align: center">
-        <div class="form-row">
-            <img src="logo_black_bg.png" height="100" width="250"/>
+         <div style="text-align: center">
+        <div style="width:80%">
+            <img src="logo_black_bg.png" />
         </div>
-    <br />
     <br/>
-<h2 style="color: #63AA9C;">CONTINUE TO PAYMENT</h2>
+    <br/>
+    <br/>
+<h2 style="color: #63AA9C;font-size:35px">CONTINUE TO PAYMENT</h2>
+<br/>
+<br/>
+<br/>
 <br/>
 <br/>
 <br/>
@@ -223,6 +227,7 @@ function submitPayuForm() {
 <input class="btn1" type="submit" value="CONTINUE" />
  <!--             <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>-->
           <% } %>
+          </div>
     </form>
 
 
