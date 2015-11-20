@@ -493,6 +493,7 @@ public class DaoImpl implements DaoI {
 		qry.setString(0, requestId);
 		PoolRequest poolRequest = (PoolRequest) qry.list().get(0);
 		if (response == GlobalConstants.REQUEST_ACCEPTED) {
+			this.leavePool(poolRequest.getUser().getId(), poolRequest.getUser().getPool().getId());
 			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
 					session);
 			if (!result)
