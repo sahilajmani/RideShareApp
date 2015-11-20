@@ -112,16 +112,19 @@ public class DaoImpl implements DaoI {
 	@Override
 	public OTP getOPTbyEmail(String userEmail) {
 		Session session = sessionFactory.openSession();
-		String hql = "from OTP where email=?";
-		Query qry = session.createQuery(hql);
-		qry.setString(0, userEmail);
-/*		Criteria cr = session.createCriteria(OTP.class);
-		cr.add(Restrictions.eq("email", userEmail));*/
+		Criteria cr = session.createCriteria(OTP.class);
+		cr.add(Restrictions.eq("email", userEmail));
 		OTP otpObjectByEmail = new OTP();
-		if (qry.uniqueResult() != null) {
-			otpObjectByEmail = (OTP) qry.uniqueResult();//list().get(0);
+		if (cr.list() != null && cr.list().size() > 0) {
+			otpObjectByEmail = (OTP) cr.list().get(0);
 		}
 		if(otpObjectByEmail == null){
+			session.clear();
+			cr = session.createCriteria(OTP.class);
+			cr.add(Restrictions.eq("email", userEmail));
+			if (cr.list() != null && cr.list().size() > 0) {
+				otpObjectByEmail = (OTP) cr.list().get(0);
+			}
 		System.out.println("OTP OBJECT BY EMAIL is NULL "+otpObjectByEmail);
 		}else
 		{

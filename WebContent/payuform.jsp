@@ -108,6 +108,47 @@ public boolean empty(String s)
 
 %>
 <html>
+<STYLE>
+BODY {
+ min-height: 100%; 
+   border:1px solid black;
+  /* margin-top: -50px; */
+   font-size: 100%;
+  font-family: Consolas, monaco, monospace;
+  color: #ECEAE0;
+  background-color: #221E1D;
+}
+
+button {
+  font-family: Consolas, monaco, monospace;
+  display: inline-block;
+  width: auto;
+  height: 15%;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 17px;
+  /*font-size: 0.75rem;*/
+  color: #fafafa;
+  background-color: #E9633B;
+}
+
+.btn1 {
+padding : 5px 5px 5px 5px;
+  font-family: Consolas, monaco, monospace;
+  display: inline-block;
+  width: 50%;
+  height: 5%;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 24px;
+  /*font-size: 0.75rem;*/
+  color: #fafafa;
+  background-color: #E9633B;
+}
+
+</STYLE>
 
 <script>
 var hash='<%= hash %>';
@@ -168,7 +209,20 @@ function submitPayuForm() {
           <td colspan="3"><input name="furl" value="<%= (empty(params.get("furl"))) ? "" : params.get("furl") %>" size="64" /></td>
         </tr>--%>
           <% if(empty(hash)){ %>
-            <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>
+          <div style="text-align: center">
+        <div class="form-row">
+            <img src="logo_black_bg.png" height="100" width="250"/>
+        </div>
+    <br />
+    <br/>
+<h2 style="color: #63AA9C;">CONTINUE TO PAYMENT</h2>
+<br/>
+<br/>
+<br/>
+<br/>
+<!-- <button onclick=window.open('','_self').close();>CANCEL</button>-->
+<input class="btn1" type="submit" value="NEXT" />
+ <!--             <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>-->
           <% } %>
     </form>
 
