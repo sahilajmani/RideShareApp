@@ -22,6 +22,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import email.SendMail;
 import pojos.Address;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
@@ -442,6 +443,16 @@ public class DaoImpl implements DaoI {
 					poolRequest.setPool(pool);
 					poolRequest.setUser(userMatch.getUserB());
 					poolRequest.setDistance(userMatch.getDistance());
+					User userPool = this.getUserDetails(pool.getId());
+					String message = "Hi "+userPool.getName()+"\n "+user.getName()+
+							 " has requested to join your car pool. Please open our app and "
+							 + " go to requests page respond to "+user.getName()+"/'s request. You can also"
+							 		+ "chat with the user. Thanks. \n Team Ride Easy. Keep Riding, Keep Sharing !";
+					String subject = user.getName()+" wants to join your car pool !";
+					String[] to = { userPool.getEmail() };
+							SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+									GlobalConstants.PASSWORD_EMAIL, subject, message,
+									to);
 
 				}
 			} catch (Exception e) {
@@ -532,6 +543,7 @@ public class DaoImpl implements DaoI {
 				    int rows = query.executeUpdate();
 				    System.out.println("rows updated"+rows);
 				    tx1.commit();
+				    
 			}
 			
 		} catch (Exception e) {

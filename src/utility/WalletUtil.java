@@ -102,7 +102,7 @@ public class WalletUtil {
 //			Pool userPool = (Pool)cr.list().get(0);
 			User poolOwner = walletRecharge.getPoolOwner();
 			User poolParticipant = walletRecharge.getPoolParticipant();
-			Long numberOfDays = ((1447320545000L-tx.getTransaction_timemillis())/(24*60*60*1000));
+			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
 			System.out.println(numberOfDays);
 			int days = numberOfDays.intValue();
 			if(days>5){
@@ -119,6 +119,7 @@ public class WalletUtil {
 			WalletTransactions poolOwnerTx = new WalletTransactions();
 			poolOwnerTx.setId(tx.getId()+"Credit");
 			poolOwnerTx.setAmount(ownerShare);
+			poolOwnerTx.setTransaction_timemillis(System.currentTimeMillis());
 			poolOwnerTx.setType(TransactionType.CREDIT_TO_WALLET);
 			poolOwnerTx.setIsSettled(true);
 			poolOwnerTx.setPoolParticipant(poolParticipant);
@@ -129,6 +130,7 @@ public class WalletUtil {
 			poolParticipanttx.setId(tx.getId()+"Refund");
 			poolParticipanttx.setAmount(participantRefund);
 			poolParticipanttx.setIsSettled(true);
+			poolParticipanttx.setTransaction_timemillis(System.currentTimeMillis());
 			poolParticipanttx.setPoolOwner(poolParticipant);
 			poolParticipanttx.setPoolParticipant(poolParticipant);
 			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwner.getName()+"'s Pool");
@@ -138,7 +140,7 @@ public class WalletUtil {
 			session.save(poolOwnerTx);
 			//poolParticipant mail notification
 			String message = "Hi "+poolParticipant.getName()+"\n You just received a refund of INR "+participantRefund+
-					"in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
+					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
 							+ ". We hope you had a pleasent experience riding and sharing ! Do share your feedback with us.";
 			String subject = "You have received a refund of INR"+tx.getAmount()+"in your Wallet";
 			String[] to = { poolParticipant.getEmail() };
