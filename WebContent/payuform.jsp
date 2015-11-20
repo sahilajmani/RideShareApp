@@ -134,15 +134,14 @@ button {
 }
 
 .btn1 {
-padding : 5px 5px 5px 5px;
   font-family: Consolas, monaco, monospace;
   display: inline-block;
-  width: 50%;
-  height: 5%;
+  width: auto;
+  height: auto;
   text-align: center;
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 17px;
   /*font-size: 0.75rem;*/
   color: #fafafa;
   background-color: #E9633B;
@@ -221,7 +220,7 @@ function submitPayuForm() {
 <br/>
 <br/>
 <!-- <button onclick=window.open('','_self').close();>CANCEL</button>-->
-<input class="btn1" type="submit" value="NEXT" />
+<input class="btn1" type="submit" value="CONTINUE" />
  <!--             <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>-->
           <% } %>
     </form>
