@@ -110,7 +110,7 @@ public class WalletUtil {
 			}
 			int ownerShare = (int)((days)/5.00 *poolOwner.getPoolCost()); // cost per month ?? we should rename //havnt we assumed that there are 5 working days only?
 			// this variable
-			tx.setAmount(ownerShare);
+//			tx.setAmount(ownerShare);
 			tx.setIsSettled(true);
 			
 			int participantRefund = poolOwner.getPoolCost()-ownerShare;

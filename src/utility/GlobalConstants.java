@@ -6,7 +6,7 @@ public class GlobalConstants {
 	public static final String HIBERNATE_CONFIG_XML = "resources/hibernate.cfg.xml" ;
 	public static final long OTPPermissibleTimeInMinutes = 30;
 	public static final int REQUEST_ACCEPTED = 1;
-	public static final int REQUEST_REJECTED = 0;	
+	public static final int REQUEST_REJECTED = 0;		
 	public static final int REQUEST_PENDING = 2;
 	public static final int REQUEST_CANCEL = 3;
 	public static final int JOIN_PENDING = 4;

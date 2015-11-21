@@ -493,6 +493,17 @@ public class DaoImpl implements DaoI {
 			Transaction tx = session.beginTransaction();
 			session.save(poolRequest);
 			tx.commit();
+			User userPool = this.getUserDetails(pool.getId());
+			String message = "Hi "+userPool.getName()+"\n "+user.getName()+
+					 " has requested to join your car pool. Please open our app and "
+					 + " go to requests page respond to "+user.getName()+"/'s request. You can also"
+					 		+ "chat with the user. Thanks. \n Team Ride Easy. Keep Riding, Keep Sharing !";
+			String subject = user.getName()+" wants to join your car pool !";
+			String[] to = { userPool.getEmail() };
+					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+							GlobalConstants.PASSWORD_EMAIL, subject, message,
+							to);
+					System.out.println("user notified ! email - "+userPool.getEmail());	
 			session.close();
 		}
 		return true;
