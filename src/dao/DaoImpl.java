@@ -607,7 +607,8 @@ public class DaoImpl implements DaoI {
 		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
-		Transactions oldTransaction = (Transactions) qry.uniqueResult();
+		Transactions oldTransaction = new Transactions();
+		oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
 		try {
 			oldTransaction.setValid_to(this.getCurrentTime());
