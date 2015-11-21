@@ -517,7 +517,7 @@ public class DaoImpl implements DaoI {
 			{
 				Transaction tx3 = session.beginTransaction();
 				try{
-				String hql2 = "delete from PoolRequest set status ="+GlobalConstants.INVALID_REQUEST+" where user.id='"+poolRequest.getUser().getId()+
+				String hql2 = "delete from PoolRequest where user.id='"+poolRequest.getUser().getId()+
 						"' AND pool.id<>'"+poolRequest.getPool().getId()+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
 				Query qry1 = session.createQuery(hql2);
 				qry1.executeUpdate();
