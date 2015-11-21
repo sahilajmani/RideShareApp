@@ -515,11 +515,17 @@ public class DaoImpl implements DaoI {
 					session);
 			if(result)
 			{
-				String hql2 = "update PoolRequest set status ="+GlobalConstants.INVALID_REQUEST+" where user.id='"+poolRequest.getUser().getId()+
+				Transaction tx3 = session.beginTransaction();
+				try{
+				String hql2 = "delete from PoolRequest set status ="+GlobalConstants.INVALID_REQUEST+" where user.id='"+poolRequest.getUser().getId()+
 						"' AND pool.id<>'"+poolRequest.getPool().getId()+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
 				Query qry1 = session.createQuery(hql2);
 				qry1.executeUpdate();
-				
+				tx3.commit();
+				}catch(Exception e){
+					tx3.rollback();
+					e.printStackTrace();
+				}
 			}
 			if (!result)
 			{
