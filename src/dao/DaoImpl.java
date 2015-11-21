@@ -716,8 +716,11 @@ public class DaoImpl implements DaoI {
 					.list();
 			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
-			Date currentDateTime = new Date();
-			oldTransaction.setValid_to(currentDateTime);
+			try {
+				oldTransaction.setValid_to(this.getCurrentTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			session.update(oldTransaction);
 
 			// Transactions homeTransaction = allTransactions.get(1);
@@ -725,7 +728,11 @@ public class DaoImpl implements DaoI {
 			newTransaction.setIs_valid(true);
 			newTransaction.setPool(userOriginalPool);
 			newTransaction.setUser(user);
-			newTransaction.setValid_from(currentDateTime);
+			try {
+				newTransaction.setValid_from(this.getCurrentTime());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			newTransaction.setValid_to(new Date(8000, 12, 31, 00, 00, 00));
 			session.save(newTransaction);
 
