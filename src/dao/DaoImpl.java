@@ -524,6 +524,20 @@ public class DaoImpl implements DaoI {
 			this.leavePool(poolRequest.getUser().getId(), poolRequest.getUser().getPool().getId());
 			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
 					session);
+			if(result)
+			{
+				Transaction tx3 = session.beginTransaction();
+				try{
+				String hql2 = "delete from PoolRequest where user.id='"+poolRequest.getUser().getId()+
+						"' AND pool.id<>'"+poolRequest.getPool().getId()+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
+				Query qry1 = session.createQuery(hql2);
+				qry1.executeUpdate();
+				tx3.commit();
+				}catch(Exception e){
+					tx3.rollback();
+					e.printStackTrace();
+				}
+			}
 			if (!result)
 			{
 				
@@ -544,7 +558,6 @@ public class DaoImpl implements DaoI {
 			{
 
 				WalletTransactions walletTransaction =new WalletTransactions();
-				walletTransaction.setId("int-456456456"); //generate this..
 				User poolOwner=this.getUserDetails(poolRequest.getPool().getId());
 				walletTransaction.setPoolOwner(poolOwner);
 				walletTransaction.setPoolParticipant(poolRequest.getUser());

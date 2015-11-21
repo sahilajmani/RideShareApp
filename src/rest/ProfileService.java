@@ -84,6 +84,7 @@ public class ProfileService {
 								.getOfficeAddress().getLongitude());
 				updateUserVO.getUser().setDistance((float) distance);
 			}
+			updateUserVO.getUser().setWallet_balance(dao.getUserDetails(updateUserVO.getUser().getId()).getWallet_balance());
 			User updatedUser = dao.updateUser(updateUserVO.getUser(),
 					updateUserVO.isChangeAddress());
 			if (null != updatedUser) {
