@@ -52,12 +52,12 @@ public class testQuery {
 //		System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
 	
 	/*	UserIdPoolIdVO userIdPoolIdVO = new UserIdPoolIdVO();
-		userIdPoolIdVO.setPoolId("0adea238-71da-11e5-899a-027a1dc8a973");
-		userIdPoolIdVO.setUserId("0c3c2ff1-817e-11e5-be8a-027a1dc8a973");
+		userIdPoolIdVO.setPoolId("7df61bc4-8fbf-11e5-be8a-027a1dc8a973");
+		userIdPoolIdVO.setUserId("28f50222-8fc0-11e5-be8a-027a1dc8a973");
 		userIdPoolIdVO.setStatus(2);
 	System.out.println(db.joinPoolRequest(userIdPoolIdVO, 0));*/
-//		System.out.println(db.updatePoolRequest("8e6aa3d7-8bb6-11e5-be8a-027a1dc8a973", 1));
-		System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
+	System.out.println(db.updatePoolRequest("e16ca242-8fd2-11e5-be8a-027a1dc8a973", 1));
+	//	System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
 	}
 
 }
