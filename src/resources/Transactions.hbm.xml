@@ -14,10 +14,10 @@
         <many-to-one name="pool" class="pojos.Pool" fetch="join">
             <column name="POOL" />
         </many-to-one>
-        <property name="valid_from" type="java.util.Date">
+        <property name="valid_from" type="java.lang.Long">
             <column name="VALID_FROM" />
         </property>
-        <property name="valid_to" type="java.util.Date">
+        <property name="valid_to" type="java.lang.Long">
             <column name="VALID_TO" />
         </property>
         <property name="is_valid" type="java.lang.Boolean">

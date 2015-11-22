@@ -9,8 +9,8 @@ public class PoolRequestResponse {
 	private Pool pool;
 	private User user;
 	private int status;
-	private Date created;
-	private Date updated;
+	private Long created;
+	private Long updated;
 	private String description;
 	private String distance;
 
@@ -38,16 +38,16 @@ public class PoolRequestResponse {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public Date getCreated() {
+	public Long getCreated() {
 		return created;
 	}
-	public void setCreated(Date created) {
+	public void setCreated(Long created) {
 		this.created = created;
 	}
-	public Date getUpdated() {
+	public Long getUpdated() {
 		return updated;
 	}
-	public void setUpdated(Date updated) {
+	public void setUpdated(Long updated) {
 		this.updated = updated;
 	}
 	public String getDescription() {

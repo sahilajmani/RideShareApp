@@ -138,11 +138,14 @@ public class WalletUtil {
 			session.update(tx);
 		    session.save(poolParticipanttx);
 			session.save(poolOwnerTx);
+			session.save(poolParticipant);
+			session.save(poolOwner);
 			//poolParticipant mail notification
 			String message = "Hi "+poolParticipant.getName()+"\n You just received a refund of INR "+participantRefund+
 					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
+							+ ".Your updated wallet balance is INR "+poolParticipant.getWallet_balance()
 							+ ". We hope you had a pleasent experience riding and sharing ! Do share your feedback with us.";
-			String subject = "You have received a refund of INR"+tx.getAmount()+"in your Wallet";
+			String subject = "You have received a refund of INR "+tx.getAmount()+"in your Wallet";
 			String[] to = { poolParticipant.getEmail() };
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 							GlobalConstants.PASSWORD_EMAIL, subject, message,

@@ -17,16 +17,16 @@ public class Transactions {
 	public void setPool(Pool pool) {
 		this.pool = pool;
 	}
-	public Date getValid_from() {
+	public Long getValid_from() {
 		return valid_from;
 	}
-	public void setValid_from(Date valid_from) {
+	public void setValid_from(Long valid_from) {
 		this.valid_from = valid_from;
 	}
-	public Date getValid_to() {
+	public Long getValid_to() {
 		return valid_to;
 	}
-	public void setValid_to(Date valid_to) {
+	public void setValid_to(Long valid_to) {
 		this.valid_to = valid_to;
 	}
 	public Boolean getIs_valid() {
@@ -36,8 +36,8 @@ public class Transactions {
 		this.is_valid = is_valid;
 	}
 	Pool pool;
-	Date valid_from;
-	Date valid_to;
+	Long valid_from;
+	Long valid_to;
 	Boolean is_valid;
 
 }

@@ -17,10 +17,10 @@
         <property name="status" type="int">
             <column name="STATUS" />
         </property>
-        <property name="created" type="java.util.Date">
+        <property name="created" type="java.lang.Long">
             <column name="CREATED" />
         </property>
-        <property name="updated" type="java.util.Date" access="field">
+        <property name="updated" type="java.lang.Long" access="field">
             <column name="UPDATED" />
         </property>
         <property name="description" type="java.lang.String">
