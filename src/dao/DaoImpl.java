@@ -3,15 +3,12 @@ package dao;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -23,7 +20,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import email.SendMail;
-import pojos.Address;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
@@ -33,10 +29,9 @@ import pojos.Transactions;
 import pojos.User;
 import pojos.UserMapping;
 import pojos.WalletTransactions;
-import utility.DistanceBwPlaces;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import utility.UserMatching;
-import utility.GlobalConstants;
 import utility.WalletUtil;
 import vo.UserIdPoolIdVO;
 
@@ -597,9 +592,10 @@ public class DaoImpl implements DaoI {
 		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
-		Transactions oldTransaction = (Transactions) qry.uniqueResult();
+		Transactions oldTransaction = new Transactions();
+		oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
-		oldTransaction.setValid_to(System.currentTimeMillis());
+			oldTransaction.setValid_to(System.currentTimeMillis());
 		session.update(oldTransaction);
 		// System.out.println("old");
 
@@ -607,7 +603,7 @@ public class DaoImpl implements DaoI {
 		newTransaction.setIs_valid(true);
 		newTransaction.setPool(pool);
 		newTransaction.setUser(user);
-		newTransaction.setValid_from(System.currentTimeMillis());
+			newTransaction.setValid_from(System.currentTimeMillis());
 		newTransaction.setValid_to(Long.MAX_VALUE);
 		session.save(newTransaction);
 		tx.commit();
@@ -687,7 +683,7 @@ public class DaoImpl implements DaoI {
 			// pool.setParticipants( (List<User>) participants);
 //			session.update(pool);
 		//	session.saveOrUpdate(userOriginalPool);
-			tx= session.beginTransaction();
+
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true)";
 
@@ -697,8 +693,7 @@ public class DaoImpl implements DaoI {
 					.list();
 			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
-			Date currentDateTime = new Date();
-			oldTransaction.setValid_to(System.currentTimeMillis());
+				oldTransaction.setValid_to(System.currentTimeMillis());
 			session.update(oldTransaction);
 
 			// Transactions homeTransaction = allTransactions.get(1);
@@ -706,7 +701,7 @@ public class DaoImpl implements DaoI {
 			newTransaction.setIs_valid(true);
 			newTransaction.setPool(userOriginalPool);
 			newTransaction.setUser(user);
-			newTransaction.setValid_from(System.currentTimeMillis());
+				newTransaction.setValid_from(System.currentTimeMillis());
 			newTransaction.setValid_to(Long.MAX_VALUE);
 			session.save(newTransaction);
 
@@ -758,7 +753,6 @@ public class DaoImpl implements DaoI {
 				Query qry = session.createQuery(hql);
 				List<Transactions> oldTransactions = (List<Transactions>) qry
 						.list();
-//				Date currentDateTime = new Date();
 				for (Transactions oldTransaction : oldTransactions) {
 					oldTransaction.setIs_valid(false);
 					oldTransaction.setValid_to(System.currentTimeMillis());
@@ -1073,7 +1067,6 @@ public class DaoImpl implements DaoI {
 /*
 	// made by vidur- helped to put data
 	public boolean matchTest(String userId) {
-
 		// session.save(user);
 		// Pool pool = createPool(user);
 		// user.setPool(pool);
