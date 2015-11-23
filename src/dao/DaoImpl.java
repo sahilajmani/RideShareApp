@@ -591,11 +591,10 @@ public class DaoImpl implements DaoI {
 		session.saveOrUpdate(user);
 		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
-				+ "' and is_valid=true ORDER BY valid_from DESC";
+				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
 		Transactions oldTransaction = new Transactions();
-		if(qry.list().size()>0){
-		oldTransaction = (Transactions) qry.list().get(0);
+		oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
 			oldTransaction.setValid_to(currentTime);
 		session.update(oldTransaction);
@@ -608,7 +607,6 @@ public class DaoImpl implements DaoI {
 			newTransaction.setValid_from(currentTime);
 		newTransaction.setValid_to(Long.MAX_VALUE);
 		session.save(newTransaction);
-		}
 		tx.commit();
 		return true;
 	}
