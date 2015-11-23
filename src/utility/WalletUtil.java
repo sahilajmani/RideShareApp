@@ -138,8 +138,8 @@ public class WalletUtil {
 			session.update(tx);
 		    session.save(poolParticipanttx);
 			session.save(poolOwnerTx);
-			session.save(poolParticipant);
-			session.save(poolOwner);
+//			session.save(poolParticipant);
+//			session.save(poolOwner);
 			//poolParticipant mail notification
 			String message = "Hi "+poolParticipant.getName()+"\n You just received a refund of INR "+participantRefund+
 					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
