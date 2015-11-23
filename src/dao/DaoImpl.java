@@ -576,6 +576,7 @@ public class DaoImpl implements DaoI {
 		if (!pool.getIsAvailable())
 			return false;
 
+		Long currentTime=System.currentTimeMillis();
 		// Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		// pool.getParticipants().add(user);
@@ -595,7 +596,7 @@ public class DaoImpl implements DaoI {
 		Transactions oldTransaction = new Transactions();
 		oldTransaction = (Transactions) qry.uniqueResult();
 		oldTransaction.setIs_valid(false);
-			oldTransaction.setValid_to(System.currentTimeMillis());
+			oldTransaction.setValid_to(currentTime);
 		session.update(oldTransaction);
 		// System.out.println("old");
 
@@ -603,7 +604,7 @@ public class DaoImpl implements DaoI {
 		newTransaction.setIs_valid(true);
 		newTransaction.setPool(pool);
 		newTransaction.setUser(user);
-			newTransaction.setValid_from(System.currentTimeMillis());
+			newTransaction.setValid_from(currentTime);
 		newTransaction.setValid_to(Long.MAX_VALUE);
 		session.save(newTransaction);
 		tx.commit();
