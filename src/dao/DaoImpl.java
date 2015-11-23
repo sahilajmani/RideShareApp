@@ -753,9 +753,10 @@ Long currentTime=System.currentTimeMillis();
 				Query qry = session.createQuery(hql);
 				List<Transactions> oldTransactions = (List<Transactions>) qry
 						.list();
+				Long currentTime=System.currentTimeMillis();
 				for (Transactions oldTransaction : oldTransactions) {
 					oldTransaction.setIs_valid(false);
-					oldTransaction.setValid_to(System.currentTimeMillis());
+					oldTransaction.setValid_to(currentTime);
 					session.update(oldTransaction);
 				}
 //				session.saveOrUpdate(oldTransactions);
@@ -778,7 +779,7 @@ Long currentTime=System.currentTimeMillis();
 						Transactions newTransaction = new Transactions();
 						newTransaction.setIs_valid(true);
 						newTransaction.setUser(participant);
-						newTransaction.setValid_from(System.currentTimeMillis());
+						newTransaction.setValid_from(currentTime);
 						newTransaction.setValid_to(Long.MAX_VALUE);
 						newTransaction.setPool(hostUserPool);
 						session.save(newTransaction);
