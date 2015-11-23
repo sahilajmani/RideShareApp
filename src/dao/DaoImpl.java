@@ -686,14 +686,14 @@ public class DaoImpl implements DaoI {
 
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true)";
-
+Long currentTime=System.currentTimeMillis();
 			Query qry = session.createQuery(hql);
 			System.out.println(qry.list().size());
 			List<Transactions> allTransactions = (List<Transactions>) qry
 					.list();
 			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
-				oldTransaction.setValid_to(System.currentTimeMillis());
+				oldTransaction.setValid_to(currentTime);
 			session.update(oldTransaction);
 
 			// Transactions homeTransaction = allTransactions.get(1);
@@ -701,7 +701,7 @@ public class DaoImpl implements DaoI {
 			newTransaction.setIs_valid(true);
 			newTransaction.setPool(userOriginalPool);
 			newTransaction.setUser(user);
-				newTransaction.setValid_from(System.currentTimeMillis());
+				newTransaction.setValid_from(currentTime);
 			newTransaction.setValid_to(Long.MAX_VALUE);
 			session.save(newTransaction);
 
