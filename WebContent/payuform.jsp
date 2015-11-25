@@ -209,9 +209,9 @@ function submitPayuForm() {
         </tr>--%>
           <% if(empty(hash)){ %>
          <div style="text-align: center">
-        <div style="width:80%">
+        <center><div style="width:80%">
             <img src="logo_black_bg.png" />
-        </div>
+        </div></center>
     <br/>
     <br/>
     <br/>
