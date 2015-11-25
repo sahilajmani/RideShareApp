@@ -19,7 +19,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
-import email.SendMail;
+import pojos.ListWalletTransactions;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
@@ -34,6 +34,7 @@ import utility.RideSharingUtil;
 import utility.UserMatching;
 import utility.WalletUtil;
 import vo.UserIdPoolIdVO;
+import email.SendMail;
 
 public class DaoImpl implements DaoI {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
@@ -826,7 +827,7 @@ Long currentTime=System.currentTimeMillis();
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
 			try {
-				user.setActive(true);
+				user.setIsActive(true);
 				if (!user.getLeaveDestinationTimeInMilliseconds().isEmpty()) {
 					logger.info("Leave Destination Time : "
 							+ user.getLeaveDestinationTimeInMilliseconds());
@@ -1180,5 +1181,19 @@ Long currentTime=System.currentTimeMillis();
 			session.close();
 		}
 		return poolRequest;
+	}
+
+	@Override
+	public ListWalletTransactions getWalletTransactionHistory(String userId) {
+		ListWalletTransactions listWalletTransactions = new ListWalletTransactions();
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(WalletTransactions.class);
+		User user = new User();
+		user.setId(userId);
+		cr.add(Restrictions.eq("poolParticipant", user));
+		List<WalletTransactions> walletTransactions = cr.list();
+		listWalletTransactions.setWalletTransactions(walletTransactions);
+		session.close();
+		return listWalletTransactions;
 	}
 }

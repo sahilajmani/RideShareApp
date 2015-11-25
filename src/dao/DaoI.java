@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import pojos.ListWalletTransactions;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
@@ -30,4 +31,5 @@ public interface DaoI{
 	void deleteUser(String userId);
 	public List<User> fetchPoolParticipants(String poolId);
 	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO);
+	public ListWalletTransactions getWalletTransactionHistory(String userId);
 }

@@ -1,14 +1,18 @@
 package rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
 
+import dao.DaoI;
 import email.SendMail;
+import pojos.ListWalletTransactions;
 import pojos.RestServiceResponse;
 import pojos.TransactionType;
 import pojos.User;
@@ -20,6 +24,8 @@ import vo.WalletTopUp;
 
 @Path("/wallet")
 public class WalletService {
+	DaoI dao = RideSharingUtil.getDaoInstance();
+
 	@POST
 	@Path("addtowallet")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -50,5 +56,13 @@ public class WalletService {
 		
 	}
 	
+	@GET
+	@Path("wallettransactionhistory")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ListWalletTransactions getTransactionHistory(@QueryParam("userId") String userId) {
+		ListWalletTransactions walletTransactions = new ListWalletTransactions();
+		walletTransactions = dao.getWalletTransactionHistory(userId);
+		return walletTransactions;
+	}
 
 }

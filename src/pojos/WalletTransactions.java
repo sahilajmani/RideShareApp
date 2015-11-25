@@ -1,6 +1,8 @@
 package pojos;
 
-public class WalletTransactions {
+import java.io.Serializable;
+
+public class WalletTransactions implements Serializable{
 	private String type;
 	private User poolOwner;
 	private User poolParticipant;
