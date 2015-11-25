@@ -17,6 +17,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import pojos.ListWalletTransactions;
@@ -1191,6 +1192,7 @@ Long currentTime=System.currentTimeMillis();
 		User user = new User();
 		user.setId(userId);
 		cr.add(Restrictions.eq("poolParticipant", user));
+		cr.addOrder(Order.desc("transaction_timemillis"));
 		List<WalletTransactions> walletTransactions = cr.list();
 		listWalletTransactions.setWalletTransactions(walletTransactions);
 		session.close();
