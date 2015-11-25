@@ -5,6 +5,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import dao.AuthenticationDaoI;
+import dao.AuthenticationDaoImpl;
 import dao.DaoI;
 import dao.DaoImpl;
 import dao.IChat;
@@ -15,6 +17,7 @@ public class RideSharingUtil {
 	private static DaoI dao = null;
 	private static SessionFactory sessionFactory = null;
 	public static IChat chatDAO = null;
+	public static AuthenticationDaoI authenticationDao = null;
 	public static Object mutex = new Object();
 	public static Object mutexDao = new Object();	
 
@@ -35,6 +38,16 @@ public class RideSharingUtil {
 			}
 		}
 		return chatDAO;
+	}
+
+	public static AuthenticationDaoI getAuthenticationDaoInstance() {
+
+		synchronized (mutex) {
+			if (authenticationDao == null) {
+				authenticationDao = new AuthenticationDaoImpl();
+			}
+		}
+		return authenticationDao;
 	}
 
 	public static SessionFactory getSessionFactoryInstance() {
