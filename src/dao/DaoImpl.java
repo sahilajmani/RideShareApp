@@ -508,10 +508,10 @@ public class DaoImpl implements DaoI {
 		poolRequest = (PoolRequest) qry.list().get(0);
 		
 		if (response == GlobalConstants.REQUEST_ACCEPTED) {
-			this.leavePool(poolRequest.getUser().getId(), poolRequest.getUser().getPool().getId());
+			//this.leavePool(poolRequest.getUser().getId(), poolRequest.getUser().getPool().getId());
 			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
 					session);
-			if(result)
+			/*if(result)
 			{
 				Transaction tx3 = session.beginTransaction();
 				try{
@@ -524,7 +524,7 @@ public class DaoImpl implements DaoI {
 					tx3.rollback();
 					e.printStackTrace();
 				}
-			}
+			}*/
 			if (!result)
 			{
 				
@@ -583,6 +583,7 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		// pool.getParticipants().add(user);
 		pool.setIs_active(true);
+		String oldPoolId = user.getPool().getId();
 		user.setPool(pool);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
@@ -593,7 +594,7 @@ public class DaoImpl implements DaoI {
 		session.saveOrUpdate(user);
 		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
-				+ "' and is_valid=true";
+				+ "'and pool.id = '"+oldPoolId+"' and is_valid=true";
 		Query qry = session.createQuery(hql);
 		Transactions oldTransaction = new Transactions();
 		oldTransaction = (Transactions) qry.uniqueResult();
