@@ -4,6 +4,7 @@ import org.hibernate.Session;
 
 import pojos.User;
 import utility.RideSharingUtil;
+import vo.UserIdPoolIdVO;
 
 public class testQuery {
 
@@ -46,16 +47,16 @@ public class testQuery {
 	//	db.matchTest("745be031-5167-11e5-a9c3-02b93fe38caf");
 	//	List<MatchedPoolsVO> map =db.getmatchedPool("7d3697e0-59f2-11e5-9624-02b93fe38caf");
 	//	System.out.println(db.matchTest("fef5eb9a-59f3-11e5-9624-02b93fe38caf"));
-	//	System.out.println(db.updatePoolRequest("958f932b-5a39-11e5-869d-02b93fe38caf",1));
+	System.out.println(db.updatePoolRequest("df7bc0fe-9446-11e5-b8ad-027a1dc8a973",1));
 //List<Transactions> t =	db.getUserPoolRecord("17e1794b-5a20-11e5-869d-02b93fe38caf");
 //		System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
 	
 	/*	UserIdPoolIdVO userIdPoolIdVO = new UserIdPoolIdVO();
-		userIdPoolIdVO.setPoolId("7df61bc4-8fbf-11e5-be8a-027a1dc8a973");
-		userIdPoolIdVO.setUserId("28f50222-8fc0-11e5-be8a-027a1dc8a973");
+		userIdPoolIdVO.setPoolId("fd63f85c-9148-11e5-be8a-027a1dc8a973");
+		userIdPoolIdVO.setUserId("9b5128f7-920c-11e5-be8a-027a1dc8a973");
 		userIdPoolIdVO.setStatus(2);
-	System.out.println(db.joinPoolRequest(userIdPoolIdVO, 0));*/
-//	System.out.println(db.updatePoolRequest("e16ca242-8fd2-11e5-be8a-027a1dc8a973", 1));
+	System.out.println(db.joinPoolRequest(userIdPoolIdVO, 0));
+*///	System.out.println(db.updatePoolRequest("e16ca242-8fd2-11e5-be8a-027a1dc8a973", 1));
 	//	System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
 	}
 

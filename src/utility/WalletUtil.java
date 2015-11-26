@@ -79,6 +79,7 @@ public class WalletUtil {
 		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
 		session.save(walletRecharge);
 		session.update(user);
+		tx.commit();
 		String message = "Hi "+user.getName()+"\n Your request to join pool owned by  "+walletRecharge.getPoolOwner().getName()+""
 				+ "just got approved. Your new wallet balance is INR "+user.getWallet_balance()+"\n Thanks for using RideEasy, Keep riding, Keep sharing !";
 		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+user.getWallet_balance();
@@ -86,7 +87,7 @@ public class WalletUtil {
 				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
 						to);
-		tx.commit();		
+			
 	}
 	
 	
@@ -136,10 +137,10 @@ public class WalletUtil {
 			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwner.getName()+"'s Pool");
 			poolParticipant.setWallet_balance(poolParticipant.getWallet_balance()+participantRefund);
 			session.update(tx);
-		    session.save(poolParticipanttx);
-			session.save(poolOwnerTx);
-//			session.save(poolParticipant);
-//			session.save(poolOwner);
+		    session.saveOrUpdate(poolParticipanttx);
+			session.saveOrUpdate(poolOwnerTx);
+		//	session.save(poolParticipant);
+		//	session.save(poolOwner);
 			//poolParticipant mail notification
 			String message = "Hi "+poolParticipant.getName()+"\n You just received a refund of INR "+participantRefund+
 					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
@@ -163,9 +164,9 @@ public class WalletUtil {
 							
 //			session.update(poolOwner);
 //			session.update(poolParticipant);
-			poolOwner = null;
-			poolParticipant= null;
-			tx=null;
+		//	poolOwner = null;
+	//		poolParticipant= null;
+	//		tx=null;
 			t1.commit();
 			session.close();
 			

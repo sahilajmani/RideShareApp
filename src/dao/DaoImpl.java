@@ -506,12 +506,18 @@ public class DaoImpl implements DaoI {
 		PoolRequest poolRequest = null;
 		if(qry.list() != null){
 		poolRequest = (PoolRequest) qry.list().get(0);
+		String poolId=poolRequest.getPool().getId();
+		String userId=poolRequest.getUser().getId();
+		String userOldPoolId=poolRequest.getUser().getPool().getId();
 		
 		if (response == GlobalConstants.REQUEST_ACCEPTED) {
-			//this.leavePool(poolRequest.getUser().getId(), poolRequest.getUser().getPool().getId());
-			result = addToPool(poolRequest.getUser(), poolRequest.getPool(),
-					session);
-			/*if(result)
+				if(userId!=userOldPoolId)
+					{
+					this.leavePool(userId,userOldPoolId);
+					}
+	//			User userToBeAdded=
+			result = addToPool(userId, poolId);
+			if(result)
 			{
 				Transaction tx3 = session.beginTransaction();
 				try{
@@ -524,7 +530,7 @@ public class DaoImpl implements DaoI {
 					tx3.rollback();
 					e.printStackTrace();
 				}
-			}*/
+			}
 			if (!result)
 			{
 				
@@ -545,9 +551,9 @@ public class DaoImpl implements DaoI {
 			{
 
 				WalletTransactions walletTransaction =new WalletTransactions();
-				User poolOwner=this.getUserDetails(poolRequest.getPool().getId());
+				User poolOwner=this.getUserDetails(poolId);
 				walletTransaction.setPoolOwner(poolOwner);
-				walletTransaction.setPoolParticipant(poolRequest.getUser());
+				walletTransaction.setPoolParticipant(this.getUserDetails(userId));
 				int days=this.dayDate();
 				System.out.println(days+" :days");
 				walletTransaction.setAmount((int)(poolOwner.getPoolCost()/5.00)*days);//need to set
@@ -571,10 +577,10 @@ public class DaoImpl implements DaoI {
 		return result;
 	}
 
-	private boolean addToPool(User user, Pool pool, Session session) { // add
-																		// user
-																		// to
-																		// pool
+	private boolean addToPool(String userId, String poolId) { // add
+		Session session = sessionFactory.openSession();																// user
+					Pool	pool=this.getPoolDetails(poolId);												// to
+					User user=this.getUserDetails(userId);													// pool
 		if (!pool.getIsAvailable())
 			return false;
 
@@ -583,7 +589,6 @@ public class DaoImpl implements DaoI {
 		Transaction tx = session.beginTransaction();
 		// pool.getParticipants().add(user);
 		pool.setIs_active(true);
-		String oldPoolId = user.getPool().getId();
 		user.setPool(pool);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
@@ -594,7 +599,7 @@ public class DaoImpl implements DaoI {
 		session.saveOrUpdate(user);
 		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
-				+ "'and pool.id = '"+oldPoolId+"' and is_valid=true";
+				+ "' and is_valid=true";
 		Query qry = session.createQuery(hql);
 		Transactions oldTransaction = new Transactions();
 		oldTransaction = (Transactions) qry.uniqueResult();
@@ -611,6 +616,7 @@ public class DaoImpl implements DaoI {
 		newTransaction.setValid_to(Long.MAX_VALUE);
 		session.save(newTransaction);
 		tx.commit();
+		session.close();
 		return true;
 	}
 
@@ -655,60 +661,56 @@ public class DaoImpl implements DaoI {
 			// }
 
 			// }
-			Transaction tx2 = session.beginTransaction();
-			Pool userOriginalPool = this.getPoolDetails(userId);
-			userOriginalPool.setIsAvailable(true);
-			user.setPool(userOriginalPool);
-			session.update(user);
-			tx2.commit();
-			WalletTransactions walletTransaction =new WalletTransactions();
-			//		walletTransaction.setId(id); generate this..
-					User poolOwner=this.getUserDetails(pool.getId());
-					walletTransaction.setPoolOwner(poolOwner);
-					walletTransaction.setPoolParticipant(user);
-					WalletUtil.poolLeftByUser(walletTransaction);
-					tx = session.beginTransaction();
-					session.update(walletTransaction.getPoolOwner());
-					session.update(walletTransaction.getPoolParticipant());
-					
-			poolOwner= null;
-//			pool=null;
-		//	session.saveOrUpdate(user);
-			Session session2 = RideSharingUtil.getSessionFactoryInstance().openSession();
-			Transaction tx3= session2.beginTransaction();
-			pool = this.getPoolDetails(poolId);
-			int noOfMembers = pool.getNumberOfMembers();
-			pool.setNumberOfMembers((noOfMembers - 1));
-			pool.setIsAvailable(true);
-			session2.update(pool);
-			tx3.commit();
-			session2.close();
-			
-			// pool.setParticipants( (List<User>) participants);
-//			session.update(pool);
-		//	session.saveOrUpdate(userOriginalPool);
 
+					
+					Transaction tx2 = session.beginTransaction();
+					Pool userOriginalPool = this.getPoolDetails(userId);
+				//	userOriginalPool.setIsAvailable(true);
+					user.setPool(userOriginalPool);
+					pool = this.getPoolDetails(poolId);
+					int noOfMembers = pool.getNumberOfMembers();
+					pool.setNumberOfMembers((noOfMembers - 1));
+					pool.setIsAvailable(true);
+					session.update(user);
+					session.update(pool);
+			
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true)";
-Long currentTime=System.currentTimeMillis();
+			Long currentTime=System.currentTimeMillis();
 			Query qry = session.createQuery(hql);
 			System.out.println(qry.list().size());
 			List<Transactions> allTransactions = (List<Transactions>) qry
 					.list();
 			Transactions oldTransaction = allTransactions.get(0);
 			oldTransaction.setIs_valid(false);
-				oldTransaction.setValid_to(currentTime);
+			oldTransaction.setValid_to(currentTime);
 			session.update(oldTransaction);
 
-			// Transactions homeTransaction = allTransactions.get(1);
 			Transactions newTransaction = new Transactions();// primary key??
 			newTransaction.setIs_valid(true);
 			newTransaction.setPool(userOriginalPool);
 			newTransaction.setUser(user);
-				newTransaction.setValid_from(currentTime);
+			newTransaction.setValid_from(currentTime);
 			newTransaction.setValid_to(Long.MAX_VALUE);
 			session.save(newTransaction);
+			session.update(user);
+			tx2.commit();
 
+
+			User walletDebitUser= this.getUserDetails(userId);
+			User walletCreditUser=this.getUserDetails(poolId);
+			
+			WalletTransactions walletTransaction =new WalletTransactions();
+			//		walletTransaction.setId(id); generate this..
+					//User poolOwner=this.getUserDetails(pool.getId());
+					walletTransaction.setPoolOwner(walletCreditUser);
+					walletTransaction.setPoolParticipant(walletDebitUser);
+					WalletUtil.poolLeftByUser(walletTransaction);
+			//		tx = session.beginTransaction();
+			//	session.update(walletCreditUser);
+			//	session.update(walletDebitUser);
+				
+			
 			result = true;
 
 		} else// if hostuser is leaving the pool
