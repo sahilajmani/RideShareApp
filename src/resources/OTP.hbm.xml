@@ -14,7 +14,7 @@
         <property name="create_time" type="java.util.Date">
             <column name="CREATE_TIME"/>
         </property>
-        <property name="passcode" type="java.lang.String">
+        <property name="passcode" type="int">
             <column name="PASSCODE" />
         </property>
     </class>

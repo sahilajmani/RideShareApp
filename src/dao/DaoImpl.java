@@ -47,7 +47,7 @@ public class DaoImpl implements DaoI {
 		OTP otpObject = new OTP();
 		otpObject.setEmail(userEmail);
 		logger.info("Email : " + userEmail);
-		otpObject.setPasscode(otp + "");
+		otpObject.setPasscode(otp);
 		logger.info("OTP : " + otp);
 		try {
 			otpObject.setCreate_time(this.getCurrentTime());
@@ -91,7 +91,7 @@ public class DaoImpl implements DaoI {
 		Criteria cr = session.createCriteria(OTP.class);
 		cr.add(Restrictions.eq("email", userEmail));
 		OTP otpObjectByEmail = (OTP) cr.list().get(0);
-		otpObjectByEmail.setPasscode(otp + "");
+		otpObjectByEmail.setPasscode(otp);
 		logger.info("OTP : " + otp);
 		try {
 			otpObjectByEmail.setCreate_time(this.getCurrentTime());

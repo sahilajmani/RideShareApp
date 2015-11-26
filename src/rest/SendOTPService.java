@@ -63,7 +63,7 @@ public class SendOTPService {
 	@Path("OTPAuthenticationService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {		
+	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
@@ -71,44 +71,46 @@ public class SendOTPService {
 			e1.printStackTrace();
 		}
 		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
-		try{
-		OTP otpObjectByEmail = new OTP();
-		boolean response = false;
-		if (null != otpObj && null != otpObj.getEmail()
-				&& null != otpObj.getPasscode() && !otpObj.getEmail().isEmpty()
-				&& !otpObj.getPasscode().isEmpty()) {
-			otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());	
-			if (null != otpObjectByEmail
-					&& otpObjectByEmail.getPasscode() != null
-					&& !otpObjectByEmail.getPasscode().isEmpty()) {
-				System.out.println("Comparing passcodes now   "+otpObjectByEmail);
-				if (getOTPAuthentication(otpObj.getPasscode(), otpObjectByEmail)) {
-					response = true;
+		try {
+			OTP otpObjectByEmail = new OTP();
+			boolean response = false;
+			if (null != otpObj && null != otpObj.getEmail()
+					&& otpObj.getPasscode() != 0
+					&& !otpObj.getEmail().isEmpty()) {
+				otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
+				if (null != otpObjectByEmail
+						&& otpObjectByEmail.getPasscode() != 0) {
+					System.out.println("Comparing passcodes now   "
+							+ otpObjectByEmail);
+					if (getOTPAuthentication(otpObj.getPasscode(),
+							otpObjectByEmail)) {
+						response = true;
+					}
 				}
 			}
-		}
-		User user = null;
-		if (response) {
-			user = dao.getUserDetailsByEmail(otpObj.getEmail());
-			otpAuthenticationResponse.setUser(user);
-		}
-		otpAuthenticationResponse.setResponse(response);
-		if(!response){
-			System.out.println("DB otp " + otpObjectByEmail.getPasscode() + "\n User OTP " + otpObj.getPasscode());			
-		}
-		}catch(Exception e){
+			User user = null;
+			if (response) {
+				user = dao.getUserDetailsByEmail(otpObj.getEmail());
+				otpAuthenticationResponse.setUser(user);
+			}
+			otpAuthenticationResponse.setResponse(response);
+			if (!response) {
+				System.out.println("DB otp " + otpObjectByEmail.getPasscode()
+						+ "\n User OTP " + otpObj.getPasscode());
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return otpAuthenticationResponse;
 	}
 
-	private boolean getOTPAuthentication(String userOTP, OTP otpObjectByEmail) {
-		if (userOTP.equalsIgnoreCase(otpObjectByEmail.getPasscode())) {
+	private boolean getOTPAuthentication(int userOTP, OTP otpObjectByEmail) {
+		if (userOTP == otpObjectByEmail.getPasscode()) {
 			Date currentTime = new Date();
 			Date otpCreationTime = otpObjectByEmail.getCreate_time();
 			long diffInMinutes = (currentTime.getTime() - otpCreationTime
 					.getTime()) / 60000;
-			System.out.println("Time Diff is --   "+diffInMinutes);
+			System.out.println("Time Diff is --   " + diffInMinutes);
 			if (diffInMinutes <= GlobalConstants.OTPPermissibleTimeInMinutes) {
 				return true;
 			}

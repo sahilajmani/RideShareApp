@@ -8,7 +8,7 @@ public class OTP implements Serializable{
 	private String email;
 	private String id;
 	private Date create_time;
-	private String passcode;
+	private int passcode;
 	public String getEmail() {
 		return email;
 	}
@@ -27,10 +27,10 @@ public class OTP implements Serializable{
 	public void setCreate_time(Date create_time) {
 		this.create_time = create_time;
 	}
-	public String getPasscode() {
+	public int getPasscode() {
 		return passcode;
 	}
-	public void setPasscode(String passcode) {
+	public void setPasscode(int passcode) {
 		this.passcode = passcode;
 	}
 	
