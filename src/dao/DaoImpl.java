@@ -516,13 +516,14 @@ public class DaoImpl implements DaoI {
 					this.leavePool(userId,userOldPoolId);
 					}
 	//			User userToBeAdded=
+				session.clear();
 			result = addToPool(userId, poolId);
 			if(result)
 			{
 				Transaction tx3 = session.beginTransaction();
 				try{
-				String hql2 = "delete from PoolRequest where user.id='"+poolRequest.getUser().getId()+
-						"' AND pool.id<>'"+poolRequest.getPool().getId()+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
+				String hql2 = "delete from PoolRequest where user.id='"+userId+
+						"' AND pool.id<>'"+poolId+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
 				Query qry1 = session.createQuery(hql2);
 				qry1.executeUpdate();
 				tx3.commit();
@@ -546,22 +547,23 @@ public class DaoImpl implements DaoI {
 			session.update(poolRequest);
 			result = true;
 			tx.commit();
-			
+			session.clear();
 			if(response == GlobalConstants.REQUEST_ACCEPTED)//this part needs to be revisted once basic functionality is done. rollback statements are required.
 			{
 
 				WalletTransactions walletTransaction =new WalletTransactions();
 				User poolOwner=this.getUserDetails(poolId);
-				walletTransaction.setPoolOwner(poolOwner);
-				walletTransaction.setPoolParticipant(this.getUserDetails(userId));
+		//		walletTransaction.setPoolOwner(poolOwner);
+		//		walletTransaction.setPoolParticipant(this.getUserDetails(userId));
 				int days=this.dayDate();
 				System.out.println(days+" :days");
 				walletTransaction.setAmount((int)(poolOwner.getPoolCost()/5.00)*days);//need to set
+				session.clear();
 				walletTransaction.setType(TransactionType.DEBIT_TO_WALLET);
-				WalletUtil.poolRequestAccepted(walletTransaction,session);
+				WalletUtil.poolRequestAccepted(walletTransaction,poolId,userId);
 				
 				    Transaction tx1 = session.beginTransaction();	
-				    String hql1="Update PoolRequest set status="+GlobalConstants.REQUEST_CANCEL+" where status="+GlobalConstants.REQUEST_PENDING+" and user.id='"+poolRequest.getUser().getId()+"'";
+				    String hql1="Update PoolRequest set status="+GlobalConstants.REQUEST_CANCEL+" where status="+GlobalConstants.REQUEST_PENDING+" and user.id='"+userId+"'";
 				    Query query=session.createQuery(hql1);
 				    int rows = query.executeUpdate();
 				    System.out.println("rows updated"+rows);
@@ -570,7 +572,9 @@ public class DaoImpl implements DaoI {
 			}
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
+		
 			session.close();
 		}
 		}
@@ -697,15 +701,15 @@ public class DaoImpl implements DaoI {
 			tx2.commit();
 
 
-			User walletDebitUser= this.getUserDetails(userId);
-			User walletCreditUser=this.getUserDetails(poolId);
+		//	User walletDebitUser= this.getUserDetails(userId);
+		//	User walletCreditUser=this.getUserDetails(poolId);
 			
 			WalletTransactions walletTransaction =new WalletTransactions();
 			//		walletTransaction.setId(id); generate this..
 					//User poolOwner=this.getUserDetails(pool.getId());
-					walletTransaction.setPoolOwner(walletCreditUser);
-					walletTransaction.setPoolParticipant(walletDebitUser);
-					WalletUtil.poolLeftByUser(walletTransaction);
+			//		walletTransaction.setPoolOwner(walletCreditUser);
+				//	walletTransaction.setPoolParticipant(walletDebitUser);
+					WalletUtil.poolLeftByUser(walletTransaction,poolId,userId);
 			//		tx = session.beginTransaction();
 			//	session.update(walletCreditUser);
 			//	session.update(walletDebitUser);
@@ -742,7 +746,7 @@ public class DaoImpl implements DaoI {
 							User poolOwner=this.getUserDetails(pool.getId());
 							walletTransaction.setPoolOwner(poolOwner);
 							walletTransaction.setPoolParticipant(participant);
-							WalletUtil.poolLeftByUser(walletTransaction); //settling account for every participant in case poolowner leaves
+							WalletUtil.poolLeftByUser(walletTransaction,poolOwner.getId(),participant.getId()); //settling account for every participant in case poolowner leaves
 							session.update(walletTransaction.getPoolOwner());
 							session.update(walletTransaction.getPoolParticipant());
 					

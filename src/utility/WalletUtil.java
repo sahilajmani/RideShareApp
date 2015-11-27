@@ -65,60 +65,83 @@ public class WalletUtil {
 	}
 	
 	
-	public static void poolRequestAccepted(WalletTransactions walletRecharge,Session session){   //set an id here//internal transaction // this method will only be initiated once a new request is acceted
+	public static void poolRequestAccepted(WalletTransactions walletRecharge,String poolOwnerId,String userId){   //set an id here//internal transaction // this method will only be initiated once a new request is acceted
+		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 		if(!TransactionType.CREDIT_TO_WALLET.equals(walletRecharge.getType())){
 			walletRecharge.setType(TransactionType.DEBIT_TO_WALLET);  				//significance of if?
 		}
 	//	User user = RideSharingUtil.getDaoInstance().getUserDetails(walletRecharge.getPoolParticipant().getId());
-		User user = walletRecharge.getPoolParticipant();
 		Transaction tx = session.beginTransaction();
-		user.setWallet_balance(user.getWallet_balance()-walletRecharge.getAmount());
-		walletRecharge.setIsSettled(false);
-		walletRecharge.setDetails("Advance paid for joining "+walletRecharge.getPoolOwner().getName()+"'s pool");
-		walletRecharge.setId("INT_POOL"+System.currentTimeMillis()+":"+walletRecharge.getPoolOwner().getId().substring(25));
-		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
-		session.save(walletRecharge);
-		session.update(user);
+		User participant =  RideSharingUtil.getDaoInstance().getUserDetails(userId);
+		participant.setWallet_balance(participant.getWallet_balance()-walletRecharge.getAmount());
+		int walletBalance=participant.getWallet_balance();
+		String participantEmail =participant.getEmail();
+		String name = participant.getName();
+		session.update(participant);
+		
 		tx.commit();
-		String message = "Hi "+user.getName()+"\n Your request to join pool owned by  "+walletRecharge.getPoolOwner().getName()+""
-				+ "just got approved. Your new wallet balance is INR "+user.getWallet_balance()+"\n Thanks for using RideEasy, Keep riding, Keep sharing !";
-		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+user.getWallet_balance();
-		String[] to = { user.getEmail() };
+		session.clear();
+		
+		Transaction tx1 = session.beginTransaction();
+		walletRecharge.setIsSettled(false);
+		walletRecharge.setId("INT_POOL"+System.currentTimeMillis()+":"+poolOwnerId.substring(25));
+		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
+		User poolOwner =RideSharingUtil.getDaoInstance().getUserDetails(poolOwnerId);
+		walletRecharge.setPoolOwner(poolOwner);
+		String poolOwnerName = poolOwner.getName();
+		walletRecharge.setDetails("Advance paid for joining "+poolOwnerName+"'s pool");
+		walletRecharge.setPoolParticipant(RideSharingUtil.getDaoInstance().getUserDetails(userId));
+		session.save(walletRecharge);
+	//	session.update(user);
+		tx1.commit();
+		String message = "Hi "+name+"\n Your request to join pool owned by  "+poolOwnerName+""
+				+ "just got approved. Your new wallet balance is INR "+walletBalance+"\n Thanks for using RideEasy, Keep riding, Keep sharing !";
+		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+walletBalance;
+		String[] to = { participantEmail };
 				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
 						to);
+				
+				session.close();
 			
 	}
 	
 	
-	public static void poolLeftByUser(WalletTransactions walletRecharge){ 
+	public static void poolLeftByUser(WalletTransactions walletRecharge,String poolOwnerId,String poolparticipantId){ 
 		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
-		Criteria cr = session.createCriteria(WalletTransactions.class).add(Restrictions.eq("poolOwner.id",walletRecharge.getPoolOwner().getId())).add
-				(Restrictions.eq("poolParticipant.id", walletRecharge.getPoolParticipant().getId())).add(Restrictions.eq("isSettled",false));
+		Criteria cr = session.createCriteria(WalletTransactions.class).add(Restrictions.eq("poolOwner.id",poolOwnerId)).add
+				(Restrictions.eq("poolParticipant.id", poolparticipantId)).add(Restrictions.eq("isSettled",false));
 		Collection <WalletTransactions> unsettledTransaction = (Collection<WalletTransactions>) cr.list();
+		String transactionId="";
 		if(unsettledTransaction!= null && unsettledTransaction.size()>0){
 		Transaction t1= session.beginTransaction();
 			WalletTransactions tx = unsettledTransaction.iterator().next();
 //			cr = session.createCriteria(Pool.class).add(Restrictions.eq("id",tx.getPoolOwner().getId()));
 //			Pool userPool = (Pool)cr.list().get(0);
-			User poolOwner = walletRecharge.getPoolOwner();
-			User poolParticipant = walletRecharge.getPoolParticipant();
+		//	User poolOwner = walletRecharge.getPoolOwner();
+		//	User poolParticipant = walletRecharge.getPoolParticipant();
 			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
-			System.out.println(numberOfDays);
+			transactionId=tx.getId();
+		//	System.out.println(numberOfDays);
 			int days = numberOfDays.intValue();
 			if(days>5){
 			days=5;
 			}
-			int ownerShare = (int)((days)/5.00 *poolOwner.getPoolCost()); // cost per month ?? we should rename //havnt we assumed that there are 5 working days only?
+			int ownerShare = (int)((days)/5.00 *tx.getPoolOwner().getPoolCost()); // cost per month ?? we should rename //havnt we assumed that there are 5 working days only?
+			int participantRefund = tx.getPoolOwner().getPoolCost()-ownerShare;
 			// this variable
 //			tx.setAmount(ownerShare);
 			tx.setIsSettled(true);
+			session.update(tx);
+			t1.commit();
 			
-			int participantRefund = poolOwner.getPoolCost()-ownerShare;
-			//Transaction t1 = session.beginTransaction();
-			poolOwner.setWallet_balance(poolOwner.getWallet_balance()+ownerShare);
+			Transaction t2= session.beginTransaction();
+			User poolOwner = RideSharingUtil.getDaoInstance().getUserDetails(poolOwnerId);
+			String poolOwnerName=poolOwner.getName();
+			String poolOwnerEmail=poolOwner.getEmail();
+			User poolParticipant = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
 			WalletTransactions poolOwnerTx = new WalletTransactions();
-			poolOwnerTx.setId(tx.getId()+"Credit");
+			poolOwnerTx.setId(transactionId+"Credit");
 			poolOwnerTx.setAmount(ownerShare);
 			poolOwnerTx.setTransaction_timemillis(System.currentTimeMillis());
 			poolOwnerTx.setType(TransactionType.CREDIT_TO_WALLET);
@@ -126,27 +149,40 @@ public class WalletUtil {
 			poolOwnerTx.setPoolParticipant(poolParticipant);
 			poolOwnerTx.setPoolOwner(poolOwner);
 			poolOwnerTx.setDetails("Pool left by user - "+poolParticipant.getName()+" Amount credited for "+days+" days");
+			session.saveOrUpdate(poolOwnerTx);
+			t2.commit();
+			session.clear();
+			Transaction t4= session.beginTransaction();
+			User poolOwner2 = RideSharingUtil.getDaoInstance().getUserDetails(poolOwnerId);
+			User poolParticipant2 = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
+			poolOwner2.setWallet_balance(poolOwner2.getWallet_balance()+ownerShare);
+			poolParticipant2.setWallet_balance(poolParticipant2.getWallet_balance()+participantRefund);
+			session.update(poolParticipant2);
+			session.update(poolOwner2);
+			t4.commit();
+			
+			Transaction t3= session.beginTransaction();
 			WalletTransactions poolParticipanttx = new WalletTransactions();
+			User poolParticipant1 = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
 			poolParticipanttx.setType(TransactionType.REFUND);
-			poolParticipanttx.setId(tx.getId()+"Refund");
+			poolParticipanttx.setId(transactionId+"Refund");
 			poolParticipanttx.setAmount(participantRefund);
 			poolParticipanttx.setIsSettled(true);
 			poolParticipanttx.setTransaction_timemillis(System.currentTimeMillis());
-			poolParticipanttx.setPoolOwner(poolParticipant);
-			poolParticipanttx.setPoolParticipant(poolParticipant);
-			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwner.getName()+"'s Pool");
-			poolParticipant.setWallet_balance(poolParticipant.getWallet_balance()+participantRefund);
-			session.update(tx);
+			poolParticipanttx.setPoolOwner(poolParticipant1);
+			poolParticipanttx.setPoolParticipant(poolParticipant1);
+			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwnerName+"'s Pool");
+			
 		    session.saveOrUpdate(poolParticipanttx);
-			session.saveOrUpdate(poolOwnerTx);
+			
 		//	session.save(poolParticipant);
 		//	session.save(poolOwner);
 			//poolParticipant mail notification
-			String message = "Hi "+poolParticipant.getName()+"\n You just received a refund of INR "+participantRefund+
+			String message = "Hi "+poolParticipant1.getName()+"\n You just received a refund of INR "+participantRefund+
 					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
-							+ ".Your updated wallet balance is INR "+poolParticipant.getWallet_balance()
+							+ ".Your updated wallet balance is INR "+poolParticipant1.getWallet_balance()
 							+ ". We hope you had a pleasent experience riding and sharing ! Do share your feedback with us.";
-			String subject = "You have received a refund of INR "+tx.getAmount()+"in your Wallet";
+			String subject = "You have received a refund of INR "+participantRefund+"in your Wallet";
 			String[] to = { poolParticipant.getEmail() };
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
@@ -154,10 +190,10 @@ public class WalletUtil {
 					
 					// pool Owner mail notification
 					
-					 message = "Hi "+poolOwner.getName()+"\n You just received the final settlement amount of INR "+ownerShare+
-							 " as "+poolParticipant.getName()+" decided to leave your car pool. Please share your valuable feeback with us. Happy riding, happy sharing !";
-					 subject = "You have received final settlement amount with "+poolParticipant.getName();
-					String [] to1 = { poolOwner.getEmail() };
+					 message = "Hi "+poolOwnerName+"\n You just received the final settlement amount of INR "+ownerShare+
+							 " as "+poolParticipant1.getName()+" decided to leave your car pool. Please share your valuable feeback with us. Happy riding, happy sharing !";
+					 subject = "You have received final settlement amount with "+poolParticipant1.getName();
+					String [] to1 = { poolOwnerEmail };
 							SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 									GlobalConstants.PASSWORD_EMAIL, subject, message,
 									to1);
@@ -167,7 +203,7 @@ public class WalletUtil {
 		//	poolOwner = null;
 	//		poolParticipant= null;
 	//		tx=null;
-			t1.commit();
+							t3.commit();
 			session.close();
 			
 		}
