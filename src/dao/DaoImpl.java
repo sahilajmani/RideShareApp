@@ -497,6 +497,7 @@ public class DaoImpl implements DaoI {
 	}
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
+		try{
 		boolean result = false;
 		Session session = sessionFactory.openSession();
 		String hql = "from PoolRequest where id=?";
@@ -518,18 +519,22 @@ public class DaoImpl implements DaoI {
 	//			User userToBeAdded=
 				session.clear();
 			result = addToPool(userId, poolId);
-			if(result)
+		if(result)
 			{
-				Transaction tx3 = session.beginTransaction();
+				Session session1= RideSharingUtil.getSessionFactoryInstance().openSession();
+				Transaction tx3 = session1.beginTransaction();
 				try{
 				String hql2 = "delete from PoolRequest where user.id='"+userId+
 						"' AND pool.id<>'"+poolId+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
-				Query qry1 = session.createQuery(hql2);
+				Query qry1 = session1.createQuery(hql2);
 				qry1.executeUpdate();
 				tx3.commit();
 				}catch(Exception e){
 					tx3.rollback();
 					e.printStackTrace();
+				}
+				finally{
+					session1.close();
 				}
 			}
 			if (!result)
@@ -552,7 +557,7 @@ public class DaoImpl implements DaoI {
 			{
 
 				WalletTransactions walletTransaction =new WalletTransactions();
-				User poolOwner=this.getUserDetails(poolId);
+				User poolOwner=this.getUserDetails(poolId); 
 		//		walletTransaction.setPoolOwner(poolOwner);
 		//		walletTransaction.setPoolParticipant(this.getUserDetails(userId));
 				int days=this.dayDate();
@@ -579,6 +584,10 @@ public class DaoImpl implements DaoI {
 		}
 		}
 		return result;
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+		return false;
 	}
 
 	private boolean addToPool(String userId, String poolId) { // add
@@ -698,7 +707,7 @@ public class DaoImpl implements DaoI {
 			newTransaction.setValid_from(currentTime);
 			newTransaction.setValid_to(Long.MAX_VALUE);
 			session.save(newTransaction);
-			session.update(user);
+		//	session.update(user);
 			tx2.commit();
 
 
@@ -721,7 +730,6 @@ public class DaoImpl implements DaoI {
 		} else// if hostuser is leaving the pool
 			//if (pool.getId().equals(user.getId())) 
 			{
-				
 				// Session session = sessionFactory.openSession();
 				// pool.getParticipants().removeAll(c);
 				// int noOfMembers = pool.getNumberOfMembers();

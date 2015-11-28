@@ -79,6 +79,7 @@ public class WalletUtil {
 		Transaction tx = session.beginTransaction();
 		User participant =  RideSharingUtil.getDaoInstance().getUserDetails(userId);
 		participant.setWallet_balance(participant.getWallet_balance()-walletRecharge.getAmount());
+		participant.setPool(RideSharingUtil.getDaoInstance().getPoolDetails(poolOwnerId));
 		int walletBalance=participant.getWallet_balance();
 		String participantEmail =participant.getEmail();
 		String name = participant.getName();
