@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import email.SendMail;
+import pojos.MailNotifierThread;
 import pojos.Pool;
 import pojos.TransactionType;
 import pojos.User;
@@ -33,9 +34,11 @@ public class WalletUtil {
 						+ "!";
 		String subject = "You have received a new wallet credit of INR"+walletRecharge.getAmount();
 		String[] to = { user.getEmail() };
-				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+				/*SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
-						to);
+						to);*/
+		new MailNotifierThread(message, user.getEmail(), subject).start();
+
 		tx.commit();
 		return user;
 		
@@ -56,9 +59,11 @@ public class WalletUtil {
 						+ "!";
 		String subject = "You have received a new wallet credit of INR"+walletRecharge.getAmount();
 		String[] to = { user.getEmail() };
-				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+				/*SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
-						to);
+						to);*/
+		new MailNotifierThread(message, user.getEmail(), subject).start();
+
 		tx.commit();
 		return user;
 		
@@ -98,9 +103,11 @@ public class WalletUtil {
 				+ "just got approved. Your new wallet balance is INR "+walletBalance+"\n Thanks for using RideEasy, Keep riding, Keep sharing !";
 		String subject = "Congratulations !Your pool request has been processed, here is your updated wallet balance "+walletBalance;
 		String[] to = { participantEmail };
-				SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+			/*	SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 						GlobalConstants.PASSWORD_EMAIL, subject, message,
-						to);
+						to);*/
+				new MailNotifierThread(message, participantEmail, subject).start();
+
 				
 				session.close();
 			
@@ -184,20 +191,19 @@ public class WalletUtil {
 							+ ". We hope you had a pleasent experience riding and sharing ! Do share your feedback with us.";
 			String subject = "You have received a refund of INR "+participantRefund+"in your Wallet";
 			String[] to = { poolParticipant.getEmail() };
-					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
-							GlobalConstants.PASSWORD_EMAIL, subject, message,
-							to);
+					new MailNotifierThread(message, poolParticipant.getEmail(), subject).start();
 					
 					// pool Owner mail notification
 					
 					 message = "Hi "+poolOwnerName+"\n You just received the final settlement amount of INR "+ownerShare+
 							 " as "+poolParticipant1.getName()+" decided to leave your car pool. Please share your valuable feeback with us. Happy riding, happy sharing !";
 					 subject = "You have received final settlement amount with "+poolParticipant1.getName();
-					String [] to1 = { poolOwnerEmail };
+					/*String [] to1 = { poolOwnerEmail };
 							SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 									GlobalConstants.PASSWORD_EMAIL, subject, message,
-									to1);
-							
+									to1);*/
+							new MailNotifierThread(message, poolOwner.getEmail(), subject).start();
+
 //			session.update(poolOwner);
 //			session.update(poolParticipant);
 		//	poolOwner = null;

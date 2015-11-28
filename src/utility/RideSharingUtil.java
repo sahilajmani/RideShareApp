@@ -1,5 +1,8 @@
 package utility;
 
+
+import java.util.HashMap;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -11,7 +14,6 @@ import dao.DaoI;
 import dao.DaoImpl;
 import dao.IChat;
 import dao.IChatImpl;
-import pojos.User;
 
 public class RideSharingUtil {
 	private static DaoI dao = null;
@@ -19,6 +21,7 @@ public class RideSharingUtil {
 	public static IChat chatDAO = null;
 	public static AuthenticationDaoI authenticationDao = null;
 	public static Object mutex = new Object();
+	private static java.util.HashMap<String, Integer> otpMap = new HashMap<String, Integer>();
 	public static Object mutexDao = new Object();	
 
 	public static DaoI getDaoInstance() {
@@ -38,6 +41,12 @@ public class RideSharingUtil {
 			}
 		}
 		return chatDAO;
+	}
+	public static void updateOTP(String email, int value){
+		otpMap.put(email, value);
+	}
+	public static int getOTP(String email){
+		return otpMap.get(email);
 	}
 
 	public static AuthenticationDaoI getAuthenticationDaoInstance() {

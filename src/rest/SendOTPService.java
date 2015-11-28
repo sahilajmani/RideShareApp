@@ -31,6 +31,7 @@ public class SendOTPService {
 		serviceResponse.setResponse(false);
 		if (!userEmail.isEmpty()) {
 			int otp = generateOTP();
+			RideSharingUtil.updateOTP(userEmail, otp);
 			String message = "OTP : " + otp;
 			String subject = "OTP for Ride Easy";
 			String[] to = { userEmail };
@@ -64,17 +65,19 @@ public class SendOTPService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public OTPAuthenticationResponse OTPAuthentication(OTP otpObj) {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
 		try {
 			OTP otpObjectByEmail = new OTP();
 			boolean response = false;
-			if (null != otpObj && null != otpObj.getEmail()
+			if(null!= otpObj && RideSharingUtil.getOTP(otpObj.getEmail())> 0){
+				if(RideSharingUtil.getOTP(otpObj.getEmail()) == otpObj.getPasscode()){
+					System.out.println("Getting OTP   value from cache ");
+					response = true;
+				}
+			}
+			else {
+               if (null != otpObj && null != otpObj.getEmail()
 					&& otpObj.getPasscode() != 0
 					&& !otpObj.getEmail().isEmpty()) {
 				otpObjectByEmail = dao.getOPTbyEmail(otpObj.getEmail());
@@ -88,6 +91,7 @@ public class SendOTPService {
 					}
 				}
 			}
+		}
 			User user = null;
 			if (response) {
 				user = dao.getUserDetailsByEmail(otpObj.getEmail());

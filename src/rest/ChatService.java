@@ -111,7 +111,7 @@ public class ChatService {
 		String userEmail = receiver.getEmail();
 			String message = "Hi "+receiver.getName()+", \n You have received a new message from "+
 					sender.getName()+
-					"Please open the RideEasy app to reply to the user. \n Thanks, \n RideEasy Team";
+					" Please open the RideEasy app to reply to the user. \n Thanks, \n RideEasy Team";
 			String subject = "You have received a new message from "+sender.getName();
 			String[] to = { userEmail };
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,

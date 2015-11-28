@@ -600,7 +600,8 @@ public class DaoImpl implements DaoI {
 			pool.setIsAvailable(false);
 
 		session.update(pool);
-		session.saveOrUpdate(user);
+		session.update(user);
+		System.out.println("user pool changed successfully !!!");
 		// System.out.println("pool saved oyeah");
 		String hql = "from Transactions where user.id='" + user.getId()
 				+ "' and is_valid=true";
@@ -718,8 +719,6 @@ public class DaoImpl implements DaoI {
 			result = true;
 
 		} else// if hostuser is leaving the pool
-			
-		
 			//if (pool.getId().equals(user.getId())) 
 			{
 				
@@ -878,6 +877,7 @@ public class DaoImpl implements DaoI {
 				Pool pool = createPool(user);
 				user.setPool(pool);
 				session.update(user.getId(), user);
+				session.save(pool);
 				// insert transaction
 				insertTransaction(user, session);
 				tx.commit();
