@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import dao.DaoI;
 import pojos.MatchedPoolsVO;
 import pojos.Pool;
+import pojos.RestServiceResponse;
 import pojos.User;
 import utility.RideSharingUtil;
 import vo.UsersList;
@@ -53,7 +54,7 @@ public class PoolService {
 		}
 		return matchPoolsList;
 	}
-	
+
 	@POST
 	@Path("getpoolusers")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -70,23 +71,32 @@ public class PoolService {
 		}
 		return users;
 	}
-	
+
 	@GET
 	@Path("leavepoolservice")
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean leavePoolService(@QueryParam("userId")String userId) {
-		if(!userId.isEmpty()){
-		try {
-			User user = dao.getUserDetails(userId);
-			if(user!=null){
-			dao.leavePool(userId, user.getPool().getId());	
+	public RestServiceResponse leavePoolService(
+			@QueryParam("userId") String userId) {
+		RestServiceResponse response = new RestServiceResponse();
+		if (!userId.isEmpty()) {
+			try {
+				User user = dao.getUserDetails(userId);
+				if (user != null) {
+					if (dao.leavePool(userId, user.getPool().getId())) {
+						response.setUser(dao.getUserDetails(userId));
+						response.setResponse(true);
+					} else {
+						response.setUser(user);
+						response.setResponse(false);
+					}
+				}
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+				response.setResponse(false);
+
 			}
-		} catch (Exception e) {
-			logger.info(e.getMessage());
-			return false;
 		}
-		return true;
-		}
-		return false;
+		return response;
 	}
+
 }
