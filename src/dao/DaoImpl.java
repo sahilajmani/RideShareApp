@@ -21,6 +21,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import pojos.ListWalletTransactions;
+import pojos.MailNotifierThread;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
 import pojos.Pool;
@@ -954,6 +955,7 @@ public class DaoImpl implements DaoI {
 					session.update(user);
 					tx.commit();
 					List<UserMapping> userMatch = findMatchedUser(user);
+					notifyUsers(userMatch);
 					persistUserMatch(userMatch);
 					List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
 
@@ -1022,6 +1024,25 @@ public class DaoImpl implements DaoI {
 			session.close();
 		}
 		return this.getUserDetails(user.getId());
+	}
+
+	private void notifyUsers(List<UserMapping> userMatch) {
+		// TODO Auto-generated method stub
+		User newUser= null;
+		User matchingUser = null;
+		String to,from,subject,body;
+		if(userMatch.size() > 0){
+			newUser = userMatch.get(0).getUserA();
+			for (UserMapping matchedUser : userMatch){
+				matchingUser = matchedUser.getUserB();
+				subject = "Congratulations! you have a new recommendation for your car pool !";
+				body = "Hi "+matchingUser.getName()+"\t"+newUser.getName()+ " matches with your"
+						+ "current pool details. Please open our app and check the recommendations"
+						+ "page to know more. Thanks \n, Keep Riding, Keep Sharing!";
+				new MailNotifierThread(body, matchingUser.getEmail(), subject).start();
+			}
+		}
+		
 	}
 
 	private String getPoolForUser(String userId, Session session) {

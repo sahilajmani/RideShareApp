@@ -190,7 +190,7 @@ public class WalletUtil {
 					" in you wallet as part of final settlement for pool owned by "+poolOwner.getName()+""
 							+ ".Your updated wallet balance is INR "+poolParticipant1.getWallet_balance()
 							+ ". We hope you had a pleasent experience riding and sharing ! Do share your feedback with us.";
-			String subject = "You have received a refund of INR "+participantRefund+"in your Wallet";
+			String subject = "You have received a refund of INR "+participantRefund+" in your Wallet";
 			String[] to = { poolParticipant.getEmail() };
 					new MailNotifierThread(message, poolParticipant.getEmail(), subject).start();
 					
