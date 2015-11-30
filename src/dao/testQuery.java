@@ -50,10 +50,10 @@ public class testQuery {
 	//	List<MatchedPoolsVO> map =db.getmatchedPool("7d3697e0-59f2-11e5-9624-02b93fe38caf");
 	//	System.out.println(db.matchTest("fef5eb9a-59f3-11e5-9624-02b93fe38caf"));
 //	System.out.println(db.updatePoolRequest("df7bc0fe-9446-11e5-b8ad-027a1dc8a973",1));
-	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
-	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
+//	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
+//	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
 
-	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
+//	new MailNotifierThread("dsfsd", "dsfs", "dsfsd").start();
 
 //List<Transactions> t =	db.getUserPoolRecord("17e1794b-5a20-11e5-869d-02b93fe38caf");
 //		System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
@@ -64,8 +64,8 @@ public class testQuery {
 		userIdPoolIdVO.setStatus(2);
 	System.out.println(db.joinPoolRequest(userIdPoolIdVO, 0));
 */
-	System.out.println(db.updatePoolRequest("cb1ebec3-9602-11e5-b8ad-027a1dc8a973", 1));
-	//	System.out.println(db.leavePool("0c3c2ff1-817e-11e5-be8a-027a1dc8a973", "0adea238-71da-11e5-899a-027a1dc8a973"));
+	//System.out.println(db.updatePoolRequest("cb1ebec3-9602-11e5-b8ad-027a1dc8a973", 1));
+		System.out.println(db.leavePool("2f88d39d-9615-11e5-b8ad-027a1dc8a973", "f4de0c33-9614-11e5-b8ad-027a1dc8a973"));
 	}
 
 }
