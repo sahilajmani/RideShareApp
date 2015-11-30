@@ -609,7 +609,8 @@ public class DaoImpl implements DaoI {
 	private boolean addToPool(String userId, String poolId) { // add
 		Session session = sessionFactory.openSession();																// user
 					Pool	pool=this.getPoolDetails(poolId);												// to
-					User user=this.getUserDetails(userId);													// pool
+					User user=this.getUserDetails(userId);	// pool
+					Pool existingPool = user.getPool();
 		if (!pool.getIsAvailable())
 			return false;
 
@@ -623,7 +624,10 @@ public class DaoImpl implements DaoI {
 		pool.setNumberOfMembers(noOfMembers + 1);
 		if (pool.getMax_members() == noOfMembers + 1)
 			pool.setIsAvailable(false);
-
+	
+		existingPool.setIsAvailable(false);
+		session.update(existingPool);
+	
 		session.update(pool);
 		session.update(user);
 		System.out.println("user pool changed successfully !!!");
