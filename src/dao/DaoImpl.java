@@ -890,6 +890,7 @@ public class DaoImpl implements DaoI {
 			System.out.println("inserted success1");
 			List<UserMapping> userMatch = findMatchedUser(user);
 			if (null != userMatch && userMatch.size() > 0) {
+				notifyUsers(userMatch);
 				persistUserMatch(userMatch);
 			}
 			System.out.println("inserted success2");
