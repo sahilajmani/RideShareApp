@@ -41,7 +41,8 @@ public boolean empty(String s)
 	String merchant_key="uSuZMB";
 	String salt="zYLejqRz";
 	String action1 ="";
-	String base_url = "https://secure.payu.com";
+//	String base_url = "https://secure.payu.com/api/v2_1/orders";
+	String base_url = "https://secure.payu.in";
 //	String base_url="https://test.payu.in";
 	int error=0;
 	String hashString="";
