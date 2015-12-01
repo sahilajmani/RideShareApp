@@ -36,10 +36,13 @@ public boolean empty(String s)
 	}
 %>
 <% 	
-	String merchant_key="oOp2p0";
-	String salt="UtJLMwao";
+//	String merchant_key="oOp2p0";
+//	String salt="UtJLMwao";
+	String merchant_key="uSuZMB";
+	String salt="zYLejqRz";
 	String action1 ="";
-	String base_url="https://test.payu.in";
+	String base_url = "https://secure.payu.com";
+//	String base_url="https://test.payu.in";
 	int error=0;
 	String hashString="";
 	
