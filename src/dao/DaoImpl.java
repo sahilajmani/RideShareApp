@@ -699,7 +699,7 @@ public class DaoImpl implements DaoI {
 					
 					Transaction tx2 = session.beginTransaction();
 					Pool userOriginalPool = this.getPoolDetails(userId);
-				//	userOriginalPool.setIsAvailable(true);
+					userOriginalPool.setIsAvailable(true);
 					user.setPool(userOriginalPool);
 					pool = this.getPoolDetails(poolId);
 					int noOfMembers = pool.getNumberOfMembers();
@@ -734,6 +734,19 @@ public class DaoImpl implements DaoI {
 		//	User walletDebitUser= this.getUserDetails(userId);
 		//	User walletCreditUser=this.getUserDetails(poolId);
 			
+			Transaction tx3 = session.beginTransaction();
+			try{
+			String hql2 = "delete from PoolRequest where user.id='"+userId+
+					"' AND pool.id='"+poolId+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
+			Query qry1 = session.createQuery(hql2);
+			qry1.executeUpdate();
+			tx3.commit();
+			}catch(Exception e){
+				tx3.rollback();
+				e.printStackTrace();
+				return false;
+			}
+			
 			WalletTransactions walletTransaction =new WalletTransactions();
 			//		walletTransaction.setId(id); generate this..
 					//User poolOwner=this.getUserDetails(pool.getId());
@@ -744,18 +757,7 @@ public class DaoImpl implements DaoI {
 			//	session.update(walletCreditUser);
 			//	session.update(walletDebitUser);
 				
-					Transaction tx3 = session.beginTransaction();
-					try{
-					String hql2 = "delete from PoolRequest where user.id='"+userId+
-							"' AND pool.id='"+poolId+"' and status="+GlobalConstants.REQUEST_ACCEPTED;
-					Query qry1 = session.createQuery(hql2);
-					qry1.executeUpdate();
-					tx3.commit();
-					}catch(Exception e){
-						tx3.rollback();
-						e.printStackTrace();
-						return false;
-					}
+				
 					
 					
 			result = true;
