@@ -91,7 +91,7 @@ public class PoolService {
 					}
 				}
 			} catch (Exception e) {
-				logger.info(e.getMessage());
+				e.printStackTrace();
 				response.setResponse(false);
 
 			}

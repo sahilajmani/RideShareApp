@@ -516,12 +516,13 @@ public class DaoImpl implements DaoI {
 		try{
 		boolean result = false;
 		Session session = sessionFactory.openSession();
+		session.clear();
 		String hql = "from PoolRequest where id=?";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, requestId);
 		
 		PoolRequest poolRequest = null;
-		if(qry.list() != null){
+		if(qry.list() != null && qry.list().size() > 0){
 		poolRequest = (PoolRequest) qry.list().get(0);
 		String poolId=poolRequest.getPool().getId();
 		String userId=poolRequest.getUser().getId();
@@ -764,86 +765,86 @@ public class DaoImpl implements DaoI {
 
 		} else// if hostuser is leaving the pool
 			//if (pool.getId().equals(user.getId())) 
-			{
-				// Session session = sessionFactory.openSession();
-				// pool.getParticipants().removeAll(c);
-				// int noOfMembers = pool.getNumberOfMembers();
-				pool.setIs_active(true);
-				pool.setIsAvailable(true);
-				pool.setNumberOfMembers(1);
-				pool.setIsAvailable(true);
-				tx= session.beginTransaction();
-				session.update(pool);
-				String hostUserId = "";
-				// Collection<User> participants = pool.getParticipants();
-				// participants.remove(user);
-				// pool.getParticipants().removeAll(participants);
-				List<User> participants = new ArrayList<User>();
-				participants = this.getParticipantsExceptHost(poolId, session);
-				float dis = 0;
-				for (User participant : participants) {
-			
-					WalletTransactions walletTransaction =new WalletTransactions();
-					//		walletTransaction.setId(id); generate this..
-							User poolOwner=this.getUserDetails(pool.getId());
-							walletTransaction.setPoolOwner(poolOwner);
-							walletTransaction.setPoolParticipant(participant);
-							WalletUtil.poolLeftByUser(walletTransaction,poolOwner.getId(),participant.getId()); //settling account for every participant in case poolowner leaves
-							session.update(walletTransaction.getPoolOwner());
-							session.update(walletTransaction.getPoolParticipant());
-					
-					if(participant.getDistance() > dis) {
-						dis = participant.getDistance(); // new host user
-						hostUserId = participant.getId();
-					}
-				}
-				
-
-				String hql = "from Transactions where user.id!='"
-						+ user.getId() + "' and is_valid=true and pool.id='"
-						+ user.getId() + "'";
-				Query qry = session.createQuery(hql);
-				List<Transactions> oldTransactions = (List<Transactions>) qry
-						.list();
-				Long currentTime=System.currentTimeMillis();
-				for (Transactions oldTransaction : oldTransactions) {
-					oldTransaction.setIs_valid(false);
-					oldTransaction.setValid_to(currentTime);
-					session.update(oldTransaction);
-				}
-//				session.saveOrUpdate(oldTransactions);
-			//	String hql1 = "from Pool where id='" + hostUserId + "'";
-			//	Query qry1 = session.createQuery(hql1);
-				Pool hostUserPool = this.getPoolDetails(hostUserId);
-				// hostUserPool.setParticipants((List<User>) participants);
-				hostUserPool.setNumberOfMembers(participants.size());
-				session.update(hostUserPool);
-
-				for (User participant : participants) {
-					participant.setPool(hostUserPool);
-					session.update(participant);
-
-				}
-			//	session.save(participants);
-				List<Transactions> newTransactions = new ArrayList<Transactions>();
 				{
+					// Session session = sessionFactory.openSession();
+					// pool.getParticipants().removeAll(c);
+					// int noOfMembers = pool.getNumberOfMembers();
+					pool.setIs_active(true);
+					pool.setIsAvailable(true);
+					pool.setNumberOfMembers(1);
+					pool.setIsAvailable(true);
+					tx= session.beginTransaction();
+					session.update(pool);
+					String hostUserId = "";
+					// Collection<User> participants = pool.getParticipants();
+					// participants.remove(user);
+					// pool.getParticipants().removeAll(participants);
+					List<User> participants = new ArrayList<User>();
+					participants = this.getParticipantsExceptHost(poolId, session);
+					float dis = 0;
 					for (User participant : participants) {
-						Transactions newTransaction = new Transactions();
-						newTransaction.setIs_valid(true);
-						newTransaction.setUser(participant);
-						newTransaction.setValid_from(currentTime);
-						newTransaction.setValid_to(Long.MAX_VALUE);
-						newTransaction.setPool(hostUserPool);
-						session.save(newTransaction);
-						newTransactions.add(newTransaction);
-					}
-
-				}
-
 				
-
-		result=true;	
-		}
+						WalletTransactions walletTransaction =new WalletTransactions();
+						//		walletTransaction.setId(id); generate this..
+								User poolOwner=this.getUserDetails(pool.getId());
+								walletTransaction.setPoolOwner(poolOwner);
+								walletTransaction.setPoolParticipant(participant);
+								WalletUtil.poolLeftByUser(walletTransaction,poolOwner.getId(),participant.getId()); //settling account for every participant in case poolowner leaves
+								session.update(walletTransaction.getPoolOwner());
+								session.update(walletTransaction.getPoolParticipant());
+						
+						if(participant.getDistance() > dis) {
+							dis = participant.getDistance(); // new host user
+							hostUserId = participant.getId();
+						}
+					}
+					
+	
+					String hql = "from Transactions where user.id!='"
+							+ user.getId() + "' and is_valid=true and pool.id='"
+							+ user.getId() + "'";
+					Query qry = session.createQuery(hql);
+					List<Transactions> oldTransactions = (List<Transactions>) qry
+							.list();
+					Long currentTime=System.currentTimeMillis();
+					for (Transactions oldTransaction : oldTransactions) {
+						oldTransaction.setIs_valid(false);
+						oldTransaction.setValid_to(currentTime);
+						session.update(oldTransaction);
+					}
+	//				session.saveOrUpdate(oldTransactions);
+				//	String hql1 = "from Pool where id='" + hostUserId + "'";
+				//	Query qry1 = session.createQuery(hql1);
+					Pool hostUserPool = this.getPoolDetails(hostUserId);
+					// hostUserPool.setParticipants((List<User>) participants);
+					hostUserPool.setNumberOfMembers(participants.size());
+					session.update(hostUserPool);
+	
+					for (User participant : participants) {
+						participant.setPool(hostUserPool);
+						session.update(participant);
+	
+					}
+				//	session.save(participants);
+					List<Transactions> newTransactions = new ArrayList<Transactions>();
+					{
+						for (User participant : participants) {
+							Transactions newTransaction = new Transactions();
+							newTransaction.setIs_valid(true);
+							newTransaction.setUser(participant);
+							newTransaction.setValid_from(currentTime);
+							newTransaction.setValid_to(Long.MAX_VALUE);
+							newTransaction.setPool(hostUserPool);
+							session.save(newTransaction);
+							newTransactions.add(newTransaction);
+						}
+	
+					}
+	
+					
+	
+			result=true;	
+			}
 		if(tx!=null){
 		tx.commit();
 		}

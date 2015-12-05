@@ -162,12 +162,18 @@ public class WalletUtil {
 			session.clear();
 			Transaction t4= session.beginTransaction();
 			User poolOwner2 = RideSharingUtil.getDaoInstance().getUserDetails(poolOwnerId);
-			User poolParticipant2 = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
+//			User poolParticipant2 = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
 			poolOwner2.setWallet_balance(poolOwner2.getWallet_balance()+ownerShare);
-			poolParticipant2.setWallet_balance(poolParticipant2.getWallet_balance()+participantRefund);
-			session.update(poolParticipant2);
+//			poolParticipant2.setWallet_balance(poolParticipant2.getWallet_balance()+participantRefund);
+//			session.update(poolParticipant2);
 			session.update(poolOwner2);
 			t4.commit();
+			session.clear();
+			Transaction tx5= session.beginTransaction();
+			User poolParticipant2 = RideSharingUtil.getDaoInstance().getUserDetails(poolparticipantId);
+			poolParticipant2.setWallet_balance(poolParticipant2.getWallet_balance()+participantRefund);
+			session.update(poolParticipant2);
+			tx5.commit();
 			
 			Transaction t3= session.beginTransaction();
 			WalletTransactions poolParticipanttx = new WalletTransactions();
