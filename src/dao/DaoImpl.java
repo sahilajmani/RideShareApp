@@ -193,12 +193,14 @@ public class DaoImpl implements DaoI {
 	@Override
 	public User getUserDetails(String userId) {
 		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		Criteria cr = session.createCriteria(User.class);
 		cr.add(Restrictions.eq("id", userId));
 		User userVO = null;
 		if (cr.list() != null && cr.list().size() > 0) {
 			userVO = (User) cr.list().get(0);
 		}
+		tx.commit();
 		session.close();
 		return userVO;
 	}
