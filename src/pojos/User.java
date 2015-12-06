@@ -20,7 +20,6 @@ public class User implements Serializable {
 	private Integer members;
 	
 	
-	
 	public Integer getMembers() {
 		return members;
 	}
