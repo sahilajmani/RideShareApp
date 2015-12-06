@@ -374,11 +374,12 @@ public class DaoImpl implements DaoI {
 	@Override
 	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
 		Session session = sessionFactory.openSession();
-		String hql = "from PoolRequest where user.id=? or (pool.id=? and status=?)";
+		String hql = "from PoolRequest where (user.id=? and status<>?) or (pool.id=? and status=?)";
 		Query qry = session.createQuery(hql);
 		qry.setString(0, userId);
-		qry.setString(1, userId);
-		qry.setInteger(2, GlobalConstants.JOIN_PENDING);
+		qry.setInteger(1, GlobalConstants.JOIN_PENDING);
+		qry.setString(2, userId);
+		qry.setInteger(3, GlobalConstants.JOIN_PENDING);
 		List<PoolRequest> userPoolRequest = qry.list();
 		// for(PoolRequest individual : userPoolRequest)
 		// {
