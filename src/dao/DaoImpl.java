@@ -413,7 +413,7 @@ public class DaoImpl implements DaoI {
 	}
 
 	@Override
-	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance) {
+	public boolean joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO, float distance) { //not using distance variable,setting distance from 
 		User user = this.getUserDetails(userIdPoolIdVO.getUserId());
 		Pool pool = this.getPoolDetails(userIdPoolIdVO.getPoolId());
 		List<User> participants = new ArrayList<User>();
@@ -421,9 +421,9 @@ public class DaoImpl implements DaoI {
 		if (userIdPoolIdVO.getStatus() != 0) {
 			status = userIdPoolIdVO.getStatus();
 		} else {
-			status = GlobalConstants.REQUEST_PENDING;
+			status = GlobalConstants.REQUEST_PENDING; // why this?? will never go or request should be invalid or error should be thrown
 		}
-		if (status == GlobalConstants.JOIN_PENDING && !user.isHasCar()
+	/*	if (status == GlobalConstants.JOIN_PENDING && !user.isHasCar()
 				&& this.getPoolDetails(user.getId()).getNumberOfMembers() >= 1) {
 			Session session = sessionFactory.openSession();
 			String hql = "from UserMapping um where um.userA.id='"
@@ -479,7 +479,7 @@ public class DaoImpl implements DaoI {
 			}
 
 		} else {
-
+*/
 			PoolRequest poolRequest = new PoolRequest();
 			poolRequest.setStatus(status);
 			Date date = new Date();
@@ -489,7 +489,7 @@ public class DaoImpl implements DaoI {
 
 			poolRequest.setPool(pool);
 			poolRequest.setUser(user);
-			poolRequest.setDistance(distance);
+			poolRequest.setDistance(userIdPoolIdVO.getDistance());
 
 			Session session = sessionFactory.openSession();
 			Transaction tx1 = session.beginTransaction();
@@ -503,7 +503,23 @@ public class DaoImpl implements DaoI {
 			Transaction tx = session.beginTransaction();
 			session.save(poolRequest);
 			tx.commit();
+		
 			User userPool = this.getUserDetails(pool.getId());
+			
+			if(status==4)
+			{
+				String message = "Hi "+user.getName()+"\n "+userPool.getName()+
+						 " has sent you a request to join his pool and ride with him. Please open our app and "
+						 + " go to requests page respond to "+userPool.getName()+"'s request. You can also"
+						 		+ " chat with the user. Thanks. \n Team Ride Easy. Keep Riding, Keep Sharing !";
+				String subject = userPool.getName()+" has sent you a request to join his pool!";
+				String[] to = { user.getEmail() };
+				
+						SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
+								GlobalConstants.PASSWORD_EMAIL, subject, message,
+								to);
+			}
+			else{
 			String message = "Hi "+userPool.getName()+"\n "+user.getName()+
 					 " has requested to join your car pool. Please open our app and "
 					 + " go to requests page respond to "+user.getName()+"/'s request. You can also"
@@ -514,8 +530,9 @@ public class DaoImpl implements DaoI {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					System.out.println("user notified ! email - "+userPool.getEmail());	
+			}
 			session.close();
-		}
+		
 		return true;
 	}
 	@Override

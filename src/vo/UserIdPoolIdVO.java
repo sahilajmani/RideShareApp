@@ -4,6 +4,16 @@ public class UserIdPoolIdVO {
 	private String userId;
 	private String poolId;
 	private int status;
+	private float distance;
+	
+
+	public float getDistance() {
+		return distance;
+	}
+
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
 
 	public String getPoolId() {
 		return poolId;
