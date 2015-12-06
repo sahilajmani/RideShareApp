@@ -1,6 +1,8 @@
 package utility;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.TimeZone;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -25,8 +27,8 @@ public class WalletUtil {
 		Transaction tx = session.beginTransaction();
 		user.setWallet_balance(user.getWallet_balance()+walletRecharge.getAmount());
 		walletRecharge.setIsSettled(true);
-		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
-		walletRecharge.setId("EXT_"+System.currentTimeMillis()+":"+user.getId().substring(25));
+		walletRecharge.setTransaction_timemillis(getSystemTimeMilisGMT());
+		walletRecharge.setId("EXT_"+getSystemTimeMilisGMT()+":"+user.getId().substring(25));
 		session.save(walletRecharge);
 		session.update(user);
 		String message = "Hi "+user.getName()+"\n You have received a credit of INR "+walletRecharge.getAmount()+" to "
@@ -50,8 +52,8 @@ public class WalletUtil {
 		Transaction tx = session.beginTransaction();
 		user.setWallet_balance(user.getWallet_balance()+walletRecharge.getAmount());
 		walletRecharge.setIsSettled(true);
-		walletRecharge.setId("INT_"+System.currentTimeMillis()+":"+user.getId().substring(25));
-		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
+		walletRecharge.setId("INT_"+getSystemTimeMilisGMT()+":"+user.getId().substring(25));
+		walletRecharge.setTransaction_timemillis(getSystemTimeMilisGMT());
 		session.save(walletRecharge);
 		session.update(user);
 		String message = "Hi "+user.getName()+"\n You have received a credit of INR "+walletRecharge.getAmount()+" to "
@@ -90,8 +92,8 @@ public class WalletUtil {
 		
 		Transaction tx1 = session.beginTransaction();
 		walletRecharge.setIsSettled(false);
-		walletRecharge.setId("INT_POOL"+System.currentTimeMillis()+":"+poolOwnerId.substring(25));
-		walletRecharge.setTransaction_timemillis(System.currentTimeMillis());
+		walletRecharge.setId("INT_POOL"+getSystemTimeMilisGMT()+":"+poolOwnerId.substring(25));
+		walletRecharge.setTransaction_timemillis(getSystemTimeMilisGMT());
 		User poolOwner =RideSharingUtil.getDaoInstance().getUserDetails(poolOwnerId);
 		walletRecharge.setPoolOwner(poolOwner);
 		String poolOwnerName = poolOwner.getName();
@@ -128,7 +130,7 @@ public class WalletUtil {
 //			Pool userPool = (Pool)cr.list().get(0);
 		//	User poolOwner = walletRecharge.getPoolOwner();
 		//	User poolParticipant = walletRecharge.getPoolParticipant();
-			Long numberOfDays = ((System.currentTimeMillis()-tx.getTransaction_timemillis())/(24*60*60*1000));
+			Long numberOfDays = ((getSystemTimeMilisGMT()-tx.getTransaction_timemillis())/(24*60*60*1000));
 			transactionId=tx.getId();
 		//	System.out.println(numberOfDays);
 			int days = numberOfDays.intValue();
@@ -151,7 +153,7 @@ public class WalletUtil {
 			WalletTransactions poolOwnerTx = new WalletTransactions();
 			poolOwnerTx.setId(transactionId+"Credit");
 			poolOwnerTx.setAmount(ownerShare);
-			poolOwnerTx.setTransaction_timemillis(System.currentTimeMillis());
+			poolOwnerTx.setTransaction_timemillis(getSystemTimeMilisGMT());
 			poolOwnerTx.setType(TransactionType.CREDIT_TO_WALLET);
 			poolOwnerTx.setIsSettled(true);
 			poolOwnerTx.setPoolParticipant(poolParticipant);
@@ -182,7 +184,7 @@ public class WalletUtil {
 			poolParticipanttx.setId(transactionId+"Refund");
 			poolParticipanttx.setAmount(participantRefund);
 			poolParticipanttx.setIsSettled(true);
-			poolParticipanttx.setTransaction_timemillis(System.currentTimeMillis());
+			poolParticipanttx.setTransaction_timemillis(getSystemTimeMilisGMT());
 			poolParticipanttx.setPoolOwner(poolParticipant1);
 			poolParticipanttx.setPoolParticipant(poolParticipant1);
 			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwnerName+"'s Pool");
@@ -242,5 +244,10 @@ public class WalletUtil {
 			addToWalletInternal(settlementTx, session);
 		}
 		session.close();
+	}
+	public static Long getSystemTimeMilisGMT(){
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		long time = cal.getTimeInMillis();
+		return time+TimeZone.getDefault().getOffset(time);
 	}
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.hibernate.Criteria;
@@ -437,8 +438,8 @@ public class DaoImpl implements DaoI {
 					poolRequest.setStatus(status);
 					Date date = new Date();
 					Timestamp time = new java.sql.Timestamp(date.getTime());
-					poolRequest.setUpdated(System.currentTimeMillis());
-					poolRequest.setCreated(System.currentTimeMillis());
+					poolRequest.setUpdated(getSystemTimeMilisGMT());
+					poolRequest.setCreated(getSystemTimeMilisGMT());
 
 					poolRequest.setPool(pool);
 					poolRequest.setUser(userMatch.getUserB());
@@ -484,8 +485,8 @@ public class DaoImpl implements DaoI {
 			poolRequest.setStatus(status);
 			Date date = new Date();
 			Timestamp time = new java.sql.Timestamp(date.getTime());
-			poolRequest.setUpdated(System.currentTimeMillis());
-			poolRequest.setCreated(System.currentTimeMillis());
+			poolRequest.setUpdated(getSystemTimeMilisGMT());
+			poolRequest.setCreated(getSystemTimeMilisGMT());
 
 			poolRequest.setPool(pool);
 			poolRequest.setUser(user);
@@ -639,7 +640,7 @@ public class DaoImpl implements DaoI {
 		if (!pool.getIsAvailable())
 			return false;
 
-		Long currentTime=System.currentTimeMillis();
+		Long currentTime=getSystemTimeMilisGMT();
 		// Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		// pool.getParticipants().add(user);
@@ -735,7 +736,7 @@ public class DaoImpl implements DaoI {
 			
 			String hql = "from Transactions where (user.id='" + user.getId()
 					+ "' and is_valid=true)";
-			Long currentTime=System.currentTimeMillis();
+			Long currentTime=getSystemTimeMilisGMT();
 			Query qry = session.createQuery(hql);
 			System.out.println(qry.list().size());
 			List<Transactions> allTransactions = (List<Transactions>) qry
@@ -830,7 +831,7 @@ public class DaoImpl implements DaoI {
 					Query qry = session.createQuery(hql);
 					List<Transactions> oldTransactions = (List<Transactions>) qry
 							.list();
-					Long currentTime=System.currentTimeMillis();
+					Long currentTime=getSystemTimeMilisGMT();
 					for (Transactions oldTransaction : oldTransactions) {
 						oldTransaction.setIs_valid(false);
 						oldTransaction.setValid_to(currentTime);
@@ -971,7 +972,7 @@ public class DaoImpl implements DaoI {
 		transaction.setIs_valid(true);
 		transaction.setPool(user.getPool());
 		transaction.setUser(user);
-		transaction.setValid_from(System.currentTimeMillis());
+		transaction.setValid_from(getSystemTimeMilisGMT());
 		transaction.setValid_to(Long.MAX_VALUE);
 		session.save(transaction);
 	}
@@ -1293,5 +1294,10 @@ public class DaoImpl implements DaoI {
 		listWalletTransactions.setWalletTransactions(walletTransactions);
 		session.close();
 		return listWalletTransactions;
+	}
+	public static Long getSystemTimeMilisGMT(){
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		long time = cal.getTimeInMillis();
+		return time+TimeZone.getDefault().getOffset(time);
 	}
 }
