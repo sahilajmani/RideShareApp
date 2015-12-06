@@ -17,7 +17,22 @@ public class User implements Serializable {
 	private String reachDestinationTimeInMilliseconds;
 	private String leaveDestinationTimeInMilliseconds;
 	private Integer poolCost;
+	private Integer members;
 	
+	
+	
+	public Integer getMembers() {
+		return members;
+	}
+
+	public void setMembers(Integer members) {
+		this.members = members;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
 	// private Date officeTime_pickup;
 	// private Date officeTime_drop;
 	// private String company_joined_month;

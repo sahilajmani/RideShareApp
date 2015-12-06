@@ -186,7 +186,7 @@ public class DaoImpl implements DaoI {
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1); // to be made dynamic
-		pool.setMax_members(5);// to be made dynamic
+		pool.setMax_members(user.getMembers());
 		return pool;
 	}
 
