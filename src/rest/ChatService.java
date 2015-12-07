@@ -3,10 +3,10 @@ package rest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.logging.Logger;
-
+import java.util.TimeZone;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,6 +23,7 @@ import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import vo.ChatJson;
+import java.util.logging.Logger;
 @Path("/chat")
 public class ChatService {
 	Logger logger = Logger.getLogger("debug");
@@ -86,7 +87,7 @@ public class ChatService {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		
 		chat.setCreateTime(sdf.parse(sdf.format(date)));//new Date().getTime()));
-		Long currentTime=System.currentTimeMillis();
+		Long currentTime=getSystemTimeMilisGMT();
 		chat.setCreateTimeSeconds(currentTime);
 		try{
 		RideSharingUtil.getChatInstance().saveChat(chat);
@@ -124,7 +125,11 @@ public class ChatService {
 							to);
 					
 	}
-	
+	public Long getSystemTimeMilisGMT(){
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		long time = cal.getTimeInMillis();
+		return time+TimeZone.getDefault().getOffset(time);
+	}
 	
 	
 }

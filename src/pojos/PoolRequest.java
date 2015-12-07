@@ -16,13 +16,13 @@ public class PoolRequest implements Serializable {
 	private Long created;
 	private Long updated;
 	private String description;
-	private Float distance;
+	private String distance;
 
-	public Float getDistance() {
+	public String getDistance() {
 		return distance;
 	}
 
-	public void setDistance(Float distance) {
+	public void setDistance(String distance) {
 		this.distance = distance;
 	}
 
