@@ -509,27 +509,28 @@ public class DaoImpl implements DaoI {
 			if(status==4)
 			{
 				String message = "Hi "+user.getName()+"\n "+userPool.getName()+
-						 " has sent you a request to join his pool and ride with him. Please open our app and "
-						 + " go to requests page respond to "+userPool.getName()+"'s request. You can also"
-						 		+ " chat with the user. Thanks. \n Team Ride Easy. Keep Riding, Keep Sharing !";
-				String subject = userPool.getName()+" has sent you a request to join his pool!";
+						 " has sent you a 'Join My Pool' request. Please open our app and "
+						 + " go to requests page respond to view details about "+userPool.getName()+"'. You can also"
+						 		+ " chat with the user.\n Thanks, \n Team RidEasy\n Keep Riding, Keep Sharing !";
+				String subject = userPool.getName()+" has sent you a request a Join My Pool request !";
 				String[] to = { user.getEmail() };
 				
 						SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 								GlobalConstants.PASSWORD_EMAIL, subject, message,
 								to);
+						logger.info("Join My Pool Request sent  - user notified ! email - "+user.getEmail());	
 			}
 			else{
 			String message = "Hi "+userPool.getName()+"\n "+user.getName()+
 					 " has requested to join your car pool. Please open our app and "
 					 + " go to requests page respond to "+user.getName()+"/'s request. You can also"
-					 		+ " chat with the user. Thanks. \n Team Ride Easy. Keep Riding, Keep Sharing !";
+					 		+ " chat with the user.\n Thanks, \n Team RidEasy \n Keep Riding, Keep Sharing !";
 			String subject = user.getName()+" wants to join your car pool !";
 			String[] to = { userPool.getEmail() };
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
-					System.out.println("user notified ! email - "+userPool.getEmail());	
+					logger.info("Request to join Pool request - user notified ! email - "+userPool.getEmail());	
 			}
 			session.close();
 		
@@ -538,6 +539,8 @@ public class DaoImpl implements DaoI {
 	@Override
 	public boolean updatePoolRequest(String requestId, int response) {
 		try{
+			logger.info("Update Pool Request call Request id-   - "+requestId+"Status -   "+response);	
+
 		boolean result = false;
 		Session session = sessionFactory.openSession();
 		session.clear();
@@ -635,6 +638,8 @@ public class DaoImpl implements DaoI {
 		Session session = sessionFactory.openSession();																// user
 					Pool	pool=this.getPoolDetails(poolId);												// to
 					User user=this.getUserDetails(userId);	// pool
+		logger.info("Add to Pool call on User  - "+user.getEmail()+"for pool - "+poolId);	
+
 					Pool existingPool = user.getPool();
 		if (!pool.getIsAvailable())
 			return false;
@@ -693,10 +698,11 @@ public class DaoImpl implements DaoI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean leavePool(String userId, String poolId) {
-
+		
 		boolean result = false;
 		User user = this.getUserDetails(userId);
 		Pool pool = this.getPoolDetails(poolId);
+		logger.info("LeavePool call on User  - "+user.getEmail()+"for pool - "+poolId);	
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 	
@@ -930,13 +936,14 @@ public class DaoImpl implements DaoI {
 			System.out.println("inserted success1");
 			List<UserMapping> userMatch = findMatchedUser(user);
 			if (null != userMatch && userMatch.size() > 0) {
-				notifyUsers(userMatch);
+				notifySingleUser(userMatch);
 				persistUserMatch(userMatch);
 			}
 			System.out.println("inserted success2");
 			List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
 
 			if (null != matchForOneUser && matchForOneUser.size() > 0) {
+				notifyUsers(matchForOneUser);
 				persistUserMatch(matchForOneUser);
 			}
 			System.out.println("inserted success2");
@@ -963,6 +970,29 @@ public class DaoImpl implements DaoI {
 		}catch(Exception e){
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	private void notifySingleUser(List<UserMapping> userMatch) {
+		// TODO Auto-generated method stub
+		User newUser= null;
+		User matchingUser = null;
+		String to,from,subject,body;
+		if(userMatch.size() > 0){
+			newUser = userMatch.get(0).getUserA();
+			for (UserMapping matchedUser : userMatch){
+				matchingUser = matchedUser.getUserA();
+				subject = "Congratulations! We already have  recommendations for you !";
+				body = "Hi "+newUser.getName()+",\n"+ " Thanks for signing up at RidEasy App. We have good news for you ! \n Please open our  "
+						+ "app again and go to recommendations page to view your car pools that match your daily trip. You can see details of each user and even chat with them in app. Don't "
+						+ "forget to add money to ur RidEasy wallet before sending requests to join pool :) ."
+						+ "\n Thanks,\n"
+						+ " Team RidEasy, \n"
+						+ " Keep Riding, Keep Sharing!";
+				new MailNotifierThread(body, matchingUser.getEmail(), subject).start();
+				logger.info(" New user notified for existing recommendations   "+newUser.getEmail());	
+			break;
+			}
 		}
 	}
 
@@ -1000,11 +1030,12 @@ public class DaoImpl implements DaoI {
 					session.update(user);
 					tx.commit();
 					List<UserMapping> userMatch = findMatchedUser(user);
-					notifyUsers(userMatch);
+					notifySingleUser(userMatch);
 					persistUserMatch(userMatch);
 					List<UserMapping> matchForOneUser = matchForOneUser(user.getId());
 
 					if (null != matchForOneUser && matchForOneUser.size() > 0) {
+						notifyUsers(matchForOneUser);
 						persistUserMatch(matchForOneUser);
 					}
 						}catch (Exception e) {
@@ -1077,14 +1108,15 @@ public class DaoImpl implements DaoI {
 		User matchingUser = null;
 		String to,from,subject,body;
 		if(userMatch.size() > 0){
-			newUser = userMatch.get(0).getUserA();
+			newUser = userMatch.get(0).getUserB();
 			for (UserMapping matchedUser : userMatch){
-				matchingUser = matchedUser.getUserB();
+				matchingUser = matchedUser.getUserA();
 				subject = "Congratulations! you have a new recommendation for your car pool !";
-				body = "Hi "+matchingUser.getName()+"\t"+newUser.getName()+ " matches with your"
-						+ "current pool details. Please open our app and check the recommendations"
-						+ "page to know more. Thanks \n, Keep Riding, Keep Sharing!";
+				body = "Hi "+matchingUser.getName()+",\n"+newUser.getName()+ " matches with your"
+						+ " current pool details. Please open our app and check the recommendations"
+						+ " page to know more. Also, you can chat with the user before you accept the request.\n Thanks,\n Team RidEasy, \n Keep Riding, Keep Sharing!";
 				new MailNotifierThread(body, matchingUser.getEmail(), subject).start();
+				logger.info(" New Match between user  "+newUser.getName()+"and existing user  - "+matchingUser.getEmail());	
 			}
 		}
 		
