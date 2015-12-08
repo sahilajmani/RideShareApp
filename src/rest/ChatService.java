@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -24,12 +23,15 @@ import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import vo.ChatJson;
+import java.util.logging.Logger;
 @Path("/chat")
 public class ChatService {
+	Logger logger = Logger.getLogger("debug");
 	@GET
 	@Path("getChat")
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetChatResult getChat(@QueryParam("receiverId") String chatJson1){
+		logger.info("New getChat call for receiverId "+chatJson1);
 		ChatJson chatJson= new ChatJson();
 		chatJson.setReceiver_Id(chatJson1);
 		GetChatResult chatResult = new GetChatResult();
@@ -66,6 +68,7 @@ public class ChatService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public GetChatResult sendChat(ChatJson chatJson) throws ParseException{
+		logger.info("Send chat call for user "+chatJson.getSender_Id()+"to receiver - "+chatJson.getReceiver_Id());
 		GetChatResult chatResult = new GetChatResult();
 		PrivateChat chat = new PrivateChat();
 		// validate senderId and receiverId
@@ -110,11 +113,11 @@ public class ChatService {
 	}
 	private void notifyUser(User receiver, User sender, PrivateChat chat) {
 		// TODO Auto-generated method stub
-		System.out.println("Sending mail to user -- "+receiver.getName());
+		logger.info("Sending mail to user -- "+receiver.getName());
 		String userEmail = receiver.getEmail();
 			String message = "Hi "+receiver.getName()+", \n You have received a new message from "+
 					sender.getName()+
-					" Please open the RideEasy app to reply to the user. \n Thanks, \n RideEasy Team";
+					".\n Please open the RidEasy app to reply to this user. \n Thanks, \n RidEasy Team,\n Keep Riding, Keep Sharing !";
 			String subject = "You have received a new message from "+sender.getName();
 			String[] to = { userEmail };
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
