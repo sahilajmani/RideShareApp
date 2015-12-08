@@ -986,7 +986,7 @@ public class DaoImpl implements DaoI {
 				subject = "Congratulations! We already have  recommendations for you !";
 				body = "Hi "+newUser.getName()+",\n"+ " Thanks for signing up at RidEasy App. We have good news for you ! \n Please open our  "
 						+ "app again and go to recommendations page to view your car pools that match your daily trip. You can see details of each user and even chat with them in app. Don't "
-						+ "forget to add money to ur RidEasy wallet before sending requests to join pool :) ."
+						+ "forget to add money to your RidEasy wallet before sending requests to join pool :) ."
 						+ "\n Thanks,\n"
 						+ " Team RidEasy, \n"
 						+ " Keep Riding, Keep Sharing!";
