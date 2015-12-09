@@ -17,7 +17,7 @@ public class UserMatching {
 	
 	public  List<UserMapping> getMatchedUsers(List<User> users, User currentUser)
 			throws MalformedURLException, ProtocolException, IOException {
-		double rangeLatLong = 0.02;
+		double rangeLatLong = 0.15;
 		double acceptDist = 5.0;
 		double currentUserDistance=currentUser.getDistance();
 		List<UserMapping> resultUsers = new ArrayList<UserMapping>();
@@ -47,14 +47,18 @@ public class UserMatching {
 								&& ((user.getOfficeAddress().getLongitude() + rangeLatLong) > currentUser
 										.getOfficeAddress().getLongitude())) {
 						//	System.out.println("live within acceptabledistance of"+ acceptDist);
-							UserMapping userMatchRow=new UserMapping();
-							userMatchRow.setUserA(currentUser);
-							userMatchRow.setUserB(user);
+							
 
 							double homeToHome=DistanceBwPlaces.getDistanceandDuration(
 									user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude(),
 									currentUser.getHomeAddress().getLattitude(),
 									currentUser.getHomeAddress().getLongitude());
+							
+							if(homeToHome >acceptDist )
+								continue;
+							UserMapping userMatchRow=new UserMapping();
+							userMatchRow.setUserA(currentUser);
+							userMatchRow.setUserB(user);
 							userMatchRow.setDistance((float) Math.abs(homeToHome));
 							resultUsers.add(userMatchRow);
 							continue;
@@ -85,9 +89,12 @@ public class UserMatching {
 							UserMapping userMatchRow=new UserMapping();
 							userMatchRow.setUserA(currentUser);
 							userMatchRow.setUserB(user);
-							userMatchRow.setDistance((float) Math.abs( (homeToHome + currentUserDistance
+							float dist=(float)( (homeToHome + currentUserDistance
 									+ officetoOffice-user
-									.getDistance())));
+									.getDistance()));
+							if(dist<0)
+								dist=2.2f;
+							userMatchRow.setDistance(dist);
 							resultUsers.add(userMatchRow);
 							continue;
 						} else {
@@ -159,10 +166,14 @@ public class UserMatching {
 					}
 					else
 					{continue;}
+					if(setDistance>acceptDist)
+						continue;
+					if(setDistance<0)
+						setDistance=2.2;
 					UserMapping userMatchRow=new UserMapping();
 					userMatchRow.setUserA(currentUser);
 					userMatchRow.setUserB(user);
-					userMatchRow.setDistance((float) Math.abs(setDistance));
+					userMatchRow.setDistance((float)(setDistance));
 					resultUsers.add(userMatchRow);
 						continue;
 					}
@@ -191,9 +202,12 @@ public class UserMatching {
 							UserMapping userMatchRow=new UserMapping();
 							userMatchRow.setUserA(currentUser);
 							userMatchRow.setUserB(user);
-							userMatchRow.setDistance((float) Math.abs((homeToHome + user.getDistance()
+							float dis=(float) ((homeToHome + user.getDistance()
 									+ officetoOffice-currentUser
-									.getDistance())));
+									.getDistance()));
+							if(dis<0)
+								dis=2.2f;
+							userMatchRow.setDistance(dis);
 							resultUsers.add(userMatchRow);
 							continue;
 						}
@@ -209,8 +223,11 @@ public class UserMatching {
 								UserMapping userMatchRow=new UserMapping();
 								userMatchRow.setUserA(currentUser);
 								userMatchRow.setUserB(user);
-								userMatchRow.setDistance((float) Math.abs(homeToHome + currentUserDistance
-										+ officetoOffice - user.getDistance()));
+								float dis = (float) Math.abs(homeToHome + currentUserDistance
+										+ officetoOffice - user.getDistance());
+								if(dis<0)
+									dis=2.2f;
+								userMatchRow.setDistance(dis);
 								resultUsers.add(userMatchRow);
 								continue;
 							}
@@ -230,8 +247,11 @@ public class UserMatching {
 						UserMapping userMatchRow=new UserMapping();
 						userMatchRow.setUserA(currentUser);
 						userMatchRow.setUserB(user);
-						userMatchRow.setDistance((float) Math.abs((homeToHome + user.getDistance() + officetoOffice - currentUser
-								.getDistance())));
+						float dis = (float)((homeToHome + user.getDistance() + officetoOffice - currentUser
+								.getDistance()));
+						if(dis<0)
+							dis=2.2f;
+						userMatchRow.setDistance(dis);
 						resultUsers.add(userMatchRow);
 					
 					}
@@ -247,13 +267,13 @@ public class UserMatching {
 	
 	public  List<UserMapping> checkMatchedUsersForUser(List<User> users, User comparedUser)
 			throws MalformedURLException, ProtocolException, IOException {
-		double rangeLatLong = 0.02;
+		double rangeLatLong = 0.15;
 		double acceptDist = 5.0;
 		double comparedUserDistance=comparedUser.getDistance();
 		List<UserMapping> resultUsers = new ArrayList<UserMapping>();
 		// current user has no car
 			for (User user : users) {
-				if (!user.isHasCar()) {//i have no car
+				if (!user.isHasCar()) {//i have no car   user A is user..User B is Compare
 				if(comparedUser.isHasCar()) {// other person has car
 					if (comparedUserDistance < user.getDistance()) {// but
 																			// i
@@ -278,15 +298,22 @@ public class UserMatching {
 								&& ((user.getOfficeAddress().getLongitude() + rangeLatLong) > comparedUser
 										.getOfficeAddress().getLongitude())) {
 						//	System.out.println("live within acceptabledistance of"+ acceptDist);
-							UserMapping userMatchRow=new UserMapping();
-							userMatchRow.setUserA(user);
-							userMatchRow.setUserB(comparedUser);
+							
 
 							double homeToHome=DistanceBwPlaces.getDistanceandDuration(
 									user.getHomeAddress().getLattitude(), user.getHomeAddress().getLongitude(),
 									comparedUser.getHomeAddress().getLattitude(),
 									comparedUser.getHomeAddress().getLongitude());
+						
+							if(homeToHome>acceptDist)
+								continue;
+							
+							UserMapping userMatchRow=new UserMapping();
+							userMatchRow.setUserA(user);
+							userMatchRow.setUserB(comparedUser);
+
 							userMatchRow.setDistance((float) Math.abs(homeToHome));
+							
 							resultUsers.add(userMatchRow);
 							continue;
 						} else {
@@ -388,6 +415,8 @@ public class UserMatching {
 					}
 					else
 					{continue;}
+					if(setDistance>acceptDist)
+						continue;
 					UserMapping userMatchRow=new UserMapping();
 					userMatchRow.setUserA(user);
 					userMatchRow.setUserB(comparedUser);
