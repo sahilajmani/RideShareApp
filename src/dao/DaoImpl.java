@@ -125,10 +125,10 @@ public class DaoImpl implements DaoI {
 			if (cr.list() != null && cr.list().size() > 0) {
 				otpObjectByEmail = (OTP) cr.list().get(0);
 			}
-		System.out.println("OTP OBJECT BY EMAIL is NULL "+otpObjectByEmail);
+		logger.info("OTP OBJECT BY EMAIL is NULL "+otpObjectByEmail);
 		}else
 		{
-			System.out.println("OTP OBJECT BY EMAIL is  "+otpObjectByEmail.getEmail() +"\t"+otpObjectByEmail.getPasscode());
+			logger.info("OTP OBJECT BY EMAIL is  "+otpObjectByEmail.getEmail() +"\t"+otpObjectByEmail.getPasscode());
 		}
 		session.close();
 		return otpObjectByEmail;
