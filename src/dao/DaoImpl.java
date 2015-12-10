@@ -233,7 +233,7 @@ public class DaoImpl implements DaoI {
 				+ " and user.pool.id<>'"
 				+ userId + "' and user.pool.id<>'"
 						+ currentUser.getPool().getId()
-				+ "'  group by  user.pool.id "
+				+ "'  and user.id = user.pool.id group by  user.pool.id "
 				+ "order by min(um.distance)";
 		Query qry = session.createQuery(hql);
 		// @SuppressWarnings("unchecked")
