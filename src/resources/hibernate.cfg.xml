@@ -60,6 +60,7 @@
         <mapping resource="resources/PrivateChat.hbm.xml"/>
         <mapping resource="resources/WalletTransactions.hbm.xml"/>
         <mapping resource="resources/Authentication.hbm.xml"/>
+          <mapping resource="resources/Image.hbm.xml"/>
         <mapping resource="resources/AuthenticationUsernamePassword.hbm.xml"/>
 
     </session-factory>

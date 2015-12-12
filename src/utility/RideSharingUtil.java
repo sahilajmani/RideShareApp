@@ -14,12 +14,15 @@ import dao.DaoI;
 import dao.DaoImpl;
 import dao.IChat;
 import dao.IChatImpl;
+import dao.ImageDAOImpl;
+import dao.ImageDao;
 
 public class RideSharingUtil {
 	private static DaoI dao = null;
 	private static SessionFactory sessionFactory = null;
 	public static IChat chatDAO = null;
 	public static AuthenticationDaoI authenticationDao = null;
+	public static ImageDao imageDao = null;
 	public static Object mutex = new Object();
 	private static java.util.HashMap<String, Integer> otpMap = new HashMap<String, Integer>();
 	public static Object mutexDao = new Object();	
@@ -57,6 +60,16 @@ public class RideSharingUtil {
 			}
 		}
 		return authenticationDao;
+	}
+
+	public static ImageDao getImageDaoInstance() {
+
+		synchronized (mutex) {
+			if (imageDao == null) {
+				imageDao = new ImageDAOImpl();
+			}
+		}
+		return imageDao;
 	}
 
 	public static SessionFactory getSessionFactoryInstance() {

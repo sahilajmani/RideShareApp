@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 Dec, 2015 1:58:46 AM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.Image" table="IMAGE">
+        <id name="id" type="java.lang.String">
+            <column name="ID" />
+            <generator class="guid" />
+        </id>
+        <many-to-one name="user" class="pojos.User" fetch="join">
+            <column name="USER" />
+        </many-to-one>
+     
+         <property name="imageBinary" type="binary">
+            <column name="IMAGEBINARY" />
+        </property>
+        <property name="description" type="java.lang.String">
+            <column name="DESCRIPTION" />
+        </property>
+        <property name="imageType" type="java.lang.String">
+            <column name="IMAGETYPE" />
+        </property>
+        <property name="isVerified" type="java.lang.Boolean">
+            <column name="ISVERIFIED" />
+        </property>
+        <property name="updated" type="java.lang.Long">
+            <column name="UPDATED" />
+        </property>
+    </class>
+</hibernate-mapping>
