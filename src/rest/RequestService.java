@@ -51,6 +51,7 @@ public class RequestService {
 					.getPoolDetails(poolRequest.getPool().getId());
 			pReq.setPool(poolDetails);
 			pReq.setUser(dao.getUserDetails(poolRequest.getUser().getId()));
+			pReq.setPoolOwnername(dao.getUserDetails(poolDetails.getId()).getName());;
 			responsePoolRequests.add(pReq);
 		}
 		listPoolRequests.setPoolRequests(responsePoolRequests);

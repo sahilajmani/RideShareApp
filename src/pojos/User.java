@@ -16,7 +16,7 @@ public class User implements Serializable {
 	private Date leaveDestinationTime;
 	private String reachDestinationTimeInMilliseconds;
 	private String leaveDestinationTimeInMilliseconds;
-	private Integer poolCost;
+	private Integer poolCost=0;
 	private Integer members;
 	
 	

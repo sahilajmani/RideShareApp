@@ -13,7 +13,14 @@ public class PoolRequestResponse {
 	private Long updated;
 	private String description;
 	private String distance;
+	private String poolOwnername;
 
+	public String getPoolOwnername() {
+		return poolOwnername;
+	}
+	public void setPoolOwnername(String poolOwnername) {
+		this.poolOwnername = poolOwnername;
+	}
 	public String getId() {
 		return id;
 	}
