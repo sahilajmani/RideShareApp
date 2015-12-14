@@ -32,7 +32,7 @@ public class WalletUtil {
 		session.save(walletRecharge);
 		session.update(user);
 		String message = "Hi "+user.getName()+"\n You have received a credit of INR "+walletRecharge.getAmount()+" to "
-				+ "your RideEasy Wallet. Your new wallet balance is "+user.getWallet_balance()+". \n Thanks. Keep Riding "
+				+ "your Rideasy Wallet. Your new wallet balance is "+user.getWallet_balance()+". \n Thanks. Keep Riding "
 						+ "!";
 		String subject = "You have received a new wallet credit of INR"+walletRecharge.getAmount();
 		String[] to = { user.getEmail() };
@@ -57,7 +57,7 @@ public class WalletUtil {
 		session.save(walletRecharge);
 		session.update(user);
 		String message = "Hi "+user.getName()+"\n You have received a credit of INR "+walletRecharge.getAmount()+" to "
-				+ "your RideEasy Wallet. Your new wallet balance is "+user.getWallet_balance()+". \n Thanks. Keep riding, keep sharing ! "
+				+ "your Rideasy Wallet. Your new wallet balance is "+user.getWallet_balance()+". \n Thanks. Keep riding, keep sharing ! "
 						+ "!";
 		String subject = "You have received a new wallet credit of INR"+walletRecharge.getAmount();
 		String[] to = { user.getEmail() };
@@ -187,7 +187,7 @@ public class WalletUtil {
 			poolParticipanttx.setTransaction_timemillis(getSystemTimeMilisGMT());
 			poolParticipanttx.setPoolOwner(poolParticipant1);
 			poolParticipanttx.setPoolParticipant(poolParticipant1);
-			poolParticipanttx.setDetails("Refund by Rideeasay on leaving "+poolOwnerName+"'s Pool");
+			poolParticipanttx.setDetails("Refund from Rideasy on leaving "+poolOwnerName+"'s Pool");
 			
 		    session.saveOrUpdate(poolParticipanttx);
 			
