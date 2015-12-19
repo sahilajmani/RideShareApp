@@ -22,6 +22,9 @@ public class DistanceBwPlaces {
 			public static double getDistanceandDuration(double sourceLat,
 					double sourceLon, double destLat, double destLon)
 					throws MalformedURLException, IOException, ProtocolException {
+				System.out.println("Google APi call for lat - "+sourceLat+"\t long "+sourceLon);
+				System.out.println("Google APi call for dest lat - "+destLat+"\t long "+destLon);
+
 				String originParams = sourceLat + "%20" + sourceLon;
 				String destinationParams = destLat + "%20" + destLon;
 if(sourceLat==destLat && sourceLon==destLon)
@@ -53,10 +56,7 @@ return 0.0;
           Object obj=null;
 		try {
 			obj = parser.parse(json);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
           JSONObject jb = (JSONObject) obj;
 //System.out.println(jb);
           //now read
@@ -64,13 +64,20 @@ return 0.0;
           JSONObject jb1 = (JSONObject) jsonObject1.get(0);
           JSONArray jsonObject2 = (JSONArray) jb1.get("elements");
           JSONObject jb2 = (JSONObject) jsonObject2.get(0);
-
+		
           status = (String) jb2.get("status");
           if(!status.equalsIgnoreCase("ok"))
         		return 11000;	  
           
           JSONObject jb3 = (JSONObject) jb2.get("distance");
+          
            outputString = (String) jb3.get("text");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("Google Call failed.");
+			e.printStackTrace();
+			return 100D;
+		}
           String[] str;
   		boolean isDistanceKm=true;
   		if(outputString.contains("km"))

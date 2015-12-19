@@ -1,9 +1,14 @@
 package dao;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+
 import org.hibernate.Session;
 
 import pojos.MailNotifierThread;
 import pojos.User;
+import utility.DistanceBwPlaces;
 import utility.RideSharingUtil;
 import vo.UserIdPoolIdVO;
 
@@ -11,7 +16,7 @@ public class testQuery {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		DaoImpl db=new DaoImpl();
+//		DaoImpl db=new DaoImpl();
 		/*
 		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 		User user = db.getUserDetails("123");
@@ -65,7 +70,20 @@ public class testQuery {
 	System.out.println(db.joinPoolRequest(userIdPoolIdVO, 0));
 */
 	//System.out.println(db.updatePoolRequest("cb1ebec3-9602-11e5-b8ad-027a1dc8a973", 1));
-		System.out.println(db.leavePool("2f88d39d-9615-11e5-b8ad-027a1dc8a973", "f4de0c33-9614-11e5-b8ad-027a1dc8a973"));
+//		System.out.println(db.leavePool("2f88d39d-9615-11e5-b8ad-027a1dc8a973", "f4de0c33-9614-11e5-b8ad-027a1dc8a973"));
+	try {
+		DistanceBwPlaces.getDistanceandDuration(28.6922224, 77.15067339999996, 28.6289883, 77.14132589999997);
+	} catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ProtocolException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
 	}
 
 }

@@ -251,8 +251,10 @@ public class UserMatching {
 		double acceptDist = 5.0;
 		double comparedUserDistance=comparedUser.getDistance();
 		List<UserMapping> resultUsers = new ArrayList<UserMapping>();
+		System.out.println("Compared User-  "+comparedUser.getId());
 		// current user has no car
 			for (User user : users) {
+				System.out.println(user.getId()+"-- user Id");
 				if (!user.isHasCar()) {//i have no car
 				if(comparedUser.isHasCar()) {// other person has car
 					if (comparedUserDistance < user.getDistance()) {// but
