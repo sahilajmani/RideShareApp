@@ -119,24 +119,33 @@ BODY {
    font-size: 100%;
   font-family: Consolas, monaco, monospace;
   color: #ECEAE0;
-  background-color: #221E1D;
-}
-
-button {
-  font-family: Consolas, monaco, monospace;
-  display: inline-block;
-  width: auto;
-  height: 15%;
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 17px;
-  /*font-size: 0.75rem;*/
-  color: #fafafa;
-  background-color: #E9633B;
+  background-color: #E6E6E6;
 }
 
 .btn1 {
+    font-family: Calibri;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 30px;
+  /*font-size: 0.75rem;*/
+  color: white;
+  background-color: #04B486;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+  padding: 2px 20px 2px 20px;
+  border-style:solid;
+  border-width:3px;
+  border-color:#088A68;
+}
+}
+
+.btn2 {
   font-family: Consolas, monaco, monospace;
   display: inline-block;
   width: auto;
@@ -210,23 +219,24 @@ function submitPayuForm() {
           <td>Failure URI: </td>
           <td colspan="3"><input name="furl" value="<%= (empty(params.get("furl"))) ? "" : params.get("furl") %>" size="64" /></td>
         </tr>--%>
+    <div style="background-color:#088A68;margin-top:0;height:70px;width:100%" >
+		<div style="color:white;font-family:Calibri;font-size:35px;position:relative;text-align:center;"><b>CONTINUE TO PAYMENT</b></div>
+	</div>
+	<br />
+	<br />
           <% if(empty(hash)){ %>
-         <div style="text-align: center">
-        <center><div style="width:80%">
-            <img src="logo_black_bg.png" />
-        </div></center>
-    <br/>
-    <br/>
-    <br/>
-<h2 style="color: #63AA9C;font-size:35px">CONTINUE TO PAYMENT</h2>
-<br/>
-<br/>
+         
+        <div align="center" >
+            <img src="rideasylogo.png" />
+        </div>
+       
 <br/>
 <br/>
 <br/>
 <br/>
 <br/>
 <!-- <button onclick=window.open('','_self').close();>CANCEL</button>-->
+<div align="center">
 <input class="btn1" type="submit" value="CONTINUE" />
  <!--             <center><div style="margin-top:50px;"><input style="height:30px" type="submit" value="Continue to Payment" /></div></center>-->
           <% } %>

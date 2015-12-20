@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Logger;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,16 +16,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import RestResponse.ChatResults;
 import RestResponse.GetChatResult;
 import email.SendMail;
 import pojos.PrivateChat;
-import pojos.RestServiceResponse;
 import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
+import vo.ChatCount;
 import vo.ChatJson;
-import java.util.logging.Logger;
+import vo.UserChatCount;
 @Path("/chat")
 public class ChatService {
 	Logger logger = Logger.getLogger("debug");
@@ -124,6 +127,41 @@ public class ChatService {
 							GlobalConstants.PASSWORD_EMAIL, subject, message,
 							to);
 					
+	}
+	@POST
+	@Path("getChatCount")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public ChatCount getunReadMsgsCount(User user){
+		
+		ChatCount chatCount = new ChatCount();
+		chatCount.setSuccess(false);
+		if(user!=null && user.getId()!=null && !"".equals(user.getId())){
+		logger.info("Calculating chatCount for user - "+user.getId());
+
+		Collection <PrivateChat> chats= RideSharingUtil.getChatInstance().getPrivateChats(user.getId(), false);
+		UserChatCount ucc= null;
+		Collection <UserChatCount> userChats = new ArrayList<UserChatCount>();
+		for(PrivateChat chat : chats){
+			ucc= new UserChatCount();
+			ucc.setSender_id(chat.getSender().getId());
+			int count=(chat.getMsg().split(",")).length;
+			if(count < 0){
+			count =1;
+			}
+			ucc.setUnreadMsgs(count);
+			userChats.add(ucc);
+			
+		}
+		if(userChats.size() > 0){
+			chatCount.setCountList(userChats);
+			chatCount.setSuccess(true);
+			logger.info("Calculating chatCount for user - "+user.getId()+" = "+userChats.size());
+
+		}
+		}
+		return chatCount;
+		
 	}
 	public Long getSystemTimeMilisGMT(){
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

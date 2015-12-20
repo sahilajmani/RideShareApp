@@ -187,7 +187,11 @@ public class DaoImpl implements DaoI {
 		pool.setIs_active(true);
 		pool.setIsAvailable(true);
 		pool.setNumberOfMembers(1); // to be made dynamic
+		if(user.getMembers()==null){
+			pool.setMax_members(4);
+		}else{
 		pool.setMax_members(user.getMembers());
+		}
 		return pool;
 	}
 
@@ -653,8 +657,10 @@ public class DaoImpl implements DaoI {
 		user.setPool(pool);
 		int noOfMembers = pool.getNumberOfMembers();
 		pool.setNumberOfMembers(noOfMembers + 1);
+		if(pool.getMax_members()!=null){
 		if (pool.getMax_members() == noOfMembers + 1)
 			pool.setIsAvailable(false);
+		}
 	
 		existingPool.setIsAvailable(false);
 		session.update(existingPool);
