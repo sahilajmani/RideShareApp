@@ -8,7 +8,7 @@
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
-   <!-- PROD URL --> <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cwqgghkrvick.us-west-2.rds.amazonaws.com:3306/myridedb</property>
+   <!-- BUILD URL -->     <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cl4nppa6jauh.us-west-2.rds.amazonaws.com:3306/myridedb</property>
         <property name="hibernate.connection.username">ridesharing</property>
         <property name="hibernate.connection.password">ridesharing123</property>
   <!-- <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/rideshare</property>
@@ -30,7 +30,7 @@
             See http://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/dialect/package-summary.html
         -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <property name="format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.c3p0.timeout">1800</property> 
@@ -50,7 +50,7 @@
         <property name="hbm2ddl.auto">update</property> -->
 		<!-- <property name="hbm2ddl.auto">create</property> -->
         <!-- This is the entity class that we'll be testing. -->
-        <mapping resource="resources/User.hbm.xml"/>
+         <mapping resource="resources/User.hbm.xml"/>
         <mapping resource="resources/Address.hbm.xml"/>
         <mapping resource="resources/OTP.hbm.xml"/>
         <mapping resource="resources/Pool.hbm.xml"/>
@@ -67,6 +67,7 @@
                     <mapping resource="resources/PayOutRequest.hbm.xml"/>
           
         <mapping resource="resources/AuthenticationUsernamePassword.hbm.xml"/>
+        
 
     </session-factory>
 </hibernate-configuration>
