@@ -1326,7 +1326,7 @@ public class DaoImpl implements DaoI {
 		Criteria cr = session.createCriteria(WalletTransactions.class);
 		User user = new User();
 		user.setId(userId);
-		cr.add(Restrictions.eq("poolParticipant", user));
+		cr.add(Restrictions.eq("poolParticipant.id", user.getId()));
 		cr.addOrder(Order.desc("transaction_timemillis"));
 		List<WalletTransactions> walletTransactions = cr.list();
 		listWalletTransactions.setWalletTransactions(walletTransactions);

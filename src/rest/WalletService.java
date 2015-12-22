@@ -62,7 +62,7 @@ public class WalletService {
 	}
 	
 	@POST
-	@Path("addtowallet")
+	@Path("wallettransactionhistory")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ListWalletTransactions getTransactionHistory(@QueryParam("userId") String userId) {
 		ListWalletTransactions walletTransactions = new ListWalletTransactions();

@@ -1,10 +1,10 @@
 package pojos;
 
 public class PayOutRequest {
-	private String userId;
-	private Integer amount;
-	private Long requestTime;
-	private String description;
+		private String userId;
+		private Integer amount;
+		private Long requestTime;
+		private String description;
 	public String getUserId() {
 		return userId;
 	}
