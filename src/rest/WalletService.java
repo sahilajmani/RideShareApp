@@ -1,6 +1,7 @@
 package rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -13,7 +14,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 import dao.DaoI;
-import email.SendMail;
 import pojos.ListWalletTransactions;
 import pojos.MailNotifierThread;
 import pojos.PayOutRequest;
@@ -61,7 +61,7 @@ public class WalletService {
 		
 	}
 	
-	@POST
+	@GET
 	@Path("wallettransactionhistory")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ListWalletTransactions getTransactionHistory(@QueryParam("userId") String userId) {
