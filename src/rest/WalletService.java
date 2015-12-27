@@ -85,7 +85,7 @@ public class WalletService {
 			 session = RideSharingUtil.getSessionFactoryInstance().openSession();
 			 tx=session.beginTransaction();
 			session.saveOrUpdate(details);
-			System.out.println("savedd...");
+			System.out.println("wallet details updated ");
 			response.setSuccess(true);
 			tx.commit();
 		}catch(Exception e){
@@ -136,13 +136,29 @@ public class WalletService {
 			Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 			Transaction tx = session.beginTransaction();
 			request.setRequestTime(System.currentTimeMillis());
-			session.save(request);
+			session.saveOrUpdate(request);
 			tx.commit();
 			session.close();
 			notifyRideShare(request);
+			notifyUser(request);
 			response.setSuccess(true);
 		}
 		return response;
+		
+	}
+
+	private void notifyUser(PayOutRequest request) {
+		// TODO Auto-generated method stub
+		User user=RideSharingUtil.getDaoInstance().getUserDetails(request.getUserId());
+		if(user!=null){
+		String msg="Hi "+user.getName().split(" ")[0]+
+				",\n We have received your request for payout and it is under processing right now."
+				+"Please be aware that the payment process may take upto 5-6 business days"
+				+ "for the amount to reflect in your bank account."
+				+ "\nThanks,\nTeam RidEasy,\nKeep Riding, Keep Sharing !";
+		String subject = "Your request for payout is under process !";
+		new MailNotifierThread(msg, user.getEmail(), subject).start();
+		}	
 		
 	}
 
