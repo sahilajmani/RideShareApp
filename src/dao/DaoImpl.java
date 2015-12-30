@@ -9,7 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
@@ -21,6 +23,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import email.SendMail;
 import pojos.ListWalletTransactions;
 import pojos.MailNotifierThread;
 import pojos.MatchedPoolsVO;
@@ -37,7 +40,6 @@ import utility.RideSharingUtil;
 import utility.UserMatching;
 import utility.WalletUtil;
 import vo.UserIdPoolIdVO;
-import email.SendMail;
 
 public class DaoImpl implements DaoI {
 	SessionFactory sessionFactory = RideSharingUtil.getSessionFactoryInstance();
@@ -225,8 +227,10 @@ public class DaoImpl implements DaoI {
 
 	@Override
 	public List<MatchedPoolsVO> getmatchedPool(String userId) {
+		Map <String,MatchedPoolsVO> matchedPoolMap=new HashMap<String, MatchedPoolsVO>();
+		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>(); 
 
-		// List of pools returned for particular user.
+		// List of pools returned for particular user.  // Mappings for UserB set as userId
 		Session session = sessionFactory.openSession();
 		 User currentUser = this.getUserDetails(userId);
 		String hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
@@ -243,7 +247,7 @@ public class DaoImpl implements DaoI {
 		// @SuppressWarnings("unchecked")
 		// List<Pool> userPools = qry.list();
 		List<Object[]> result = (List<Object[]>) qry.list();
-		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>();
+		
 		for (Object[] results : result) {
 			String poolId = ((String) results[0]);
 			Float distance = (Float) results[1];
@@ -260,11 +264,53 @@ public class DaoImpl implements DaoI {
 			matchedPool.setDistance(distance.toString());
 			matchedPool.setName(name);
 			matchedPool.setPoolCost(poolCost);
-			matchedPools.add(matchedPool);
+			matchedPoolMap.put(poolId, matchedPool);
+//			matchedPools.add(matchedPool);
 		}
 
 		// for(Pool pool:userPools)
 		// System.out.println(pool.getId());
+		
+		// mappings for userA set as UserId
+		 hql = "select user.pool.id,min(um.distance),user.name,user.poolCost from User user,UserMapping um where um.userA.id='"
+				+ userId
+				+ "' and um.userA.id=user.id"
+				+ " and user.pool.isAvailable="
+				+ true
+				+ " and user.pool.id<>'"
+				+ userId + "' and user.pool.id<>'"
+						+ currentUser.getPool().getId()
+				+ "'  and user.id = user.pool.id group by  user.pool.id "
+				+ "order by min(um.distance)";
+		 qry = session.createQuery(hql);
+		// @SuppressWarnings("unchecked")
+		// List<Pool> userPools = qry.list();
+		 result = (List<Object[]>) qry.list();
+		
+		for (Object[] results : result) {
+			String poolId = ((String) results[0]);
+			Float distance = (Float) results[1];
+			String name = ((String) results[2]);
+			Integer poolCost = ((Integer) results[3]);	
+			// System.out.println(pool.getId() + "  " + distance);// able to get
+			// pool and
+			// distance.put
+			// it in java
+			// element
+			Pool newPool = this.getPoolDetails(poolId);
+			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
+			matchedPool.setPool(newPool);
+			matchedPool.setDistance(distance.toString());
+			matchedPool.setName(name);
+			matchedPool.setPoolCost(poolCost);
+			matchedPoolMap.put(poolId, matchedPool);
+//			matchedPools.add(matchedPool);
+		}
+		for(String key : matchedPoolMap.keySet()){
+			matchedPools.add(matchedPoolMap.get(key));
+		}
+		logger.info("Number of recommendations for User - "+currentUser.getName()+"\t"
+				+matchedPools.size());
 		session.close();
 		return matchedPools;
 

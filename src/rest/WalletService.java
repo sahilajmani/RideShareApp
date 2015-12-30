@@ -41,7 +41,7 @@ public class WalletService {
 		tx.setPoolOwner(walletTopUp.getUser());
 		tx.setDetails("Recharged the wallet by "+walletTopUp.getAmount()+ "Rs");
 		tx.setAmount(walletTopUp.getAmount());
-		tx.setId(walletTopUp.getTransactionId()); // external id - add ext in front.
+		tx.setId(walletTopUp.getTransactionId()); // external id - add text in front.
 		tx.setType(TransactionType.CREDIT_TO_WALLET);
 		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 		
@@ -154,7 +154,7 @@ public class WalletService {
 		String msg="Hi "+user.getName().split(" ")[0]+
 				",\n We have received your request for payout and it is under processing right now."
 				+"Please be aware that the payment process may take upto 5-6 business days"
-				+ "for the amount to reflect in your bank account."
+				+ " for the amount to reflect in your bank account. Do write to us incase you have any queries. "
 				+ "\nThanks,\nTeam RidEasy,\nKeep Riding, Keep Sharing !";
 		String subject = "Your request for payout is under process !";
 		new MailNotifierThread(msg, user.getEmail(), subject).start();
