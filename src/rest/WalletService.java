@@ -134,6 +134,13 @@ public class WalletService {
 		GenericResponse response = new GenericResponse();
 		if(request!=null && request.getUserId()!=null && request.getAmount()!=0){
 			Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
+			Criteria cr = session.createCriteria(PayOutRequest.class).add(Restrictions.eq("userId", request.getUserId()));
+			if(cr.list()!=null && cr.list().size() >0){
+				response.setErrorMsg("We have already received your request!");
+				response.setSuccess(false);
+				session.close();
+				return response;
+			}
 			Transaction tx = session.beginTransaction();
 			request.setRequestTime(System.currentTimeMillis());
 			session.saveOrUpdate(request);
