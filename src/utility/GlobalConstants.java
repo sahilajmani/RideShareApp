@@ -12,4 +12,5 @@ public class GlobalConstants {
 	public static final int JOIN_PENDING = 4;
 	public static final int INVALID_REQUEST = 5;
 	public static final long NOTIFICATION_CHAT_TIMEOUT=120000L;
+	public static final String FREE_RECHARGE = "WELCOME50";
 }

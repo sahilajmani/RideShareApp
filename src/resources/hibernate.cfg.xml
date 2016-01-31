@@ -30,7 +30,7 @@
             See http://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/dialect/package-summary.html
         -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="hibernate.c3p0.timeout">1800</property> 
@@ -65,6 +65,8 @@
           <mapping resource="resources/Image.hbm.xml"/>
           <mapping resource="resources/UserBankDetails.hbm.xml"/>
                     <mapping resource="resources/PayOutRequest.hbm.xml"/>
+                    <mapping resource="resources/Coupons.hbm.xml"/>
+                    <mapping resource="resources/RedeemedCoupons.hbm.xml"/>
           
         <mapping resource="resources/AuthenticationUsernamePassword.hbm.xml"/>
         

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 31, 2016 12:24:28 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.Coupons" table="COUPONS">
+        <id name="couponCode" type="java.lang.String">
+            <column name="COUPONCODE" />
+            <generator class="assigned" />
+        </id>
+        <property name="isApplicableMultipleTimes" type="boolean" access="field">
+            <column name="ISAPPLICABLEMULTIPLETIMES" />
+        </property>
+        <property name="details" type="java.lang.String">
+            <column name="DETAILS" />
+        </property>
+        <property name="expiryDate" type="java.lang.Long">
+            <column name="EXPIRYDATE" />
+        </property>
+        <property name="isValid" type="boolean" access="field">
+            <column name="ISVALID" />
+        </property>
+    </class>
+</hibernate-mapping>

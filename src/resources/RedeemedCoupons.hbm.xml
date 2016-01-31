@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 31, 2016 12:24:28 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="pojos.RedeemedCoupons" table="REDEEMEDCOUPONS">
+        
+        <id name="userId" type="java.lang.String">
+            <column name="USERID" />
+            <generator class="assigned" />
+        </id>
+        <property name="couponCode" type="java.lang.String">
+            <column name="COUPONCODE" />
+        </property>
+        <property name="timeOfRedemption" type="java.lang.Long">
+            <column name="TIMEOFREDEMPTION" />
+        </property>
+        <property name="metaData" type="java.lang.String">
+            <column name="METADATA" />
+        </property>
+        <property name="isSetlled" type="boolean" access="field">
+            <column name="ISSETLLED" />
+        </property>
+    </class>
+</hibernate-mapping>
