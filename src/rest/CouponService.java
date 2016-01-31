@@ -2,9 +2,12 @@ package rest;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -15,14 +18,20 @@ import pojos.Coupons;
 import pojos.RedeemedCoupons;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
+import vo.ApplyCouponVO;
 import vo.GenericResponse;
 @Path("coupons")
 public class CouponService {
 
-@GET
-@Path("apply")
-public GenericResponse checkCouponValidity(@QueryParam("userId") String userId, @QueryParam("couponCode") String couponCode,@QueryParam("metaData") String metaData){
+@POST
+@Path("/apply")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public GenericResponse checkCouponValidity(ApplyCouponVO applyCouponVO){
 	
+	String userId = applyCouponVO.getUserId();
+	String metaData = applyCouponVO.getMetaData();
+	String couponCode = applyCouponVO.getCouponCode();
 	GenericResponse response = new GenericResponse();
 	Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
 	Criteria cr = session.createCriteria(Coupons.class);
