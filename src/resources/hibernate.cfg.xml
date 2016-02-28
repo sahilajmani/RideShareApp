@@ -8,12 +8,12 @@
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
-   <!--  BUILD URL   <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cl4nppa6jauh.us-west-2.rds.amazonaws.com:3306/myridedb</property>
-        <property name="hibernate.connection.username">ridesharing</property>
-        <property name="hibernate.connection.password">ridesharing123</property> -->
-         <!-- PROD URL --> <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cwqgghkrvick.us-west-2.rds.amazonaws.com:3306/myridedb</property>
+   <!--  BUILD URL -->   <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cl4nppa6jauh.us-west-2.rds.amazonaws.com:3306/myridedb</property>
         <property name="hibernate.connection.username">ridesharing</property>
         <property name="hibernate.connection.password">ridesharing123</property>
+         <!-- PROD URL --><!--  <property name="hibernate.connection.url">jdbc:mysql://myridedbinstance.cwqgghkrvick.us-west-2.rds.amazonaws.com:3306/myridedb</property>
+        <property name="hibernate.connection.username">ridesharing</property>
+        <property name="hibernate.connection.password">ridesharing123</property> -->
         
   <!-- <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/rideshare</property>
         <property name="hibernate.connection.username">root</property>
