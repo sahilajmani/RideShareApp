@@ -14,6 +14,7 @@ import pojos.RestServiceResponse;
 import pojos.User;
 import utility.GlobalConstants;
 import utility.RideSharingUtil;
+import utility.SmsSender;
 import dao.DaoI;
 import email.SendMail;
 
@@ -32,9 +33,12 @@ public class SendOTPService {
 		if (!userEmail.isEmpty()) {
 			int otp = generateOTP();
 			RideSharingUtil.updateOTP(userEmail, otp);
-			String message = "OTP : " + otp;
-			String subject = "OTP for Ride Easy";
+			String message = "Hi "+user.getName()+",\n Please enter - " + otp+"as OTP in "
+					+ "Rideasy mobile app to proceed. Thanks,\n Team Rideasy,\n Keep Riding, Keep Sharing !";
+			String subject = "Thankyou for downloading Rideasy app ! ";
 			String[] to = { userEmail };
+			SmsSender.getInstance().sendSms(user.getContact(), "OTP : "+otp+"\n Thanks for"
+					+ " registering on our app. Keep Riding, Keep Sharing !");
 			if (dao.containsOTPforEmail(userEmail)) {
 				if (dao.updateOTPEmail(userEmail, otp)) {
 					SendMail.sendEmail(GlobalConstants.FROM_EMAIL,
