@@ -5,6 +5,7 @@ import java.util.List;
 import pojos.ListWalletTransactions;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
+import pojos.OTPbySMS;
 import pojos.Pool;
 import pojos.PoolRequest;
 import pojos.Transactions;
@@ -32,4 +33,9 @@ public interface DaoI{
 	public List<User> fetchPoolParticipants(String poolId);
 	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO);
 	public ListWalletTransactions getWalletTransactionHistory(String userId);
+	boolean containsOTPforSMS(String number);
+	boolean updateOTPSMS(String number, int otp);
+	public boolean insertOTPSMS(String number, int otp);
+	public OTPbySMS getOPTbySMS(String number);
+	User getUserDetailsByNumber(String number);
 }

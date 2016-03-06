@@ -28,6 +28,7 @@ import pojos.ListWalletTransactions;
 import pojos.MailNotifierThread;
 import pojos.MatchedPoolsVO;
 import pojos.OTP;
+import pojos.OTPbySMS;
 import pojos.Pool;
 import pojos.PoolRequest;
 import pojos.TransactionType;
@@ -87,6 +88,20 @@ public class DaoImpl implements DaoI {
 		}
 		return false;
 	}
+	@Override
+	public boolean containsOTPforSMS(String number) {
+		Session session = sessionFactory.openSession();
+		String hql = "from OTPbySMS otpbysms where otpbysms.number=?";
+		Query qry = session.createQuery(hql);
+		qry.setString(0, number);
+		List<OTP> lst = qry.list();
+		session.close();
+		if (lst != null && lst.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
 
 	@Override
 	public boolean updateOTPEmail(String userEmail, int otp) {
@@ -110,7 +125,28 @@ public class DaoImpl implements DaoI {
 			session.close();
 		}
 	}
-
+	@Override
+	public boolean updateOTPSMS(String number, int otp) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		Criteria cr = session.createCriteria(OTPbySMS.class);
+		cr.add(Restrictions.eq("number", number));
+		OTPbySMS otpObjectBySMS = (OTPbySMS) cr.list().get(0);
+		otpObjectBySMS.setPasscode(otp);
+		logger.info("OTP : " + otp);
+		try {
+			otpObjectBySMS.setCreate_time(this.getCurrentTime());
+			session.update(otpObjectBySMS);
+			tx.commit();
+			logger.info("Update Successful");
+			return true;
+		} catch (ParseException e) {
+			logger.info("Parse Exception Occured " + e.getStackTrace());
+			return false;
+		} finally {
+			session.close();
+		}
+	}
 	@Override
 	public OTP getOPTbyEmail(String userEmail) {
 		Session session = sessionFactory.openSession();
@@ -134,6 +170,18 @@ public class DaoImpl implements DaoI {
 		}
 		session.close();
 		return otpObjectByEmail;
+	}
+	@Override
+	public OTPbySMS getOPTbySMS(String number) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(OTPbySMS.class);
+		cr.add(Restrictions.eq("number", number));
+		OTPbySMS otpObjectByNumber = new OTPbySMS();
+		if (cr.list() != null && cr.list().size() > 0) {
+			otpObjectByNumber = (OTPbySMS) cr.list().get(0);
+		}
+		session.close();
+		return otpObjectByNumber;
 	}
 
 	public boolean deleteUserOnly(String userId) {
@@ -421,6 +469,30 @@ public class DaoImpl implements DaoI {
 		session.close();
 		return userVO;
 	}
+	@Override
+	public User getUserDetailsByNumber(String number) {
+		Session session = sessionFactory.openSession();
+		Criteria cr = session.createCriteria(User.class);
+		cr.add(Restrictions.eq("contact", number));
+		User userVO = null;
+		if (cr.list() != null && cr.list().size() > 0) {
+			userVO = (User) cr.list().get(0);
+			try{
+			userVO.setReachDestinationTimeInMilliseconds(String.valueOf(userVO
+					.getReachDestinationTime().getTime()));
+			userVO.setLeaveDestinationTimeInMilliseconds(String.valueOf(userVO
+					.getLeaveDestinationTime().getTime()));
+			}catch(NullPointerException e){
+				return userVO;
+			}
+		} else {
+			userVO = new User();
+			userVO.setName("doesntexist");
+		}
+		session.close();
+		return userVO;
+	}
+
 
 	@Override
 	public List<PoolRequest> getOutgoingPoolRequests(String userId) { // CHECKED
@@ -1383,5 +1455,28 @@ public class DaoImpl implements DaoI {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		long time = cal.getTimeInMillis();
 		return time+TimeZone.getDefault().getOffset(time);
+	}
+
+	@Override
+	public boolean insertOTPSMS(String number, int otp) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		OTPbySMS otpObject = new OTPbySMS();
+		otpObject.setNumber(number);
+		logger.info("Number : " + number);
+		otpObject.setPasscode(otp);
+		logger.info("OTP : " + otp);
+		try {
+			otpObject.setCreate_time(this.getCurrentTime());
+			session.saveOrUpdate(otpObject);
+			logger.info("Commit Successful");
+			tx.commit();
+			return true;
+		} catch (ParseException e) {
+			logger.info("Parse Exception Occured " + e.getStackTrace());
+			return false;
+		} finally {
+			session.close();
+		}
 	}
 }
