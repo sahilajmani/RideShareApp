@@ -6,6 +6,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import pojos.OTP;
@@ -68,9 +70,13 @@ public class SendOTPService {
 	@Path("sms/sendOTPService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse sendOTPSMS(User user) {
- 		String number = user.getContact();
+	public RestServiceResponse sendOTPSMS(User user,@Context HttpHeaders hh) throws Exception {
 		RestServiceResponse serviceResponse = new RestServiceResponse();
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
+ 		String number = user.getContact();
 		serviceResponse.setResponse(false);
 		if (!number.isEmpty()) {
 			int otp = generateOTP();
@@ -153,9 +159,12 @@ public class SendOTPService {
 	@Path("sms/OTPAuthenticationService")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public OTPAuthenticationResponse OTPAuthenticationbySMS(OTPbySMS otpObj) {
-		
+	public OTPAuthenticationResponse OTPAuthenticationbySMS(OTPbySMS otpObj,@Context HttpHeaders hh) throws Exception {		
 		OTPAuthenticationResponse otpAuthenticationResponse = new OTPAuthenticationResponse();
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		try {
 			OTPbySMS otpObjectBynumber = new OTPbySMS();
 			boolean response = false;
