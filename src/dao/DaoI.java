@@ -32,4 +32,5 @@ public interface DaoI{
 	public List<User> fetchPoolParticipants(String poolId);
 	public PoolRequest getPoolRequestVO(UserIdPoolIdVO userIdPoolIdVO);
 	public ListWalletTransactions getWalletTransactionHistory(String userId);
+	public List<MatchedPoolsVO> getmatchedPoolForUnregistered(User user);
 }

@@ -17,6 +17,7 @@ import pojos.MatchedPoolsVO;
 import pojos.Pool;
 import pojos.RestServiceResponse;
 import pojos.User;
+import utility.DistanceBwPlaces;
 import utility.RideSharingUtil;
 import vo.UsersList;
 
@@ -55,6 +56,27 @@ public class PoolService {
 		return matchPoolsList;
 	}
 
+	@POST
+	@Path("getmatchedpoolsforunregistered")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<MatchedPoolsVO> getMatchedPoolsForUnregistered(User user) {
+		List<MatchedPoolsVO> matchPoolsList = new ArrayList<MatchedPoolsVO>();
+		try {
+			double distance = DistanceBwPlaces.getDistanceandDuration(user
+					.getHomeAddress().getLattitude(), user.getHomeAddress()
+					.getLongitude(), user.getOfficeAddress().getLattitude(),
+					user.getOfficeAddress().getLongitude());
+			logger.info("distance stored for user : " + distance);
+			user.setDistance((float) distance);
+			user.setId("temp1234");
+			matchPoolsList = dao.getmatchedPoolForUnregistered(user);
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+		return matchPoolsList;
+	}
 	@POST
 	@Path("getpoolusers")
 	@Consumes(MediaType.APPLICATION_JSON)
