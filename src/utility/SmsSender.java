@@ -8,6 +8,18 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.jboss.logging.Logger;
 
 
 public class SmsSender {
@@ -17,20 +29,61 @@ public class SmsSender {
 	private static String authKey="106328A6w61fm37Do56d5b552";
 	private static String senderId="RIDESY";
 	private static String route="4";
+	private Logger logger = Logger.getLogger("debug");
 	private SmsSender(){
 		
 	}
+	
 	public static SmsSender getInstance(){
 		return sender;
+	}
+	static {
+	    disableSslVerification();
+	}
+
+	private static void disableSslVerification() {
+	    try
+	    {
+	        // Create a trust manager that does not validate certificate chains
+	        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+	            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+	                return null;
+	            }
+	            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	            }
+	            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	            }
+	        }
+	        };
+
+	        // Install the all-trusting trust manager
+	        SSLContext sc = SSLContext.getInstance("SSL");
+	        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+	        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+	        // Create all-trusting host name verifier
+	        HostnameVerifier allHostsValid = new HostnameVerifier() {
+	            public boolean verify(String hostname, SSLSession session) {
+	                return true;
+	            }
+	        };
+
+	        // Install the all-trusting host verifier
+	        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+	    } catch (NoSuchAlgorithmException e) {
+	        e.printStackTrace();
+	    } catch (KeyManagementException e) {
+	        e.printStackTrace();
+	    }
 	}
 	public boolean sendSms(String number, String msg){
 		 URL url;
 		try {
+			logger.debug("sending sms to - "+number);
 			url = new URL(prepareSmsQueryString(number, msg));
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			int res = conn.getResponseCode();
-			System.out.println(res+"");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					conn.getInputStream()));
                
