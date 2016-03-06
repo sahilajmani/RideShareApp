@@ -364,6 +364,49 @@ public class DaoImpl implements DaoI {
 
 	}
 
+	
+	@Override
+	public List<MatchedPoolsVO> getmatchedPoolForUnregistered(User user) {
+		List<MatchedPoolsVO> matchedPools = new ArrayList<MatchedPoolsVO>(); 
+		List<UserMapping> userMatchList = findMatchedUser(user);
+		Map<String,Float> poolIdDistanceMap=new HashMap<String,Float>();
+		System.out.println("number of matches : "+userMatchList.size());
+		Session session = sessionFactory.openSession();
+	
+		for(UserMapping userMatch:userMatchList)
+		{
+			User userB=getUserDetails(userMatch.getUserB().getId());
+			if(userB.getPool().getIsAvailable())
+			{
+				String pooId=userMatch.getUserB().getPool().getId();
+				if(poolIdDistanceMap.containsKey(pooId))
+						{
+						if(poolIdDistanceMap.get(pooId)>userMatch.getDistance())
+							poolIdDistanceMap.put(pooId, userMatch.getDistance());
+							else continue;
+						}
+				else
+				{
+					poolIdDistanceMap.put(pooId, userMatch.getDistance());
+			}
+		}
+	}
+		
+		for (Map.Entry<String, Float> entry : poolIdDistanceMap.entrySet())
+		{
+			MatchedPoolsVO matchedPool = new MatchedPoolsVO();
+			matchedPool.setPool(getPoolDetails(entry.getKey()));
+			matchedPool.setDistance(entry.getValue().toString());
+			User hostUser=getUserDetails(entry.getKey());
+			matchedPool.setName(hostUser.getName());
+			matchedPool.setPoolCost(hostUser.getPoolCost());
+			matchedPools.add(matchedPool);
+		}
+		session.close();
+		return matchedPools;
+	}
+	
+	
 	private List<UserMapping> findMatchedUser(User currentUser) {
 		Session session = sessionFactory.openSession();
 //		User currentUser = this.getUserDetails(userId);

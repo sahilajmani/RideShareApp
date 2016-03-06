@@ -71,7 +71,7 @@
                     <mapping resource="resources/PayOutRequest.hbm.xml"/>
                     <mapping resource="resources/Coupons.hbm.xml"/>
                     <mapping resource="resources/RedeemedCoupons.hbm.xml"/>
-          
+           <mapping resource="resources/OTPbySMS.hbm.xml"/>
         <mapping resource="resources/AuthenticationUsernamePassword.hbm.xml"/>
         
 

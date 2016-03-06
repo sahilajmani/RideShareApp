@@ -38,4 +38,5 @@ public interface DaoI{
 	public boolean insertOTPSMS(String number, int otp);
 	public OTPbySMS getOPTbySMS(String number);
 	User getUserDetailsByNumber(String number);
+	public List<MatchedPoolsVO> getmatchedPoolForUnregistered(User user);
 }
