@@ -88,16 +88,18 @@ public class SendOTPService {
 */			
 			if (dao.containsOTPforSMS(number)) {
 				if (dao.updateOTPSMS(number, otp)) {
-					SmsSender.getInstance().sendSms(user.getContact(), "OTP : "+otp+"\n Thanks for"
-							+ " registering on our app. Keep Riding, Keep Sharing !");
+					SmsSender.getInstance().sendSms(user.getContact(), otp+" is yout OTP for Riseasy "
+							+ "\n Thanks for"
+							+ "using our app.\n Keep Riding, Keep Sharing !");
 					serviceResponse.setResponse(true);
 				} else {
 					serviceResponse.setResponse(false);
 				}
 			} else {
 				if (dao.insertOTPSMS(number, otp)) {
-					SmsSender.getInstance().sendSms(user.getContact(), "OTP : "+otp+"\n Thanks for"
-							+ " registering on our app. Keep Riding, Keep Sharing !");
+					SmsSender.getInstance().sendSms(user.getContact(), otp+" is yout OTP for Riseasy "
+							+ "\n Thanks for"
+							+ "using our app.\n Keep Riding, Keep Sharing !");
 					serviceResponse.setResponse(true);
 				} else {
 					serviceResponse.setResponse(false);
