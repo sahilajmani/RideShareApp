@@ -6,6 +6,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Criteria;
@@ -13,7 +15,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
-import dao.DaoI;
 import pojos.ListWalletTransactions;
 import pojos.MailNotifierThread;
 import pojos.PayOutRequest;
@@ -22,10 +23,12 @@ import pojos.TransactionType;
 import pojos.User;
 import pojos.UserBankDetails;
 import pojos.WalletTransactions;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import utility.WalletUtil;
 import vo.GenericResponse;
 import vo.WalletTopUp;
+import dao.DaoI;
 
 @Path("/wallet")
 public class WalletService {
@@ -35,7 +38,11 @@ public class WalletService {
 	@Path("addtowallet")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse creditToWallet(WalletTopUp walletTopUp) {
+	public RestServiceResponse creditToWallet(WalletTopUp walletTopUp,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		WalletTransactions tx = new WalletTransactions();
 		tx.setPoolParticipant(walletTopUp.getUser());
 		tx.setPoolOwner(walletTopUp.getUser());
@@ -64,7 +71,11 @@ public class WalletService {
 	@GET
 	@Path("wallettransactionhistory")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListWalletTransactions getTransactionHistory(@QueryParam("userId") String userId) {
+	public ListWalletTransactions getTransactionHistory(@QueryParam("userId") String userId,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		ListWalletTransactions walletTransactions = new ListWalletTransactions();
 		walletTransactions = dao.getWalletTransactionHistory(userId);
 		return walletTransactions;
@@ -74,7 +85,11 @@ public class WalletService {
 	@Path("updateBankDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GenericResponse updateBankDetails(UserBankDetails details){
+	public GenericResponse updateBankDetails(UserBankDetails details,@Context HttpHeaders hh) throws Exception{
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		GenericResponse response = new GenericResponse();
 		Transaction tx=null;
 		if(details.getUserId()!=null&&details.getAcNo()!=null&&details.getIfscCode()!=null
@@ -110,7 +125,11 @@ public class WalletService {
 	@Path("getUserBankDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GenericResponse getUserBankDetails(User user){
+	public GenericResponse getUserBankDetails(User user,@Context HttpHeaders hh) throws Exception{
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		GenericResponse response = new GenericResponse();
 	if(user!=null || !"".equals(user.getId())){
 		Session session = RideSharingUtil.getSessionFactoryInstance().openSession();
@@ -130,7 +149,11 @@ public class WalletService {
 	@Path("requestPayOut")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public GenericResponse requestPayOut(PayOutRequest request){
+	public GenericResponse requestPayOut(PayOutRequest request,@Context HttpHeaders hh) throws Exception{
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		GenericResponse response = new GenericResponse();
 		if(request!=null && request.getUserId()!=null && request.getAmount()!=0){
 			Session session = RideSharingUtil.getSessionFactoryInstance().openSession();

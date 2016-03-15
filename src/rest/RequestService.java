@@ -7,6 +7,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import pojos.ListPoolRequests;
@@ -30,7 +32,11 @@ public class RequestService {
 	@Path("outgoingrequests")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListPoolRequests getOutgoingRequest(User user) {
+	public ListPoolRequests getOutgoingRequest(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		if (user == null || user.getId() == null)
 			return null;
 
@@ -62,7 +68,11 @@ public class RequestService {
 	@Path("incomingrequests")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListPoolRequests getIncomingRequest(User user) {
+	public ListPoolRequests getIncomingRequest(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		if (user == null || user.getId() == null)
 			return null;
 
@@ -92,7 +102,11 @@ public class RequestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public RestServiceResponse sendRequestResponse(
-			RequestResponseVO requestResponseVO) {
+			RequestResponseVO requestResponseVO,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		restServiceResponse.setResponse(dao.updatePoolRequest(
 				requestResponseVO.getRequestId(),
@@ -104,7 +118,11 @@ public class RequestService {
 	@Path("joinpoolrequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO) {
+	public RestServiceResponse joinPoolRequest(UserIdPoolIdVO userIdPoolIdVO,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		restServiceResponse.setResponse(dao.joinPoolRequest(userIdPoolIdVO,
 				(float) 0.0));
@@ -115,7 +133,11 @@ public class RequestService {
 	@Path("cancelpoolrequest")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean cancelPoolRequest(RequestResponseVO requestResponseVO) {
+	public boolean cancelPoolRequest(RequestResponseVO requestResponseVO,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		String requestId = requestResponseVO.getRequestId();
 		try {
 			dao.updatePoolRequest(requestId, GlobalConstants.REQUEST_CANCEL);
@@ -129,7 +151,11 @@ public class RequestService {
 	@Path("getrequeststatus")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RequestStatusVO getRequestStatus(UserIdPoolIdVO userIdPoolIdVO) {
+	public RequestStatusVO getRequestStatus(UserIdPoolIdVO userIdPoolIdVO,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RequestStatusVO requestStatusVO = new RequestStatusVO();
 		if (userIdPoolIdVO != null && !userIdPoolIdVO.getPoolId().isEmpty()
 				&& !userIdPoolIdVO.getUserId().isEmpty()) {

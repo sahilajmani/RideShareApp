@@ -10,15 +10,19 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import dao.DaoI;
 import pojos.MatchedPoolsVO;
 import pojos.Pool;
 import pojos.RestServiceResponse;
 import pojos.User;
+import utility.DistanceBwPlaces;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import vo.UsersList;
+import dao.DaoI;
 
 @Path("/poolservice")
 public class PoolService {
@@ -29,7 +33,11 @@ public class PoolService {
 	@Path("getpoolservice")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Pool getPoolService(Pool pool) {
+	public Pool getPoolService(Pool pool,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		Pool responsePool = new Pool();
 		try {
 			responsePool = dao.getPoolDetails(pool.getId());
@@ -44,7 +52,11 @@ public class PoolService {
 	@Path("getmatchedpools")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<MatchedPoolsVO> getMatchedPoolsService(User user) {
+	public List<MatchedPoolsVO> getMatchedPoolsService(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		List<MatchedPoolsVO> matchPoolsList = new ArrayList<MatchedPoolsVO>();
 		try {
 			matchPoolsList = dao.getmatchedPool(user.getId());
@@ -56,10 +68,39 @@ public class PoolService {
 	}
 
 	@POST
+	@Path("getmatchedpoolsforunregistered")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<MatchedPoolsVO> getMatchedPoolsForUnregistered(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
+		List<MatchedPoolsVO> matchPoolsList = new ArrayList<MatchedPoolsVO>();
+		try {
+			double distance = DistanceBwPlaces.getDistanceandDuration(user
+					.getHomeAddress().getLattitude(), user.getHomeAddress()
+					.getLongitude(), user.getOfficeAddress().getLattitude(),
+					user.getOfficeAddress().getLongitude());
+			logger.info("distance stored for user : " + distance);
+			user.setDistance((float) distance);
+			user.setId("temp1234");
+			matchPoolsList = dao.getmatchedPoolForUnregistered(user);
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		}
+		return matchPoolsList;
+	}
+	@POST
 	@Path("getpoolusers")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public UsersList getPoolUsers(Pool pool) {
+	public UsersList getPoolUsers(Pool pool,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		UsersList users = new UsersList();
 		List<User> participants = new ArrayList<User>();
 		try {
@@ -76,7 +117,11 @@ public class PoolService {
 	@Path("leavepoolservice")
 	@Produces(MediaType.APPLICATION_JSON)
 	public RestServiceResponse leavePoolService(
-			@QueryParam("userId") String userId) {
+			@QueryParam("userId") String userId,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RestServiceResponse response = new RestServiceResponse();
 		if (!userId.isEmpty()) {
 			try {

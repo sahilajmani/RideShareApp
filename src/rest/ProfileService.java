@@ -10,12 +10,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import pojos.RestServiceResponse;
 import pojos.UpdateUserVO;
 import pojos.User;
 import utility.DistanceBwPlaces;
+import utility.GlobalConstants;
 import utility.RideSharingUtil;
 import dao.DaoI;
 
@@ -28,8 +31,12 @@ public class ProfileService {
 	@Path("insertUserProfile")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse insertUserProfile(User user)
-			throws SystemException {
+	public RestServiceResponse insertUserProfile(User user,@Context HttpHeaders hh)
+			throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RestServiceResponse restServiceResponse = new RestServiceResponse();
 		try {
 			double distance = DistanceBwPlaces.getDistanceandDuration(user
@@ -71,8 +78,12 @@ public class ProfileService {
 	@Path("updateUserProfile")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public RestServiceResponse updateUserProfile(UpdateUserVO updateUserVO)
-			throws SystemException {
+	public RestServiceResponse updateUserProfile(UpdateUserVO updateUserVO,@Context HttpHeaders hh)
+			throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 		RestServiceResponse serviceResponse = new RestServiceResponse();
 		try {
 			if (updateUserVO.isChangeAddress()) {
@@ -110,7 +121,11 @@ public class ProfileService {
 	@Path("getUserDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User fetchUserDetails(User user) {
+	public User fetchUserDetails(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 			return dao.getUserDetails(user.getId());
 	}
 
@@ -119,7 +134,11 @@ public class ProfileService {
 	@Path("getUserDetailsViaEmail")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User fetchUserDetailsViaEmail(User user) {
+	public User fetchUserDetailsViaEmail(User user,@Context HttpHeaders hh) throws Exception {
+		String authorization = hh.getRequestHeaders().get("Authorization")!=null?hh.getRequestHeaders().get("Authorization").toString():"";
+		if(authorization.equals("") || !authorization.equals("["+GlobalConstants.AUTH_STRING+"]")){
+			throw new Exception("Not Authorized Exception");
+		}
 			return dao.getUserDetailsByEmail(user.getEmail());
 	}
 	
