@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import pojos.Pool;
+import pojos.UserImage;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
@@ -70,10 +71,10 @@ public class ImageService {
 	@Path("uploadjson")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean getPoolService(byte[] url,String userId) throws Exception {
-		if(url==null)
-			return false;
-		System.out.println("I got "+url);
+	public boolean uploadImageOfUser(UserImage userImage) throws Exception {
+			System.out.println(userImage.getUserId());
+			System.out.println("received");
+			System.out.println(userImage.getImageArray());
 		return true;
 	}
 
